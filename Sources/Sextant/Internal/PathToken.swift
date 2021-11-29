@@ -1,9 +1,9 @@
 import Foundation
 import Hitch
 
-public class PathToken {
-    private weak var prev: PathToken?
-    private var next: PathToken?
+class PathToken {
+    weak var prev: PathToken?
+    var next: PathToken?
     
     func checkArray(currentPath: Hitch,
                     jsonObject: JsonAny,
@@ -28,7 +28,7 @@ public class PathToken {
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
         guard let jsonObject = jsonObject as? [JsonAny] else { return .done }
         
-        let evalPath = "\(currentPath)[\(arrayIndex)]".hitch()
+        let evalPath = Hitch.combine(currentPath, "[\(arrayIndex)]".hitch())
         let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject,
                                                               item: jsonObject[arrayIndex]) : Path.nullPath()
         
@@ -52,23 +52,108 @@ public class PathToken {
                                  evaluationContext: evaluationContext)
         }
         
+        return .done
+    }
+    
+    func handle(properties: [Hitch],
+                currentPath: Hitch,
+                jsonObject: JsonAny,
+                evaluationContext: EvaluationContext) -> EvaluationStatus {
         
-        /*
-        id evalHit = obj[effectiveIndex];
-        
-        if (self.leaf)
-        {
-            if ([context addResult:evalPath operation:pathRef jsonObject:evalHit] == SMJEvaluationContextStatusAborted)
-                return SMJEvaluationStatusAborted;
+        if properties.count == 1 {
+            let property = properties[0]
+            let evalPath = Hitch.combine(currentPath, "['", property, "']")
             
-            return SMJEvaluationStatusDone;
+            var propertyVal = read(property: property,
+                                   jsonObject: jsonObject,
+                                   evaluationContext: evaluationContext)
+            if propertyVal == nil {
+                // [From original source] Conditions below heavily depend on current token type (and its logic) and are not "universal",
+                // so this code is quite dangerous (I'd rather rewrite it & move to PropertyPathToken and implemented
+                // WildcardPathToken as a dynamic multi prop case of PropertyPathToken).
+                // Better safe than sorry.
+                
+                if isLeaf() {
+                    return .done
+                } else {
+                    if (isUpstreamDefinite() && isTokenDefinite()) == false {
+                        return .done
+                    }
+                    return .error("Missing property in path \(evalPath)")
+                }
+            }
+            
+            let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject, property: property) : Path.nullPath()
+            
+            if let next = next {
+                let result = next.evaluate(currentPath: evalPath,
+                                           parentPath: path,
+                                           jsonObject: propertyVal,
+                                           evaluationContext: evaluationContext)
+            } else {
+                if evaluationContext.add(path: evalPath, operation: path, jsonObject: propertyVal) == .aborted {
+                    return .aborted
+                }
+            }
+        } else {
+            let evalPath = Hitch.combine(currentPath, "[", properties.joined(delimiter: .comma, wrap: .singleQuote), "]")
+            
+            var merged = [Hitch: JsonAny]()
+            for property in properties {
+                var propertyVal: JsonAny = nil
+                
+                
+                if has(property: property,
+                       jsonObject: jsonObject,
+                       evaluationContext: evaluationContext) {
+                    propertyVal = read(property: property,
+                                       jsonObject: jsonObject,
+                                       evaluationContext: evaluationContext)
+                    if propertyVal == nil {
+                        continue
+                    }
+                } else {
+                    continue
+                }
+                
+                if let propertyVal = propertyVal {
+                    merged[property] = propertyVal
+                }
+            }
+            
+            let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject, properties: properties) : Path.nullPath()
+            
+            if evaluationContext.add(path: evalPath, operation: path, jsonObject: merged) == .aborted {
+                return .aborted
+            }
         }
-        else
-        {
-            return [self.next evaluateWithCurrentPath:evalPath parentPathRef:pathRef jsonObject:evalHit evaluationContext:context error:error];
-        }*/
         
         return .done
+    }
+    
+    func has(property: Hitch,
+             jsonObject: JsonAny,
+             evaluationContext: EvaluationContext) -> Bool {
+        return read(property: property,
+                    jsonObject: jsonObject,
+                    evaluationContext: evaluationContext) != nil
+    }
+    
+    func read(property: Hitch,
+              jsonObject: JsonAny,
+              evaluationContext: EvaluationContext) -> JsonAny {
+        if let jsonObject = jsonObject as? [String: JsonAny] {
+            return jsonObject[property.description] ?? nil
+        }
+        if let jsonObject = jsonObject as? [Hitch: JsonAny] {
+            return jsonObject[property] ?? nil
+        }
+        if let jsonObject = jsonObject as? [JsonAny] {
+            guard let index = property.toInt() else { return nil }
+            guard index >= 0 && index < jsonObject.count else { return nil }
+            return jsonObject[index]
+        }
+        return nil
     }
     
     func evaluate(currentPath: Hitch,
@@ -92,9 +177,18 @@ public class PathToken {
     }
     
     func isTokenDefinite() -> Bool {
-        fatalError("needs to be ovcerwritten")
+        fatalError("needs to be overwritten")
     }
     
+    func isPathDefinite() -> Bool {
+        if let next = next,
+           isTokenDefinite() {
+            return next.isPathDefinite()
+        }
+        return isTokenDefinite()
+    }
+    
+    @discardableResult
     func append(tail token: PathToken) -> PathToken {
         next = token
         next?.prev = self

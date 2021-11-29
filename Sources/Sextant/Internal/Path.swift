@@ -1,9 +1,18 @@
 import Foundation
 import Hitch
 
-public class Path {
+class Path {
+    class func newPath(rootObject: JsonAny) -> Path {
+        return RootPath(rootObject: rootObject)
+    }
     class func newPath(object: JsonAny, item: JsonAny) -> Path {
         return ArrayIndexPath(object: object, item: item)
+    }
+    class func newPath(object: JsonAny, property: Hitch) -> Path {
+        return ObjectPropertyPath(object: object, property: property)
+    }
+    class func newPath(object: JsonAny, properties: [Hitch]) -> Path {
+        return ObjectMultiPropertyPath(object: object, properties: properties)
     }
     class func nullPath() -> Path {
         return NullPath.shared

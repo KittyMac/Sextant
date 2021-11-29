@@ -1,7 +1,7 @@
 import Foundation
 import Hitch
 
-public final class ArraySliceOperation: CustomStringConvertible {
+final class ArraySliceOperation: CustomStringConvertible {
     
     public var from: Int?
     public var to: Int?

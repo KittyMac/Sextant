@@ -1,7 +1,7 @@
 import Foundation
 import Hitch
 
-public class ArrayIndexToken: ArrayPathToken {
+class ArrayIndexToken: ArrayPathToken {
     let indexOperation: ArrayIndexOperation
     
     init(_ indexOperation: ArrayIndexOperation) {

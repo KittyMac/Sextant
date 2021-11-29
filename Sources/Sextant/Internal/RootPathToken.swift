@@ -1,7 +1,7 @@
 import Foundation
 import Hitch
 
-public class RootPathToken: PathToken {
+final class RootPathToken: PathToken {
     weak var tail: PathToken?
     var tokenCount = 0
     var rootToken = Hitch(capacity: 512)
@@ -18,10 +18,37 @@ public class RootPathToken: PathToken {
         return rootToken[0] == UInt8.dollarSign
     }
     
+    func isFunctionPath() -> Bool {
+        return (tail as? FunctionPathToken) != nil
+    }
+    
     func append(token: PathToken) -> PathToken {
         tail = tail?.append(tail: token)
         tokenCount += 1
         return self
+    }
+    
+    override func evaluate(currentPath: Hitch,
+                           parentPath: Path,
+                           jsonObject: JsonAny,
+                           evaluationContext: EvaluationContext) -> EvaluationStatus {
+        
+        if isLeaf() {
+            let op = evaluationContext.forUpdate ? parentPath : Path.nullPath()
+            
+            return evaluationContext.add(path: rootToken,
+                                         operation: op,
+                                         jsonObject: jsonObject)
+        }
+        
+        if let next = next {
+            return next.evaluate(currentPath: rootToken,
+                                 parentPath: parentPath,
+                                 jsonObject: jsonObject,
+                                evaluationContext: evaluationContext)
+        }
+        
+        return .error("root path token is leaf but next is nil")
     }
 }
 

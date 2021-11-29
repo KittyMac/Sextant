@@ -1,7 +1,7 @@
 import Foundation
 import Hitch
 
-public class CompiledPath: Path {
+class CompiledPath: Path {
     var root: RootPathToken
     
     init(root: RootPathToken) {
@@ -10,17 +10,25 @@ public class CompiledPath: Path {
     }
     
     override func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext? {
-        fatalError("TO BE IMPLEMENTED")
+        let context = EvaluationContext(path: self,
+                                        rootJsonObject: rootJsonObject)
+        
+        let op = context.forUpdate ? Path.newPath(rootObject: rootJsonObject) : Path.nullPath()
+        
+        _ = root.evaluate(currentPath: Hitch(),
+                          parentPath: op,
+                          jsonObject: jsonObject,
+                          evaluationContext: context)
+        
+        return context
     }
     
     override func isDefinite() -> Bool {
-        fatalError("TO BE IMPLEMENTED")
-        //return root.isTokenDefinite()
+        return root.isPathDefinite()
     }
     
     override func isFunctionPath() -> Bool {
-        fatalError("TO BE IMPLEMENTED")
-        //return root.
+        return root.isFunctionPath()
     }
     
     override func isRootPath() -> Bool {
@@ -74,28 +82,6 @@ public class CompiledPath: Path {
 - (NSString *)stringValue
 {
 	return [_root stringValue];
-}
-
-- (nullable id <SMJEvaluationContext>)evaluateJsonObject:(id)jsonObject rootJsonObject:(id)rootJsonObject configuration:(SMJConfiguration *)configuration error:(NSError **)error
-{
-	return [self evaluateJsonObject:jsonObject rootJsonObject:rootJsonObject configuration:configuration forUpdate:NO error:error];
-}
-
-- (nullable id <SMJEvaluationContext>)evaluateJsonObject:(id)jsonObject rootJsonObject:(id)rootJsonObject configuration:(SMJConfiguration *)configuration forUpdate:(BOOL)forUpdate error:(NSError **)error
-{
-	//if (logger.isDebugEnabled()) {
-	//	logger.debug("Evaluating path: {}", toString());
-	//}
-	
-	SMJEvaluationContextImpl *context = [[SMJEvaluationContextImpl alloc] initWithPath:self rootJsonObject:rootJsonObject configuration:configuration forUpdate:forUpdate];
-	SMJPathRef				 *op = context.forUpdate ?  [SMJPathRef pathRefWithRootObject:rootJsonObject] : [SMJPathRef pathRefNull];
-
-	SMJEvaluationStatus result = [_root evaluateWithCurrentPath:@"" parentPathRef:op jsonObject:jsonObject evaluationContext:context error:error];
-	
-	if (result == SMJEvaluationStatusError)
-		return nil;
-	
-	return context;
 }
 
 - (BOOL)isDefinite

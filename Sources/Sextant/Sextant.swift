@@ -7,48 +7,89 @@ func error(_ error: String) {
     print("Error: " + error)
 }
 
-public enum ArrayPathCheck: Equatable {
+extension Hitch {
+    class func combine(_ parts: Hitch...) -> Hitch {
+        guard parts.count > 0 else { return Hitch() }
+        
+        var total = 0
+        parts.forEach { total += $0.count }
+        
+        let buffer = Hitch(capacity: total)
+        parts.forEach { buffer.append($0) }
+        return buffer
+    }
+}
+
+extension Array where Element == Hitch {
+    func joined(delimiter: UInt8, wrap: UInt8) -> Hitch {
+        guard count > 0 else { return Hitch() }
+        
+        var total = 0
+        forEach { total += $0.count + 2 }
+        
+        let buffer = Hitch(capacity: total)
+        
+        forEach { part in
+            if buffer.count > 0 {
+                buffer.append(delimiter)
+            }
+            buffer.append(wrap)
+            buffer.append(part)
+            buffer.append(wrap)
+        }
+        
+        return buffer
+    }
+}
+
+enum ArrayPathCheck: Equatable {
     case handle
     case skip
     case error(String)
     
-    public static func == (lhs: ArrayPathCheck, rhs: ArrayPathCheck) -> Bool {
+    static func == (lhs: ArrayPathCheck, rhs: ArrayPathCheck) -> Bool {
         switch (lhs, rhs) {
         case (.error, .error):
             return true
+        case (.handle, .handle):
+            return true
+        case (.skip, .skip):
+            return true
 
         default:
-            return lhs == rhs
+            return false
         }
     }
 }
 
-public enum EvaluationStatus: Equatable {
+enum EvaluationStatus: Equatable {
     case done
     case aborted
     case error(_ error: String)
     
-    public static func == (lhs: EvaluationStatus, rhs: EvaluationStatus) -> Bool {
+    static func == (lhs: EvaluationStatus, rhs: EvaluationStatus) -> Bool {
         switch (lhs, rhs) {
         case (.error, .error):
             return true
+        case (.done, .done):
+            return true
+        case (.aborted, .aborted):
+            return true
 
         default:
-            return lhs == rhs
+            return false
         }
     }
 }
 
 extension String {
-    
-    func query(path: Hitch) -> JsonAny {
+    func json(values path: Hitch) -> JsonAny {
         guard let jsonData = self.data(using: .utf8) else { return nil }
         guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else { return nil }
         
-        return Sextant.shared.query(object: jsonObject,
-                                    path: path)
+        return Sextant.shared.values(root: jsonObject,
+                                     path: path)
     }
-    
 }
 
 public final class Sextant {
@@ -69,12 +110,23 @@ public final class Sextant {
         return path
     }
     
-    public func query(object: JsonAny,
+    public func values(root: JsonAny,
+                       path: Hitch) -> [JsonAny] {
+        guard let path = cachedPath(query: path) else { return [] }
+        if let result = path.evaluate(jsonObject: root,
+                                      rootJsonObject: root) {
+            return result.valueResults
+        }
+        return []
+    }
+    
+    public func paths(root: JsonAny,
                       path: Hitch) -> [JsonAny] {
         guard let path = cachedPath(query: path) else { return [] }
-        
-        
-        
+        if let result = path.evaluate(jsonObject: root,
+                                      rootJsonObject: root) {
+            return result.pathResults
+        }
         return []
     }
     

@@ -1,14 +1,26 @@
 import Foundation
 import Hitch
 
-public final class EvaluationContext {
+final class EvaluationContext {
     let forUpdate = false
     
     var updateOperations = [Path]()
     
     var valueResults = [JsonAny]()
-    var pathResults = [JsonAny]()
+    var pathResults = [String]()
     var resultIndex = 0
+    
+    var evaluationCache = [Hitch:JsonAny]()
+    
+    var path: Path
+    var rootJsonObject: JsonAny
+    
+    init(path: Path,
+         rootJsonObject: JsonAny) {
+        
+        self.path = path
+        self.rootJsonObject = rootJsonObject
+    }
     
     func add(path: Hitch,
              operation: Path,
@@ -18,7 +30,7 @@ public final class EvaluationContext {
         }
         
         valueResults.append(jsonObject)
-        pathResults.append(path)
+        pathResults.append(path.description)
         
         resultIndex += 1
         

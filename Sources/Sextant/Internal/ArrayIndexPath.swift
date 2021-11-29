@@ -2,7 +2,7 @@ import Foundation
 import Hitch
 
 
-public final class ArrayIndexPath: Path {
+final class ArrayIndexPath: Path {
     var item: JsonAny
     
     init(object: JsonAny, item: JsonAny) {

@@ -1,7 +1,7 @@
 import Foundation
 import Hitch
 
-public class CharacterIndex {
+class CharacterIndex {
     private let charSequence: Hitch
     
     var position: Int
@@ -11,6 +11,14 @@ public class CharacterIndex {
         charSequence = query
         position = 0
         endPosition = charSequence.count - 1
+    }
+    
+    func substring(_ from: Int, _ to: Int) -> Hitch? {
+        return charSequence.substring(from, to)
+    }
+    
+    func count() -> Int {
+        return charSequence.count
     }
     
     func current() -> UInt8 {
@@ -41,6 +49,10 @@ public class CharacterIndex {
     
     func first() -> UInt8 {
         return charSequence[position]
+    }
+    
+    func inBounds(position: Int) -> Bool {
+        return position >= 0 && position <= endPosition
     }
     
     func inBounds() -> Bool {

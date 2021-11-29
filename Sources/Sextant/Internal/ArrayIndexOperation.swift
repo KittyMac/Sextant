@@ -1,7 +1,7 @@
 import Foundation
 import Hitch
 
-public final class ArrayIndexOperation: CustomStringConvertible {
+final class ArrayIndexOperation: CustomStringConvertible {
     
     public var indices = [Int]()
     

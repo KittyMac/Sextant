@@ -7,7 +7,7 @@ fileprivate let wildcardChar = UInt8.astericks
 fileprivate let beginFilterChar = UInt8.questionMark
 fileprivate let splitChar = UInt8.colon
 
-public class PathCompiler {
+final class PathCompiler {
     
     let ci: CharacterIndex
     
@@ -46,8 +46,8 @@ public class PathCompiler {
         
         ci.advance()
         
-        guard ci.current() != UInt8.dot && ci.current() != UInt8.openBrace else {
-            error("Illegal character at position \(ci.position) expected '.' or '['")
+        guard ci.current() == .dot || ci.current() == .openBrace else {
+            error("Illegal character at position \(ci.position) expected '.' or '[' and found \(ci.current())")
             return nil
         }
         
@@ -104,8 +104,7 @@ public class PathCompiler {
             return true
         default:
             var result = false
-            fatalError("TO BE IMPLEMENTED")
-            //result = result || readPropertyOrFunctionToken(appender: appender)
+            result = result || readPropertyOrFunctionToken(appender: appender)
             guard result else {
                 error("Could not parse token starting at position \(ci.position).")
                 return false
@@ -132,6 +131,251 @@ public class PathCompiler {
         }
         
         return readNextToken(appender: appender)
+    }
+    
+    private func readPropertyOrFunctionToken(appender: PathToken) -> Bool {
+        if ci.current() == .openBrace || ci.current() == wildcardChar || ci.current() == .dot || ci.current() == .space {
+            return false
+        }
+        
+        let startPosition = ci.position
+        var readPosition = startPosition
+        var endPosition = 0
+        
+        var isFunction = false
+        
+        while ci.inBounds(position: readPosition) {
+            let c = ci[readPosition]
+            if c == .space {
+                error("Use bracket notion ['my prop'] if your property contains blank characters. position: \(readPosition)")
+                return false
+            } else if c == .dot || c == .openBrace {
+                endPosition = readPosition
+                break
+            } else if c == .parenOpen {
+                isFunction = true
+                endPosition = readPosition
+                break
+            }
+            readPosition += 1
+        }
+        
+        if endPosition == 0 {
+            endPosition = ci.count()
+        }
+        
+        var functionParameters: [Parameter]? = nil
+        
+        if isFunction {
+            if ci.inBounds(position: readPosition + 1) {
+                // read the next token to determine if we have a simple no-args function call
+                let c = ci[readPosition + 1]
+                
+                if c != .parenClose {
+                    ci.position = endPosition + 1
+                    
+                    // parse the arguments of the function - arguments that are inner queries or JSON objet(s)
+                    guard let functionName = ci.substring(startPosition, endPosition) else {
+                        error("Failed to extract function name, position: \(readPosition)")
+                        return false
+                    }
+                    
+                    functionParameters = parseFunctionParameters(functionName)
+                    if functionParameters == nil {
+                        return false
+                    }
+                } else {
+                    ci.position = readPosition + 1
+                }
+            } else {
+                ci.position = readPosition
+            }
+        } else {
+            ci.position = readPosition
+        }
+        
+        if let property = ci.substring(startPosition, endPosition) {
+            if let functionParameters = functionParameters {
+                appender.append(tail: FunctionPathToken(name: property,
+                                                        parameters: functionParameters))
+            } else {
+                guard let pathToken = PropertyPathToken(properties: [property],
+                                                        wrap: UInt8.singleQuote) else { return false }
+                
+                appender.append(tail: pathToken)
+            }
+        }
+        
+        return ci.positionAtEnd() || readNextToken(appender: appender)
+    }
+    
+    private func parseFunctionParameters(_ funcName: Hitch) -> [Parameter] {
+        fatalError("TO BE IMPLEMENTED")
+        return []
+        
+        /*
+        NSNumber *type = nil; // SMJParamType
+        
+        // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
+        // last parameter boundary
+        NSInteger    groupParen = 1, groupBracket = 0, groupBrace = 0, groupQuote = 0;
+        BOOL         endOfStream = NO;
+        unichar     priorChar = 0;
+        
+        NSMutableArray <SMJParameter *> *parameters = [[NSMutableArray alloc] init];
+        NSMutableString *parameter = [[NSMutableString alloc] init];
+        
+        while ([_path inBounds] && !endOfStream)
+        {
+            unichar c = _path.currentCharacter;
+            
+            [_path incrementPositionBy:1];
+            
+            // we're at the start of the stream, and don't know what type of parameter we have
+            if (type == nil)
+            {
+                if ([self isWhitespace:c])
+                    continue;
+                
+                if (c == kOpenBraceChar || (c >= '0' && c <= '9') || kDoubleQuote == c)
+                    type = @(SMJParamTypeJSON);
+                else if ([self isPathContext:c])
+                    type = @(SMJParamTypePath); // read until we reach a terminating comma and we've reset grouping to zero
+            }
+            
+            switch (c)
+            {
+                case kDoubleQuote:
+                {
+                    if (priorChar != '\\' && groupQuote > 0)
+                    {
+                        if (groupQuote == 0)
+                        {
+                            SMSetError(error, 1, @"Unexpected quote '\"' at character position: %ld", (long)_path.position);
+                            return nil;
+                        }
+                        
+                        groupQuote--;
+                    }
+                    else
+                    {
+                        groupQuote++;
+                    }
+                    
+                    break;
+                }
+                    
+                case kOpenParenthesisChar:
+                {
+                    groupParen++;
+                    break;
+                }
+                    
+                case kOpenBraceChar:
+                {
+                    groupBrace++;
+                    break;
+                }
+                    
+                case kOpenSquareBracketChar:
+                {
+                    groupBracket++;
+                    break;
+                }
+                    
+                case kCloseBraceChar:
+                {
+                    if (groupBrace == 0)
+                    {
+                        SMSetError(error, 2, @"Unexpected close brace '}' at character position: %ld", (long)_path.position);
+                        return nil;
+                    }
+                    groupBrace--;
+                    break;
+                }
+                    
+                case kCloseSquareBracketChar:
+                {
+                    if (groupBracket == 0)
+                    {
+                        SMSetError(error, 3, @"Unexpected close bracket ']' at character position: %ld", (long)_path.position);
+                        return nil;
+                    }
+                    groupBracket--;
+                    break;
+                }
+                    
+                // In either the close paren case where we have zero paren groups left, capture the parameter, or where
+                // we've encountered a kCommaChar do the same
+                case kCloseParenthesisChar:
+                {
+                    groupParen--;
+                    
+                    if (groupParen != 0)
+                        [parameter appendString:[NSString stringWithCharacters:&c length:1]];
+                    
+                    // No break.
+                }
+                    
+                case kCommaChar:
+                {
+                    // In this state we've reach the end of a function parameter and we can pass along the parameter string
+                    // to the parser
+                    if ((groupQuote == 0 && groupBrace == 0 && groupBracket == 0 && ((groupParen == 0 && c == kCloseParenthesisChar) || groupParen == 1)))
+                    {
+                        endOfStream = (0 == groupParen);
+                        
+                        if (type != nil)
+                        {
+                            SMJParameter *param = nil;
+                            
+                            switch (type.intValue)
+                            {
+                                case SMJParamTypeJSON:
+                                {
+                                    // parse the json and set the value
+                                    param = [[SMJParameter alloc] initWithJSON:parameter];
+                                    break;
+                                }
+                                    
+                                case SMJParamTypePath:
+                                {
+                                    id <SMJPath> path = [SMJPathCompiler compilePathString:parameter error:error];
+                                    
+                                    if (!path)
+                                        return nil;
+                                    
+                                    param = [[SMJParameter alloc] initWithPath:path];
+                                    
+                                    break;
+                                }
+                            }
+                            
+                            if (param != nil)
+                                [parameters addObject:param];
+                            
+                            [parameter deleteCharactersInRange:NSMakeRange(0, parameter.length)];
+                            type = nil;
+                        }
+                    }
+                    break;
+                }
+            }
+            
+            if (type != nil && !(c == kCommaChar && groupBrace == 0 && groupBracket == 0 && groupParen == 1))
+                [parameter appendString:[NSString stringWithCharacters:&c length:1]];
+            
+            priorChar = c;
+        }
+        
+        if (groupBrace != 0 || groupParen != 0 || groupBracket != 0)
+        {
+            SMSetError(error, 4, @"Arguments to function: '%@' are not closed properly.", funcName);
+            return nil;
+        }
+        
+        return parameters;
+         */
     }
 }
 

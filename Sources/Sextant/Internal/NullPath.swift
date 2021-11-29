@@ -2,7 +2,7 @@ import Foundation
 import Hitch
 
 
-public final class NullPath: Path {
+final class NullPath: Path {
     static let shared = NullPath()
     private init() { super.init(parent: nil) }
 }

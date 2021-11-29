@@ -1,7 +1,7 @@
 import Foundation
 import Hitch
 
-public class ArrayPathToken: PathToken {
+class ArrayPathToken: PathToken {
     
 }
 
