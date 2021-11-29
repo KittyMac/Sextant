@@ -3,7 +3,7 @@ import class Foundation.Bundle
 
 import Sextant
 
-final class SextantTests: XCTestCase {
+class SextantTests: SextantTestsBase {
     
     func testArrayIndexOperation() {
         let op = ArrayIndexOperation("1,2,20,5464,673,34")
@@ -19,6 +19,10 @@ final class SextantTests: XCTestCase {
         
         let op3 = ArraySliceOperation(":54")
         XCTAssertEqual(op3!.description, "[:54]")
+    }
+    
+    func testSimple1() {
+        
     }
     
     

@@ -14,6 +14,30 @@ public class Path {
     init(parent: JsonAny) {
         self.parent = parent
     }
+    
+    public var description: String {
+        return ""
+    }
+    
+    func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext? {
+        fatalError("TO BE IMPLEMENTED")
+        //return nil
+    }
+    
+    func isDefinite() -> Bool {
+        fatalError("TO BE IMPLEMENTED")
+        //return false
+    }
+    
+    func isFunctionPath() -> Bool {
+        fatalError("TO BE IMPLEMENTED")
+        //return false
+    }
+    
+    func isRootPath() -> Bool {
+        fatalError("TO BE IMPLEMENTED")
+        //return false
+    }
 }
 
 /*

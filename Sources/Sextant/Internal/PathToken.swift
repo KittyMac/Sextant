@@ -94,6 +94,12 @@ public class PathToken {
     func isTokenDefinite() -> Bool {
         fatalError("needs to be ovcerwritten")
     }
+    
+    func append(tail token: PathToken) -> PathToken {
+        next = token
+        next?.prev = self
+        return token
+    }
 }
 
 
