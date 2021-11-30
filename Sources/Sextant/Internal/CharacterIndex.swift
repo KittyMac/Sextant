@@ -79,6 +79,40 @@ class CharacterIndex {
             endPosition -= 1
         }
     }
+    
+    func nextSignificantCharacter() -> UInt8 {
+        return nextSignificantCharacterFromIndex(startPosition: position)
+    }
+
+    func nextSignificantCharacterFromIndex(startPosition: Int) -> UInt8 {
+        var readPosition = startPosition + 1
+        
+        while inBounds(position: readPosition) && charSequence[readPosition] == .space {
+            readPosition += 1
+        }
+        
+        if inBounds(position: readPosition) {
+            return charSequence[readPosition]
+        }
+        return .space
+    }
+    
+    func nextIndexOfCharacter(character: UInt8) -> Int {
+        return nextIndexOfCharacter(character: character,
+                                    from: position + 1)
+    }
+
+    func nextIndexOfCharacter(character: UInt8,
+                              from: Int) -> Int {
+        var readPosition = from
+        while inBounds(position: readPosition) {
+            if charSequence[readPosition] == character {
+                return readPosition
+            }
+            readPosition += 1
+        }
+        return -1
+    }
 }
 
 

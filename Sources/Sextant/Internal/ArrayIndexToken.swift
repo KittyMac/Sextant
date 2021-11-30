@@ -4,8 +4,8 @@ import Hitch
 class ArrayIndexToken: ArrayPathToken {
     let indexOperation: ArrayIndexOperation
     
-    init(_ indexOperation: ArrayIndexOperation) {
-        self.indexOperation = indexOperation
+    init(operation: ArrayIndexOperation) {
+        self.indexOperation = operation
     }
     
     override func evaluate(currentPath: Hitch,

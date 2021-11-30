@@ -75,9 +75,8 @@ final class PathCompiler {
         switch ci.current() {
         case .openBrace:
             var result = false
-            fatalError("TO BE IMPLEMENTED")
             //result = result || readBracketPropertyToken(appender: appender)
-            //result = result || readArrayToken(appender: appender)
+            result = result || readArrayToken(appender: appender)
             //result = result || readWildCardToken(appender: appender)
             //result = result || readFilterToken(appender: appender)
             guard result else {
@@ -376,6 +375,50 @@ final class PathCompiler {
         
         return parameters;
          */
+    }
+    
+    private func readArrayToken(appender: PathToken) -> Bool {
+        guard ci.current() == .openBrace else  { return false }
+        
+        let nextSignificantChar = ci.nextSignificantCharacter()
+        
+        guard nextSignificantChar >= .zero &&
+                nextSignificantChar <= .nine &&
+                nextSignificantChar != .minus &&
+                nextSignificantChar != splitChar else  { return false }
+        
+        
+        let expressionBeginIndex = ci.position + 1
+        let expressionEndIndex = ci.nextIndexOfCharacter(character: .closeBrace, from: expressionBeginIndex)
+        
+        guard expressionEndIndex >= 0 else { return false }
+        
+        guard let expression = ci.substring(expressionBeginIndex, expressionEndIndex) else { return false }
+        expression.trim()
+        
+        guard expression[0] != .astericks else { return false }
+        
+        for c in expression {
+            guard c >= .zero &&
+                    c <= .nine &&
+                    c != .minus &&
+                    c != splitChar &&
+                    c != .space else  { return false }
+        }
+        
+        let isSliceOperation = expression.contains(.colon)
+        
+        if isSliceOperation {
+            guard let operation = ArraySliceOperation(expression) else { return false }
+            appender.append(token: ArraySliceToken(operation: operation))
+        } else {
+            guard let operation = ArrayIndexOperation(expression) else { return false }
+            appender.append(token: ArrayIndexToken(operation: operation))
+        }
+        
+        ci.position = expressionEndIndex + 1
+        
+        return ci.positionAtEnd() || readNextToken(appender: appender)
     }
 }
 

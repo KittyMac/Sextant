@@ -15,7 +15,10 @@ class PathToken {
             return .error("The path \(currentPath) is null")
         }
         
-        guard let jsonObject = jsonObject as? [JsonAny] else { return .handle }
+        if jsonObject as? [JsonAny] != nil {
+            return .handle
+        }
+        
         if isUpstreamDefinite() == false {
             return .skip
         }

@@ -51,6 +51,10 @@ final class RootPathToken: PathToken {
         
         return .error("root path token is leaf but next is nil")
     }
+    
+    override func isTokenDefinite() -> Bool {
+        return true
+    }
 }
 
 

@@ -36,8 +36,14 @@ class SextantReturnTypeTests: SextantTestsBase {
     }
     
     func test_assert_maps_can_be_read() {
-        print(Sextant.shared.values(root: json, path: "$.store.book[0]"))
-        //XCTAssertEqual((Sextant.shared.values(root: json, path: "$.store.book[0]").first as? [JsonAny]), [])
+        XCTAssertEqualAny(Sextant.shared.values(root: json, path: "$.store.book[0]"), [
+            [
+                "author": "Nigel Rees",
+                "title": "Sayings of the Century",
+                "display-price": 8.95,
+                "category": "reference"
+            ]
+        ])
         XCTAssertEqual(Sextant.shared.paths(root: json, path: "$.store.book[0]").first as? String, "$['store']['book'][0]")
     }
 }
