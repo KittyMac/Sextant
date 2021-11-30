@@ -29,7 +29,7 @@ final class PathCompiler {
     func compile() -> CompiledPath? {
         guard let root = readContextToken() else { return nil }
         
-        return CompiledPath(root: root)
+        return CompiledPath(root: root, isRootPath: root.rootToken[0] == UInt8.dollarSign)
     }
     
     private func readContextToken() -> RootPathToken? {
@@ -196,13 +196,13 @@ final class PathCompiler {
         
         if let property = ci.substring(startPosition, endPosition) {
             if let functionParameters = functionParameters {
-                appender.append(tail: FunctionPathToken(name: property,
-                                                        parameters: functionParameters))
+                appender.append(token: FunctionPathToken(name: property,
+                                                         parameters: functionParameters))
             } else {
                 guard let pathToken = PropertyPathToken(properties: [property],
                                                         wrap: UInt8.singleQuote) else { return false }
                 
-                appender.append(tail: pathToken)
+                appender.append(token: pathToken)
             }
         }
         

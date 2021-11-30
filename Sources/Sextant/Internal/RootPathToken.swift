@@ -4,11 +4,11 @@ import Hitch
 final class RootPathToken: PathToken {
     weak var tail: PathToken?
     var tokenCount = 0
-    var rootToken = Hitch(capacity: 512)
+    var rootToken = Hitch(capacity: 1)
     
     init(root: UInt8) {
         rootToken.append(root)
-        tokenCount += 1
+        tokenCount = 1
         
         super.init()
         tail = self
@@ -22,7 +22,8 @@ final class RootPathToken: PathToken {
         return (tail as? FunctionPathToken) != nil
     }
     
-    func append(token: PathToken) -> PathToken {
+    @discardableResult
+    override func append(token: PathToken) -> PathToken {
         tail = tail?.append(tail: token)
         tokenCount += 1
         return self

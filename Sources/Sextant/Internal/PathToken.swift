@@ -194,6 +194,11 @@ class PathToken {
         next?.prev = self
         return token
     }
+    
+    @discardableResult
+    func append(token: PathToken) -> PathToken {
+        return append(tail: token)
+    }
 }
 
 
