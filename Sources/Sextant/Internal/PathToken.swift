@@ -1,7 +1,7 @@
 import Foundation
 import Hitch
 
-class PathToken {
+class PathToken: CustomStringConvertible {
     weak var prev: PathToken?
     var next: PathToken?
     
@@ -15,7 +15,7 @@ class PathToken {
             return .error("The path \(currentPath) is null")
         }
         
-        if jsonObject as? [JsonAny] != nil {
+        if jsonObject as? JsonArray != nil {
             return .handle
         }
         
@@ -29,7 +29,7 @@ class PathToken {
                 currentPath: Hitch,
                 jsonObject: JsonAny,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
-        guard let jsonObject = jsonObject as? [JsonAny] else { return .done }
+        guard let jsonObject = jsonObject as? JsonArray else { return .done }
         
         let evalPath = Hitch.combine(currentPath, "[\(arrayIndex)]".hitch())
         let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject,
@@ -67,7 +67,7 @@ class PathToken {
             let property = properties[0]
             let evalPath = Hitch.combine(currentPath, "['", property, "']")
             
-            var propertyVal = read(property: property,
+            let propertyVal = read(property: property,
                                    jsonObject: jsonObject,
                                    evaluationContext: evaluationContext)
             if propertyVal == nil {
@@ -93,6 +93,9 @@ class PathToken {
                                            parentPath: path,
                                            jsonObject: propertyVal,
                                            evaluationContext: evaluationContext)
+                if result != .done {
+                    return result
+                }
             } else {
                 if evaluationContext.add(path: evalPath, operation: path, jsonObject: propertyVal) == .aborted {
                     return .aborted
@@ -101,7 +104,7 @@ class PathToken {
         } else {
             let evalPath = Hitch.combine(currentPath, "[", properties.joined(delimiter: .comma, wrap: .singleQuote), "]")
             
-            var merged = [Hitch: JsonAny]()
+            var merged = [String: JsonAny]()
             for property in properties {
                 var propertyVal: JsonAny = nil
                 
@@ -120,7 +123,7 @@ class PathToken {
                 }
                 
                 if let propertyVal = propertyVal {
-                    merged[property] = propertyVal
+                    merged[property.description] = propertyVal
                 }
             }
             
@@ -145,13 +148,13 @@ class PathToken {
     func read(property: Hitch,
               jsonObject: JsonAny,
               evaluationContext: EvaluationContext) -> JsonAny {
-        if let jsonObject = jsonObject as? [String: JsonAny] {
+        if let jsonObject = jsonObject as? JsonDictionary {
             return jsonObject[property.description] ?? nil
         }
-        if let jsonObject = jsonObject as? [Hitch: JsonAny] {
-            return jsonObject[property] ?? nil
-        }
-        if let jsonObject = jsonObject as? [JsonAny] {
+        //if let jsonObject = jsonObject as? [Hitch: JsonAny] {
+        //    return jsonObject[property] ?? nil
+        //}
+        if let jsonObject = jsonObject as? JsonArray {
             guard let index = property.toInt() else { return nil }
             guard index >= 0 && index < jsonObject.count else { return nil }
             return jsonObject[index]
@@ -191,6 +194,10 @@ class PathToken {
         return isTokenDefinite()
     }
     
+    func pathFragment() -> String {
+        fatalError("needs to be overwritten")
+    }
+    
     @discardableResult
     func append(tail token: PathToken) -> PathToken {
         next = token
@@ -201,6 +208,13 @@ class PathToken {
     @discardableResult
     func append(token: PathToken) -> PathToken {
         return append(tail: token)
+    }
+    
+    var description: String {
+        if let next = next {
+            return pathFragment() + next.description
+        }
+        return pathFragment()
     }
 }
 

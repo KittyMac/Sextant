@@ -39,7 +39,7 @@ final class Parameter {
         for param in parameters {
             guard let value = param.value() else { return nil }
             
-            if let array = value as? [JsonAny] {
+            if let array = value as? JsonArray {
                 array.forEach(handle)
             } else {
                 handle(value)

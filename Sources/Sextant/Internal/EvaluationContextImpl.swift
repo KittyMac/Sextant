@@ -6,7 +6,7 @@ final class EvaluationContext {
     
     var updateOperations = [Path]()
     
-    var valueResults = [JsonAny]()
+    var valueResults = JsonArray()
     var pathResults = [String]()
     var resultIndex = 0
     

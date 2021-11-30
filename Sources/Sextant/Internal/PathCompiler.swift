@@ -114,8 +114,7 @@ final class PathCompiler {
     
     private func readDotToken(appender: PathToken) -> Bool {
         if ci.current() == .dot && ci.next() == .dot {
-            fatalError("TO BE IMPLEMENTED")
-            //appender.append(tail: ScanPathToken())
+            appender.append(tail: ScanPathToken())
             ci.advance(2)
         } else if ci.hasMoreCharacters() == false {
             error("Path must not end with a '.'")

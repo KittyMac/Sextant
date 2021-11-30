@@ -27,6 +27,10 @@ final class FunctionPathToken: PathToken {
     override func isTokenDefinite() -> Bool {
         return true
     }
+    
+    override func pathFragment() -> String {
+        return "." + (fragment ?? "TO BE IMPLEMENTED").description
+    }
 }
 
 /*

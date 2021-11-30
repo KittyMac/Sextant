@@ -42,17 +42,8 @@ class ArrayIndexToken: ArrayPathToken {
     override func isTokenDefinite() -> Bool {
         return indexOperation.isSingleIndexOperation()
     }
+    
+    override func pathFragment() -> String {
+        return indexOperation.description
+    }
 }
-
-/*
-
-- (NSString *)pathFragment
-{
-	return [_indexOperation stringValue];
-}
-
-@end
-
-
-NS_ASSUME_NONNULL_END
-*/

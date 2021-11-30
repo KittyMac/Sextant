@@ -29,16 +29,12 @@ class PropertyPathToken: PathToken {
         return isLeaf() == false && properties.count > 1
     }
     
-    func pathFragment() -> String {
-        return "[\(properties.joined(delimiter: .comma, wrap: wrap))]"
-    }
-    
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
                            evaluationContext: EvaluationContext) -> EvaluationStatus {
         
-        guard let jsonObject = jsonObject as? [String: JsonAny] else {
+        guard let jsonObject = jsonObject as? JsonDictionary else {
             if isUpstreamDefinite() == false {
                 return .done
             }
@@ -74,63 +70,8 @@ class PropertyPathToken: PathToken {
         // in case of leaf multiprops will be merged, so it's kinda definite
         return singlePropertyCase() || multiPropertyMergeCase()
     }
+    
+    override func pathFragment() -> String {
+        return "[\(properties.joined(delimiter: .comma, wrap: wrap))]"
+    }
 }
-
-/*
-
-#pragma mark - SMJPropertyPathToken - SMJPathToken
-
-- (SMJEvaluationStatus)evaluateWithCurrentPath:(NSString *)currentPath parentPathRef:(SMJPathRef *)parent jsonObject:(id)jsonObject evaluationContext:(SMJEvaluationContextImpl *)context error:(NSError **)error
-{
-	// Can't assert it in ctor because isLeaf() could be changed later on.
-	//assert onlyOneIsTrueNonThrow(singlePropertyCase(), multiPropertyMergeCase(), multiPropertyIterationCase());
-	
-	if ([jsonObject isKindOfClass:[NSDictionary class]] == NO)
-	{
-		if (self.upstreamDefinite == NO)
-		{
-			return SMJEvaluationStatusDone;
-		}
-		else
-		{
-			NSString *m = (jsonObject == nil ? @"null" : [[jsonObject class] description]);
-			
-			SMSetError(error, 1, @"Expected to find an object with property %@ in path %@ but found '%@'. This is not a json object.", self.pathFragment, currentPath, m);
-			
-			return SMJEvaluationStatusError;
-		}
-	}
-	
-	if (self.singlePropertyCase || self.multiPropertyMergeCase)
-	{
-		return [self handleObjectPropertyWithCurrentPathString:currentPath jsonObject:jsonObject evaluationContext:context properties:_properties error:error];
-	}
-	
-	if (self.multiPropertyIterationCase == NO)
-	{
-		SMSetError(error, 2, @"internal error (need to be multi property iteration case)");
-		return SMJEvaluationStatusError;
-	}
-	
-	for (NSString *property in _properties)
-	{
-		SMJEvaluationStatus result = [self handleObjectPropertyWithCurrentPathString:currentPath jsonObject:jsonObject evaluationContext:context properties:@[ property ] error:error];
-		
-		if (result == SMJEvaluationStatusError)
-			return SMJEvaluationStatusError;
-		else if (result == SMJEvaluationStatusAborted)
-			return SMJEvaluationStatusAborted;
-	}
-
-	return SMJEvaluationStatusDone;
-}
-- (NSString *)pathFragment
-{
-	return [NSString stringWithFormat:@"[%@]", [SMJUtils stringByJoiningStrings:_properties delimiter:@"," wrap:_stringDelimiter]];
-}
-
-@end
-
-
-NS_ASSUME_NONNULL_END
-*/

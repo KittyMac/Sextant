@@ -4,39 +4,39 @@ import class Foundation.Bundle
 import Sextant
 
 class SextantReturnTypeTests: SextantTestsBase {
-    var json: JsonAny = nil
+    var root: JsonAny = nil
     
     override func setUp() {
-        json = decode(json: jsonDocument)
+        root = decode(json: jsonDocument)
     }
     
     func test_assert_strings_can_be_read() {
-        XCTAssertEqual(Sextant.shared.values(root: json, path: "$.string-property").first as? String, "string-value")
-        XCTAssertEqual(Sextant.shared.paths(root: json, path: "$.string-property").first as? String, "$['string-property']")
+        XCTAssertEqual(root.query(values: "$.string-property").first as? String, "string-value")
+        XCTAssertEqual(root.query(paths: "$.string-property").first as? String, "$['string-property']")
     }
     
     func test_assert_ints_can_be_read() {
-        XCTAssertEqual(Sextant.shared.values(root: json, path: "$.int-max-property").first as? UInt32, UINT32_MAX)
-        XCTAssertEqual(Sextant.shared.paths(root: json, path: "$.int-max-property").first as? String, "$['int-max-property']")
+        XCTAssertEqual(root.query(values: "$.int-max-property").first as? UInt32, UINT32_MAX)
+        XCTAssertEqual(root.query(paths: "$.int-max-property").first as? String, "$['int-max-property']")
     }
     
     func test_assert_longs_can_be_read() {
-        XCTAssertEqual(Sextant.shared.values(root: json, path: "$.long-max-property").first as? UInt64, UINT64_MAX)
-        XCTAssertEqual(Sextant.shared.paths(root: json, path: "$.long-max-property").first as? String, "$['long-max-property']")
+        XCTAssertEqual(root.query(values: "$.long-max-property").first as? UInt64, UINT64_MAX)
+        XCTAssertEqual(root.query(paths: "$.long-max-property").first as? String, "$['long-max-property']")
     }
     
     func test_assert_boolean_values_can_be_read() {
-        XCTAssertEqual(Sextant.shared.values(root: json, path: "$.boolean-property").first as? Bool, true)
-        XCTAssertEqual(Sextant.shared.paths(root: json, path: "$.boolean-property").first as? String, "$['boolean-property']")
+        XCTAssertEqual(root.query(values: "$.boolean-property").first as? Bool, true)
+        XCTAssertEqual(root.query(paths: "$.boolean-property").first as? String, "$['boolean-property']")
     }
     
     func test_assert_arrays_can_be_read() {
-        XCTAssertEqual((Sextant.shared.values(root: json, path: "$.store.book").first as? [JsonAny])?.count, 4)
-        XCTAssertEqual(Sextant.shared.paths(root: json, path: "$.store.book").first as? String, "$['store']['book']")
+        XCTAssertEqual((root.query(values: "$.store.book").first as? JsonArray)?.count, 4)
+        XCTAssertEqual(root.query(paths: "$.store.book").first as? String, "$['store']['book']")
     }
     
     func test_assert_maps_can_be_read() {
-        XCTAssertEqualAny(Sextant.shared.values(root: json, path: "$.store.book[0]"), [
+        XCTAssertEqualAny(root.query(values: "$.store.book[0]"), [
             [
                 "author": "Nigel Rees",
                 "title": "Sayings of the Century",
@@ -44,6 +44,15 @@ class SextantReturnTypeTests: SextantTestsBase {
                 "category": "reference"
             ]
         ])
-        XCTAssertEqual(Sextant.shared.paths(root: json, path: "$.store.book[0]").first as? String, "$['store']['book'][0]")
+        XCTAssertEqual(root.query(paths: "$.store.book[0]").first as? String, "$['store']['book'][0]")
+    }
+    
+    func test_a_path_evaluation_can_be_returned_as_PATH_LIST() {
+        XCTAssertEqualAny(root.query(paths: "$..author"), [
+            "$['store']['book'][0]['author']",
+            "$['store']['book'][1]['author']",
+            "$['store']['book'][2]['author']",
+            "$['store']['book'][3]['author']"
+        ])
     }
 }
