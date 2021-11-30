@@ -69,6 +69,10 @@ class CompiledPath: Path {
     override func isRootPath() -> Bool {
         return rootPath
     }
+    
+    override var description: String {
+        return root.description
+    }
 }
 
 /*

@@ -9,6 +9,10 @@ fileprivate let splitChar = UInt8.colon
 
 final class PathCompiler {
     
+    class func compile(query: Hitch) -> Path? {
+        return PathCompiler(query: query)?.compile()
+    }
+    
     let ci: CharacterIndex
     
     init?(query: Hitch) {
@@ -114,7 +118,7 @@ final class PathCompiler {
     
     private func readDotToken(appender: PathToken) -> Bool {
         if ci.current() == .dot && ci.next() == .dot {
-            appender.append(tail: ScanPathToken())
+            appender.append(token: ScanPathToken())
             ci.advance(2)
         } else if ci.hasMoreCharacters() == false {
             error("Path must not end with a '.'")

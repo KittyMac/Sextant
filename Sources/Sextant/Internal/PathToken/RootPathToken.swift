@@ -55,6 +55,10 @@ final class RootPathToken: PathToken {
     override func isTokenDefinite() -> Bool {
         return true
     }
+    
+    override func pathFragment() -> String {
+        return rootToken.description
+    }
 }
 
 

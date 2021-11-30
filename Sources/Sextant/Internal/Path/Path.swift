@@ -1,7 +1,7 @@
 import Foundation
 import Hitch
 
-class Path {
+class Path: CustomStringConvertible {
     class func newPath(rootObject: JsonAny) -> Path {
         return RootPath(rootObject: rootObject)
     }
@@ -24,7 +24,7 @@ class Path {
         self.parent = parent
     }
     
-    public var description: String {
+    var description: String {
         return ""
     }
     

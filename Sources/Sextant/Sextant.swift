@@ -20,6 +20,39 @@ extension Hitch {
         parts.forEach { buffer.append($0) }
         return buffer
     }
+    
+    class func make(path: Hitch, index: Int) -> Hitch {
+        let clone = Hitch(hitch: path)
+        clone.reserveCapacity(clone.count + 32)
+        
+        clone.append(UInt8.openBrace)
+        clone.append(number: index)
+        clone.append(UInt8.closeBrace)
+        
+        return clone
+    }
+    
+    class func make(path: Hitch, property: Hitch) -> Hitch {
+        let clone = Hitch(hitch: path)
+        clone.reserveCapacity(clone.count + property.count + 2)
+        clone.append(UInt8.openBrace)
+        clone.append(property)
+        clone.append(UInt8.closeBrace)
+        return clone
+    }
+    
+    class func make(path: Hitch, property: Hitch, wrap: UInt8) -> Hitch {
+        let clone = Hitch(hitch: path)
+        clone.reserveCapacity(clone.count + property.count + 4)
+        clone.append(UInt8.openBrace)
+        clone.append(wrap)
+        clone.append(property)
+        clone.append(wrap)
+        clone.append(UInt8.closeBrace)
+        return clone
+    }
+    
+    // Hitch.make(path: currentPath, property: properties.joined(delimiter: .comma, wrap: .singleQuote))
 }
 
 extension Array where Element == Hitch {

@@ -31,7 +31,7 @@ class PathToken: CustomStringConvertible {
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
         guard let jsonObject = jsonObject as? JsonArray else { return .done }
         
-        let evalPath = Hitch.combine(currentPath, "[\(arrayIndex)]".hitch())
+        let evalPath = Hitch.make(path: currentPath, index: arrayIndex)
         let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject,
                                                               item: jsonObject[arrayIndex]) : Path.nullPath()
         
@@ -65,7 +65,9 @@ class PathToken: CustomStringConvertible {
         
         if properties.count == 1 {
             let property = properties[0]
-            let evalPath = Hitch.combine(currentPath, "['", property, "']")
+            let evalPath = Hitch.make(path: currentPath,
+                                      property: property,
+                                      wrap: .singleQuote)
             
             let propertyVal = read(property: property,
                                    jsonObject: jsonObject,
@@ -102,7 +104,8 @@ class PathToken: CustomStringConvertible {
                 }
             }
         } else {
-            let evalPath = Hitch.combine(currentPath, "[", properties.joined(delimiter: .comma, wrap: .singleQuote), "]")
+            let evalPath = Hitch.make(path: currentPath,
+                                      property: properties.joined(delimiter: .comma, wrap: .singleQuote))
             
             var merged = [String: JsonAny]()
             for property in properties {
