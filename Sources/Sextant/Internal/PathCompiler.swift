@@ -79,7 +79,7 @@ final class PathCompiler {
         switch ci.current() {
         case .openBrace:
             var result = false
-            //result = result || readBracketPropertyToken(appender: appender)
+            result = result || readBracketPropertyToken(appender: appender)
             result = result || readArrayToken(appender: appender)
             //result = result || readWildCardToken(appender: appender)
             //result = result || readFilterToken(appender: appender)
@@ -420,6 +420,91 @@ final class PathCompiler {
         }
         
         ci.position = expressionEndIndex + 1
+        
+        return ci.positionAtEnd() || readNextToken(appender: appender)
+    }
+    
+    private func readBracketPropertyToken(appender: PathToken) -> Bool {
+        guard ci.current() == .openBrace else  { return false }
+        
+        let potentialStringDelimiter = ci.nextSignificantCharacter()
+        guard potentialStringDelimiter == .singleQuote || potentialStringDelimiter == .doubleQuote else {
+            return false
+        }
+        
+        var properties = [Hitch]()
+        
+        var startPosition = ci.position + 1
+        var readPosition = startPosition
+        var endPosition = 0
+        
+        var inProperty = false
+        var inEscape = false
+        var lastSignificantWasComma = false
+        
+        while ci.inBounds(position: readPosition) {
+            let c = ci[readPosition]
+            
+            if inEscape {
+                inEscape = false
+            } else if c == .backSlash {
+                inEscape = true
+            } else if c == .closeBrace && inProperty == false {
+                if lastSignificantWasComma {
+                    error("Found empty property at index \(readPosition)")
+                    return false
+                }
+                break
+            } else if c == potentialStringDelimiter {
+                if inProperty {
+                    let nextSignificantChar = ci.nextSignificantCharacterFromIndex(startPosition: readPosition)
+                    if nextSignificantChar != .closeBrace && nextSignificantChar != .comma {
+                        error("Property must be separated by comma or Property must be terminated close square bracket at index \(readPosition)")
+                        return false
+                    }
+                    
+                    endPosition = readPosition
+                    
+                    guard let prop = ci.substring(startPosition, endPosition) else {
+                        error("Failed to extract property at \(readPosition)")
+                        return false
+                    }
+                    
+                    prop.unescape()
+                    properties.append(prop)
+                    
+                    inProperty = false
+                } else {
+                    startPosition = readPosition + 1
+                    inProperty = true
+                    lastSignificantWasComma = false
+                }
+            } else if c == .comma {
+                if lastSignificantWasComma {
+                    error("Found empty property at index \(readPosition)")
+                    return false
+                }
+                lastSignificantWasComma = true
+            }
+            
+            readPosition += 1
+        }
+        
+        if inProperty {
+            error("Property has not been closed - missing closing \(potentialStringDelimiter)")
+            return false
+        }
+        
+        let endBracketIndex = ci.indexOfNextSignificantCharacter(character: .closeBrace,
+                                                                 from: endPosition) + 1
+        ci.position = endBracketIndex
+        
+        guard let pathToken = PropertyPathToken(properties: properties,
+                                                wrap: potentialStringDelimiter) else {
+            return false
+        }
+        
+        appender.append(token: pathToken)
         
         return ci.positionAtEnd() || readNextToken(appender: appender)
     }
@@ -952,174 +1037,6 @@ final class PathCompiler {
 	return _path.positionAtEnd || [self readNextToken:appender error:error];
 }
 
-
-//
-// [1], [1,2, n], [1:], [1:2], [:2]
-//
-- (BOOL)readArrayToken:(id <SMJPathTokenAppender>)appender error:(NSError **)error
-{
-	if (![_path currentCharacterIsEqualTo:kOpenSquareBracketChar])
-		return NO;
-	
-	unichar nextSignificantChar = [_path nextSignificantCharacter];
-	
-	if (!(nextSignificantChar >= '0' && nextSignificantChar <= '9') && nextSignificantChar != kMinusChar && nextSignificantChar != kSplitChar)
-		return NO;
-	
-	NSInteger expressionBeginIndex = _path.position + 1;
-	NSInteger expressionEndIndex = [_path nextIndexOfCharacter:kCloseSquareBracketChar fromIndex:expressionBeginIndex];
-	
-	if (expressionEndIndex == NSNotFound)
-		return NO;
-	
-	NSString *expression = [[_path stringFromIndex:expressionBeginIndex toIndex:expressionEndIndex] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-	
-	if ([expression isEqualToString:@"*"])
-		return NO;
-	
-	//check valid chars
-	for (NSInteger i = 0; i < expression.length; i++)
-	{
-		unichar c = [expression characterAtIndex:i];
-				
-		if (!(c >= '0' && c <= '9') && c != kCommaChar && c != kMinusChar && c != kSplitChar && c != kSpaceChar)
-			return NO;
-	}
-	
-	BOOL isSliceOperation = ([expression rangeOfString:@":"].location != NSNotFound);
-	
-	if (isSliceOperation)
-	{
-		SMJArraySliceOperation *arraySliceOperation = [SMJArraySliceOperation arraySliceOperationByParsing:expression error:error];
-		
-		if (!arraySliceOperation)
-			return NO;
-		
-		[appender appendPathToken:[[SMJArraySliceToken alloc] initWithSliceOperation:arraySliceOperation]];
-	}
-	else
-	{
-		SMJArrayIndexOperation *arrayIndexOperation = [SMJArrayIndexOperation arrayIndexOperation:expression error:error];
-		
-		if (!arrayIndexOperation)
-			return NO;
-		
-		[appender appendPathToken:[[SMJArrayIndexToken alloc] initWithIndexOperation:arrayIndexOperation]];
-	}
-	
-	[_path setPosition:expressionEndIndex + 1];
-	
-	return _path.positionAtEnd || [self readNextToken:appender error:error];
-}
-
-
-//
-// ['foo']
-//
-- (BOOL)readBracketPropertyToken:(id <SMJPathTokenAppender>)appender error:(NSError **)error
-{
-	if (![_path currentCharacterIsEqualTo:kOpenSquareBracketChar])
-	{
-		return NO;
-	}
-	
-	unichar potentialStringDelimiter = [_path nextSignificantCharacter];
-	
-	if (potentialStringDelimiter != kSingleQuoteChar && potentialStringDelimiter != kDoubleQuote)
-	{
-		return false;
-	}
-	
-	NSMutableArray <NSString *> *properties = [NSMutableArray array];
-	
-	NSInteger startPosition = _path.position + 1;
-	NSInteger readPosition = startPosition;
-	NSInteger endPosition = 0;
-	BOOL inProperty = NO;
-	BOOL inEscape = NO;
-	BOOL lastSignificantWasComma = NO;
-	
-	while ([_path isInBoundsIndex:readPosition])
-	{
-		unichar c = [_path characterAtIndex:readPosition];
-		
-		if (inEscape)
-		{
-			inEscape = NO;
-		}
-		else if (c == '\\')
-		{
-			inEscape = YES;
-		}
-		else if (c == kCloseSquareBracketChar && !inProperty)
-		{
-			if (lastSignificantWasComma)
-			{
-				SMSetError(error, 1, @"Found empty property at index %ld", (long)readPosition);
-				return NO;
-			}
-			break;
-		}
-		else if (c == potentialStringDelimiter)
-		{
-			if (inProperty)
-			{
-				unichar nextSignificantChar = [_path nextSignificantCharacterFromIndex:readPosition];
-				
-				if (nextSignificantChar != kCloseSquareBracketChar && nextSignificantChar != kCommaChar)
-				{
-					SMSetError(error, 2, @"Property must be separated by comma or Property must be terminated close square bracket at index %ld", (long)readPosition);
-					return NO;
-				}
-				
-				endPosition = readPosition;
-				
-				NSString *prop = [_path stringFromIndex:startPosition toIndex:endPosition];
-				
-				[properties addObject:[SMJUtils stringByUnescapingString:prop]];
-				
-				inProperty = NO;
-			}
-			else
-			{
-				startPosition = readPosition + 1;
-				inProperty = YES;
-				lastSignificantWasComma = NO;
-			}
-		}
-		else if (c == kCommaChar)
-		{
-			if (lastSignificantWasComma)
-			{
-				SMSetError(error, 2, @"Found empty property at index %ld", (long)readPosition);
-				return NO;
-			}
-			
-			lastSignificantWasComma = YES;
-		}
-		
-		readPosition++;
-	}
-	
-	if (inProperty)
-	{
-		SMSetError(error, 2, @"Property has not been closed - missing closing %c", (char)potentialStringDelimiter);
-		return NO;
-	}
-	
-	NSInteger endBracketIndex = [_path indexOfNextSignificantCharacter:kCloseSquareBracketChar fromIndex:endPosition] + 1;
-	
-	[_path setPosition:endBracketIndex];
-	
-	SMJPropertyPathToken *pathToken = [[SMJPropertyPathToken alloc] initWithProperties:properties delimiter:potentialStringDelimiter error:error];
-	
-	if (!pathToken)
-		return NO;
-	
-	[appender appendPathToken:pathToken];
-	
-	return _path.positionAtEnd || [self readNextToken:appender error:error];
-}
 
 @end
 

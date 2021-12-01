@@ -2,7 +2,8 @@ import Foundation
 import Hitch
 
 class CharacterIndex {
-    private let charSequence: Hitch
+    @usableFromInline
+    internal let charSequence: Hitch
     
     var position: Int
     var endPosition: Int
@@ -38,6 +39,7 @@ class CharacterIndex {
         return position >= endPosition
     }
     
+    @inlinable @inline(__always)
     subscript (index: Int) -> UInt8 {
         get { return charSequence[index] }
         set(newValue) { charSequence[index] = newValue }
@@ -110,6 +112,25 @@ class CharacterIndex {
                 return readPosition
             }
             readPosition += 1
+        }
+        return -1
+    }
+    
+    func indexOfNextSignificantCharacter(character: UInt8) -> Int {
+        return indexOfNextSignificantCharacter(character: character,
+                                               from: position)
+    }
+
+    func indexOfNextSignificantCharacter(character: UInt8,
+                                         from: Int) -> Int {
+        var readPosition = from + 1
+        
+        while inBounds() && charSequence[readPosition] == .space {
+            readPosition += 1
+        }
+        
+        if charSequence[readPosition] == character {
+            return readPosition
         }
         return -1
     }

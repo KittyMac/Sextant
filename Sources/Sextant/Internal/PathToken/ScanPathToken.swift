@@ -66,7 +66,7 @@ class ScanPathToken: PathToken {
                 for evalObject in jsonObject {
                     let evalPath = Hitch.make(path: currentPath, index: idx)
                     
-                    let result = path.evaluate(currentPath: evalPath,
+                    let result = next.evaluate(currentPath: evalPath,
                                                parentPath: parentPath,
                                                jsonObject: evalObject,
                                                evaluationContext: evaluationContext)
