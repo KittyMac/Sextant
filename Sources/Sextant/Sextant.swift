@@ -118,10 +118,15 @@ enum EvaluationStatus: Equatable {
 }
 
 public extension String {
-    func query(values path: Hitch) -> JsonAny {
-        guard let jsonData = self.data(using: .utf8) else { return nil }
-        guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else { return nil }
+    func query(values path: Hitch) -> JsonArray {
+        guard let jsonData = self.data(using: .utf8) else { return [] }
+        guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? JsonDictionary else { return [] }
         return Sextant.shared.query(jsonObject, values: path)
+    }
+    func query(paths path: Hitch) -> JsonArray {
+        guard let jsonData = self.data(using: .utf8) else { return [] }
+        guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? JsonDictionary else { return [] }
+        return Sextant.shared.query(jsonObject, paths: path)
     }
 }
 

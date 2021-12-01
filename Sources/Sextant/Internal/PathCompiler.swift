@@ -81,7 +81,7 @@ final class PathCompiler {
             var result = false
             result = result || readBracketPropertyToken(appender: appender)
             result = result || readArrayToken(appender: appender)
-            //result = result || readWildCardToken(appender: appender)
+            result = result || readWildCardToken(appender: appender)
             //result = result || readFilterToken(appender: appender)
             guard result else {
                 error("Could not parse token starting at position \(ci.position). Expected ?, ', 0-9, * ")
@@ -98,8 +98,7 @@ final class PathCompiler {
             return true
         case wildcardChar:
             var result = false
-            fatalError("TO BE IMPLEMENTED")
-            //result = result || readWildCardToken(appender: appender)
+            result = result || readWildCardToken(appender: appender)
             guard result else {
                 error("Could not parse token starting at position \(ci.position).")
                 return false
@@ -381,15 +380,16 @@ final class PathCompiler {
     }
     
     private func readArrayToken(appender: PathToken) -> Bool {
+        // like: [1], [1,2, n], [1:], [1:2], [:2]
         guard ci.current() == .openBrace else  { return false }
         
         let nextSignificantChar = ci.nextSignificantCharacter()
         
-        guard nextSignificantChar >= .zero &&
-                nextSignificantChar <= .nine &&
-                nextSignificantChar != .minus &&
-                nextSignificantChar != splitChar else  { return false }
-        
+        if (nextSignificantChar >= .zero && nextSignificantChar <= .nine) == false &&
+            nextSignificantChar != .minus &&
+            nextSignificantChar != splitChar {
+            return false
+        }
         
         let expressionBeginIndex = ci.position + 1
         let expressionEndIndex = ci.nextIndexOfCharacter(character: .closeBrace, from: expressionBeginIndex)
@@ -402,11 +402,13 @@ final class PathCompiler {
         guard expression[0] != .astericks else { return false }
         
         for c in expression {
-            guard c >= .zero &&
-                    c <= .nine &&
-                    c != .minus &&
-                    c != splitChar &&
-                    c != .space else  { return false }
+            if (c >= .zero && c <= .nine) == false &&
+                c != .comma &&
+                c != .minus &&
+                c != splitChar &&
+                c != .space {
+                return false
+            }
         }
         
         let isSliceOperation = expression.contains(.colon)
@@ -425,6 +427,7 @@ final class PathCompiler {
     }
     
     private func readBracketPropertyToken(appender: PathToken) -> Bool {
+        // like: ['foo']
         guard ci.current() == .openBrace else  { return false }
         
         let potentialStringDelimiter = ci.nextSignificantCharacter()
@@ -508,6 +511,38 @@ final class PathCompiler {
         
         return ci.positionAtEnd() || readNextToken(appender: appender)
     }
+    
+    private func readWildCardToken(appender: PathToken) -> Bool {
+        // like: [*]
+        // like: *
+        let inBracket = ci.current() == .openBrace
+        if inBracket && ci.nextSignificantCharacter() != wildcardChar {
+            return false
+        }
+        
+        if ci.current() != wildcardChar && ci.hasMoreCharacters() == false {
+            return false
+        }
+        
+        if inBracket {
+            let wildCardIndex = ci.indexOfNextSignificantCharacter(character: wildcardChar)
+            
+            if ci.nextSignificantCharacterFromIndex(startPosition: wildCardIndex) != .closeBrace {
+                error("Expected wildcard token to end with ']' on position \(wildCardIndex + 1)")
+                return false
+            }
+            
+            let bracketCloseIndex = ci.indexOfNextSignificantCharacter(character: .closeBrace, from: wildCardIndex)
+            ci.position = bracketCloseIndex + 1
+        } else {
+            ci.advance(1)
+        }
+        
+        appender.append(token: WildcardPathToken())
+        
+        return ci.positionAtEnd() || readNextToken(appender: appender)
+    }
+
 }
 
 /*
@@ -990,49 +1025,6 @@ final class PathCompiler {
 	[appender appendPathToken:[[SMJPredicatePathToken alloc] initWithPredicate:predicate]];
 	
 	[_path setPosition:closeStatementBracketIndex + 1];
-	
-	return _path.positionAtEnd || [self readNextToken:appender error:error];
-}
-
-
-//
-// [*]
-// *
-//
-- (BOOL)readWildCardToken:(id <SMJPathTokenAppender>)appender error:(NSError **)error
-{
-	BOOL inBracket = [_path currentCharacterIsEqualTo:kOpenSquareBracketChar];
-	
-	if (inBracket && ![_path nextSignificantCharacterIsEqualTo:kWildcardChar])
-	{
-		return false;
-	}
-	
-	if (![_path currentCharacterIsEqualTo:kWildcardChar] && [_path isOutOfBoundsIndex:_path.position + 1])
-	{
-		return false;
-	}
-	
-	if (inBracket)
-	{
-		NSInteger wildCardIndex = [_path indexOfNextSignificantCharacter:kWildcardChar];
-		
-		if (![_path nextSignificantCharacterIsEqualTo:kCloseSquareBracketChar fromIndex:wildCardIndex])
-		{
-			SMSetError(error, 4, @"Expected wildcard token to end with ']' on position %ld", (long)wildCardIndex + 1);
-			return NO;
-		}
-		
-		NSInteger bracketCloseIndex = [_path indexOfNextSignificantCharacter:kCloseSquareBracketChar fromIndex:wildCardIndex];
-		
-		[_path setPosition:bracketCloseIndex + 1];
-	}
-	else
-	{
-		[_path incrementPositionBy:1];
-	}
-	
-	[appender appendPathToken:[[SMJWildcardPathToken alloc] init]];
 	
 	return _path.positionAtEnd || [self readNextToken:appender error:error];
 }

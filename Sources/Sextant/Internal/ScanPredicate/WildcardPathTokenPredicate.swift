@@ -1,10 +1,6 @@
 import Foundation
 import Hitch
 
-class WildcardPathToken: PathToken {
-    
-}
-
 class WildcardPathTokenPredicate: ScanPredicate {
     let token: WildcardPathToken
     
