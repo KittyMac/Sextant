@@ -1,6 +1,8 @@
 import Foundation
 import Hitch
 
+fileprivate let regexChar = UInt8.forwardSlash
+
 class CharacterIndex {
     @usableFromInline
     internal let charSequence: Hitch
@@ -82,6 +84,28 @@ class CharacterIndex {
         }
     }
     
+    func nextIndexOfUnescapedCharacter(character: UInt8) -> Int {
+        return nextIndexOfUnescapedCharacter(character: character,
+                                             from: position)
+    }
+
+    func nextIndexOfUnescapedCharacter(character: UInt8,
+                                       from: Int) -> Int {
+        var readPosition = from + 1
+        var inEscape = false
+        while inBounds(position: readPosition) {
+            if inEscape {
+                inEscape = false
+            } else if charSequence[readPosition] == .backSlash {
+                inEscape = true
+            } else if charSequence[readPosition] == character {
+                return readPosition
+            }
+            readPosition += 1
+        }
+        return -1
+    }
+    
     func nextSignificantCharacter() -> UInt8 {
         return nextSignificantCharacterFromIndex(startPosition: position)
     }
@@ -133,6 +157,77 @@ class CharacterIndex {
             return readPosition
         }
         return -1
+    }
+    
+    func indexOfMatchingCloseCharacterFromIndex(startPosition: Int,
+                                                openChar: UInt8,
+                                                closeChar: UInt8,
+                                                skipStrings: Bool,
+                                                skipRegex: Bool) -> Int {
+        guard charSequence[startPosition] == openChar else {
+            error("Expected \(openChar) but found \(charSequence[startPosition])")
+            return -1
+        }
+        
+        
+        var opened = 1
+        var readPosition = startPosition + 1
+        
+        while inBounds(position: readPosition) {
+            if skipStrings {
+                let quoteChar = charSequence[readPosition]
+                if quoteChar == .singleQuote || quoteChar == .doubleQuote {
+                    readPosition = nextIndexOfUnescapedCharacter(character: quoteChar,
+                                                                 from: readPosition)
+                    
+                    guard readPosition >= 0 else {
+                        error("Could not find matching close quote for \(quoteChar) when parsing : \(charSequence)")
+                        return -1
+                    }
+                    
+                    readPosition += 1
+                }
+            }
+            
+            if skipRegex {
+                if charSequence[readPosition] == regexChar {
+                    readPosition = nextIndexOfUnescapedCharacter(character: regexChar,
+                                                                 from: readPosition)
+                    
+                    guard readPosition >= 0 else {
+                        error("Could not find matching close for \(regexChar) when parsing regex in : \(charSequence)")
+                        return -1
+                    }
+                    
+                    readPosition += 1
+                }
+            }
+            
+            if charSequence[readPosition] == openChar {
+                opened += 1
+            }
+            
+            if charSequence[readPosition] == closeChar {
+                opened -= 1
+                if opened == 0 {
+                    return readPosition
+                }
+            }
+            
+            readPosition += 1
+        }
+        
+        return -1
+    }
+    
+    func indexOfClosingBracketFromIndex(startPosition: Int,
+                                        skipStrings: Bool,
+                                        skipRegex: Bool) -> Int {
+        return indexOfMatchingCloseCharacterFromIndex(startPosition: startPosition,
+                                                      openChar: .parenOpen,
+                                                      closeChar: .parenClose,
+                                                      skipStrings: skipStrings,
+                                                      skipRegex: skipRegex)
     }
 }
 

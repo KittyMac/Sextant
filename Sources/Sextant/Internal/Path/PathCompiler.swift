@@ -82,7 +82,7 @@ final class PathCompiler {
             result = result || readBracketPropertyToken(appender: appender)
             result = result || readArrayToken(appender: appender)
             result = result || readWildCardToken(appender: appender)
-            //result = result || readFilterToken(appender: appender)
+            result = result || readFilterToken(appender: appender)
             guard result else {
                 error("Could not parse token starting at position \(ci.position). Expected ?, ', 0-9, * ")
                 return false
@@ -210,173 +210,134 @@ final class PathCompiler {
         return ci.positionAtEnd() || readNextToken(appender: appender)
     }
     
-    private func parseFunctionParameters(_ funcName: Hitch) -> [Parameter] {
-        fatalError("TO BE IMPLEMENTED")
-        return []
+    private func parseFunctionParameters(_ funcName: Hitch) -> [Parameter]? {
         
-        /*
-        NSNumber *type = nil; // SMJParamType
+        enum Type {
+            case unknown
+            case json
+            case path
+        }
+        
+        var type: Type = .unknown
         
         // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
         // last parameter boundary
-        NSInteger    groupParen = 1, groupBracket = 0, groupBrace = 0, groupQuote = 0;
-        BOOL         endOfStream = NO;
-        unichar     priorChar = 0;
         
-        NSMutableArray <SMJParameter *> *parameters = [[NSMutableArray alloc] init];
-        NSMutableString *parameter = [[NSMutableString alloc] init];
+        var groupParen = 1, groupBracket = 0, groupBrace = 0, groupQuote = 0
+        var endOfStream = false
+        var priorChar: UInt8 = 0
         
-        while ([_path inBounds] && !endOfStream)
-        {
-            unichar c = _path.currentCharacter;
+        var parameters = [Parameter]()
+        let parameter = Hitch()
+        
+        while ci.inBounds() && endOfStream == false {
+            let c = ci.current()
             
-            [_path incrementPositionBy:1];
+            ci.advance(1)
             
             // we're at the start of the stream, and don't know what type of parameter we have
-            if (type == nil)
-            {
-                if ([self isWhitespace:c])
-                    continue;
+            if type == .unknown {
+                if isWhitespace(c) {
+                    continue
+                }
                 
-                if (c == kOpenBraceChar || (c >= '0' && c <= '9') || kDoubleQuote == c)
-                    type = @(SMJParamTypeJSON);
-                else if ([self isPathContext:c])
-                    type = @(SMJParamTypePath); // read until we reach a terminating comma and we've reset grouping to zero
+                if c == .openBrace || (c >= .zero && c <= .nine) || c == .doubleQuote {
+                    type = .json
+                } else if isPathContext(c) {
+                    type = .path // read until we reach a terminating comma and we've reset grouping to zero
+                }
             }
             
-            switch (c)
-            {
-                case kDoubleQuote:
-                {
-                    if (priorChar != '\\' && groupQuote > 0)
-                    {
-                        if (groupQuote == 0)
-                        {
-                            SMSetError(error, 1, @"Unexpected quote '\"' at character position: %ld", (long)_path.position);
-                            return nil;
-                        }
-                        
-                        groupQuote--;
+            switch c {
+            case .doubleQuote:
+                if priorChar != .backSlash && groupQuote > 0 {
+                    if groupQuote == 0 {
+                        error("Unexpected quote '\"' at character position: \(ci.position)")
+                        return nil
                     }
-                    else
-                    {
-                        groupQuote++;
-                    }
-                    
-                    break;
+                    groupQuote -= 1
+                } else {
+                    groupQuote += 1
                 }
-                    
-                case kOpenParenthesisChar:
-                {
-                    groupParen++;
-                    break;
+                break
+            case .parenOpen:
+                groupParen += 1
+                break
+            case .openBrace:
+                groupBrace += 1
+                break
+            case .openBracket:
+                groupBracket += 1
+                break
+            case .closeBrace:
+                if groupBrace == 0 {
+                    error("Unexpected close brace ']' at character position: \(ci.position)")
+                    return nil
                 }
-                    
-                case kOpenBraceChar:
-                {
-                    groupBrace++;
-                    break;
+                groupBrace -= 1
+                break
+            case .closeBracket:
+                if groupBracket == 0 {
+                    error("Unexpected close bracket '}' at character position: \(ci.position)")
+                    return nil
                 }
-                    
-                case kOpenSquareBracketChar:
-                {
-                    groupBracket++;
-                    break;
-                }
-                    
-                case kCloseBraceChar:
-                {
-                    if (groupBrace == 0)
-                    {
-                        SMSetError(error, 2, @"Unexpected close brace '}' at character position: %ld", (long)_path.position);
-                        return nil;
-                    }
-                    groupBrace--;
-                    break;
-                }
-                    
-                case kCloseSquareBracketChar:
-                {
-                    if (groupBracket == 0)
-                    {
-                        SMSetError(error, 3, @"Unexpected close bracket ']' at character position: %ld", (long)_path.position);
-                        return nil;
-                    }
-                    groupBracket--;
-                    break;
-                }
-                    
+                groupBracket -= 1
+                break
+            case .parenClose, .comma:
                 // In either the close paren case where we have zero paren groups left, capture the parameter, or where
                 // we've encountered a kCommaChar do the same
-                case kCloseParenthesisChar:
-                {
-                    groupParen--;
-                    
-                    if (groupParen != 0)
-                        [parameter appendString:[NSString stringWithCharacters:&c length:1]];
-                    
-                    // No break.
-                }
-                    
-                case kCommaChar:
-                {
-                    // In this state we've reach the end of a function parameter and we can pass along the parameter string
-                    // to the parser
-                    if ((groupQuote == 0 && groupBrace == 0 && groupBracket == 0 && ((groupParen == 0 && c == kCloseParenthesisChar) || groupParen == 1)))
-                    {
-                        endOfStream = (0 == groupParen);
-                        
-                        if (type != nil)
-                        {
-                            SMJParameter *param = nil;
-                            
-                            switch (type.intValue)
-                            {
-                                case SMJParamTypeJSON:
-                                {
-                                    // parse the json and set the value
-                                    param = [[SMJParameter alloc] initWithJSON:parameter];
-                                    break;
-                                }
-                                    
-                                case SMJParamTypePath:
-                                {
-                                    id <SMJPath> path = [SMJPathCompiler compilePathString:parameter error:error];
-                                    
-                                    if (!path)
-                                        return nil;
-                                    
-                                    param = [[SMJParameter alloc] initWithPath:path];
-                                    
-                                    break;
-                                }
-                            }
-                            
-                            if (param != nil)
-                                [parameters addObject:param];
-                            
-                            [parameter deleteCharactersInRange:NSMakeRange(0, parameter.length)];
-                            type = nil;
-                        }
+                if c == .parenClose {
+                    groupParen -= 1
+                    if groupParen != 0 {
+                        parameter.append(c)
                     }
-                    break;
                 }
+                
+                // In this state we've reach the end of a function parameter and we can pass along the parameter string
+                // to the parser
+                if (groupQuote == 0 && groupBrace == 0 && groupBracket == 0 && ((groupParen == 0 && c == .parenClose) || groupParen == 1)) {
+                    endOfStream = (0 == groupParen)
+                    
+                    if type != .unknown {
+                        var param: Parameter? = nil
+                        
+                        switch type {
+                        case .json:
+                            param = Parameter(json: parameter)
+                            break
+                        case .path:
+                            guard let path = PathCompiler.compile(query: parameter) else { return nil }
+                            param = Parameter(path: path)
+                            break
+                        default:
+                            break
+                        }
+                        
+                        if let param = param {
+                            parameters.append(param)
+                        }
+                        parameter.count = 0
+                        type = .unknown
+                    }
+                }
+            default:
+                break
             }
             
-            if (type != nil && !(c == kCommaChar && groupBrace == 0 && groupBracket == 0 && groupParen == 1))
-                [parameter appendString:[NSString stringWithCharacters:&c length:1]];
+            if type != .unknown && !(c == .comma && groupBrace == 0 && groupBracket == 0 && groupParen == 1) {
+                parameter.append(c)
+            }
             
-            priorChar = c;
+            priorChar = c
         }
         
-        if (groupBrace != 0 || groupParen != 0 || groupBracket != 0)
-        {
-            SMSetError(error, 4, @"Arguments to function: '%@' are not closed properly.", funcName);
-            return nil;
+        if groupBrace != 0 || groupParen != 0 || groupBracket != 0 {
+            error("Arguments to function: '\(funcName)' are not closed properly.")
+            return nil
         }
         
-        return parameters;
-         */
+        
+        return parameters
     }
     
     private func readArrayToken(appender: PathToken) -> Bool {
@@ -541,6 +502,55 @@ final class PathCompiler {
         appender.append(token: WildcardPathToken())
         
         return ci.positionAtEnd() || readNextToken(appender: appender)
+    }
+    
+    private func readFilterToken(appender: PathToken) -> Bool {
+        // like: [?(...)]
+        
+        if ci.current() != .openBrace && ci.nextSignificantCharacter() != beginFilterChar {
+            return false
+        }
+        guard ci.current() == .openBrace || ci.nextSignificantCharacter() == beginFilterChar else { return false }
+        
+        let openStatementBracketIndex = ci.position
+        let questionMarkIndex = ci.indexOfNextSignificantCharacter(character: beginFilterChar)
+        
+        guard questionMarkIndex >= 0 else { return false }
+        
+        let openBracketIndex = ci.indexOfNextSignificantCharacter(character: .parenOpen,
+                                                                  from: questionMarkIndex)
+        
+        guard openBracketIndex >= 0 else { return false }
+        
+        let closeBracketIndex = ci.indexOfClosingBracketFromIndex(startPosition: openBracketIndex,
+                                                                  skipStrings: true,
+                                                                  skipRegex: true)
+        
+        guard closeBracketIndex >= 0 else { return false }
+        
+        guard ci.nextSignificantCharacterFromIndex(startPosition: closeBracketIndex) == .closeBrace else { return false }
+        
+        let closeStatementBracketIndex = ci.indexOfNextSignificantCharacter(character: .closeBrace,
+                                                                            from: closeBracketIndex)
+        
+        let criteria = ci.substring(openStatementBracketIndex, closeStatementBracketIndex + 1)
+        
+        
+        
+        fatalError("TO BE IMPLEMENTED")
+        
+        /*
+        id <SMJPredicate> predicate = [SMJFilterCompiler compileFilterString:criteria error:error];
+        
+        if (!predicate)
+            return NO;
+        
+        [appender appendPathToken:[[SMJPredicatePathToken alloc] initWithPredicate:predicate]];
+        
+        [_path setPosition:closeStatementBracketIndex + 1];
+        
+        return _path.positionAtEnd || [self readNextToken:appender error:error];
+         */
     }
 
 }

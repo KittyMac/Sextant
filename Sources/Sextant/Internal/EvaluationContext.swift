@@ -51,6 +51,19 @@ final class EvaluationContext {
          */
         return .done
     }
+    
+    func jsonObject() -> JsonAny {
+        if path.isDefinite() {
+            if (resultIndex == 0 || valueResults.count == 0) {
+                error("No results for path: \(path)")
+                return nil;
+            }
+            
+            return valueResults[valueResults.count - 1]
+        }
+        
+        return valueResults
+    }
 }
 
 /*
