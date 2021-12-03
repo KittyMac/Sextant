@@ -3,7 +3,7 @@ import Hitch
 
 fileprivate let regexChar = UInt8.forwardSlash
 
-class CharacterIndex {
+class CharacterIndex: CustomStringConvertible {
     @usableFromInline
     internal let charSequence: Hitch
     
@@ -14,6 +14,10 @@ class CharacterIndex {
         charSequence = query
         position = 0
         endPosition = charSequence.count - 1
+    }
+    
+    var description: String {
+        return charSequence.description
     }
     
     func substring(_ from: Int, _ to: Int) -> Hitch? {
@@ -35,6 +39,10 @@ class CharacterIndex {
     
     func advance(_ count: Int = 1) {
         position += count
+    }
+    
+    func removeFromEnd(_ count: Int = 1) {
+        endPosition = endPosition - count
     }
     
     func positionAtEnd() -> Bool {
@@ -67,21 +75,27 @@ class CharacterIndex {
         return position < endPosition
     }
     
-    func trim() {
+    @discardableResult
+    func trim() -> Self {
         skipBlanks()
         skipBlanksAtEnd()
+        return self
     }
     
-    func skipBlanks() {
+    @discardableResult
+    func skipBlanks() -> Self {
         while inBounds() && position < endPosition && charSequence[position] == UInt8.space {
             advance()
         }
+        return self
     }
     
-    func skipBlanksAtEnd() {
+    @discardableResult
+    func skipBlanksAtEnd() -> Self {
         while inBounds() && position < endPosition && charSequence[endPosition] == UInt8.space {
             endPosition -= 1
         }
+        return self
     }
     
     func nextIndexOfUnescapedCharacter(character: UInt8) -> Int {
@@ -121,6 +135,25 @@ class CharacterIndex {
             return charSequence[readPosition]
         }
         return .space
+    }
+    
+    func readSignificantCharacter(character: UInt8) -> Bool {
+        let c = skipBlanks().current()
+        if c != character {
+            error("Expected character '\(character)' but found '\(c)'")
+            return false
+        }
+        advance(1)
+        return true
+    }
+
+    func hasSignificantString(string: Hitch) -> Bool {
+        skipBlanks()
+        
+        guard charSequence.starts(with: string) else { return false }
+        
+        advance(string.count)
+        return true
     }
     
     func nextIndexOfCharacter(character: UInt8) -> Int {

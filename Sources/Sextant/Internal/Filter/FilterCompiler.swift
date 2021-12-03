@@ -2,55 +2,214 @@ import Foundation
 import Hitch
 
 fileprivate let kDocContextChar = UInt8.dollarSign
-fileprivate let  kEvalContextChar = UInt8.atMark
+fileprivate let kEvalContextChar = UInt8.atMark
 
-fileprivate let  kOpenSquareBracketChar = UInt8.openBrace
-fileprivate let  kCloseSquareBracketChar = UInt8.closeBrace
-fileprivate let  kOpenParenthesisChar = UInt8.parenOpen
-fileprivate let  kCloseParenthesisChar = UInt8.parenClose
-fileprivate let  kOpenObjectChar = UInt8.openBracket
-fileprivate let  kCloseObjectChar = UInt8.closeBracket
-fileprivate let  kOpenArrayChar = UInt8.openBrace
-fileprivate let  kCloseArrayChar = UInt8.closeBrace
+fileprivate let kOpenSquareBracketChar = UInt8.openBrace
+fileprivate let kCloseSquareBracketChar = UInt8.closeBrace
+fileprivate let kOpenParenthesisChar = UInt8.parenOpen
+fileprivate let kCloseParenthesisChar = UInt8.parenClose
+fileprivate let kOpenObjectChar = UInt8.openBracket
+fileprivate let kCloseObjectChar = UInt8.closeBracket
+fileprivate let kOpenArrayChar = UInt8.openBrace
+fileprivate let kCloseArrayChar = UInt8.closeBrace
 
-fileprivate let  kSingleQuoteChar = UInt8.singleQuote
-fileprivate let  kDoubleQuoteChar = UInt8.doubleQuote
+fileprivate let kSingleQuoteChar = UInt8.singleQuote
+fileprivate let kDoubleQuoteChar = UInt8.doubleQuote
 
-fileprivate let  kSpaceChar = UInt8.space
-fileprivate let  kPeriodChar = UInt8.dot
+fileprivate let kSpaceChar = UInt8.space
+fileprivate let kPeriodChar = UInt8.dot
 
-fileprivate let  kAndChar = UInt8.ampersand
-fileprivate let  kOrChar = UInt8.pipe
+fileprivate let kAndChar = UInt8.ampersand
+fileprivate let kOrChar = UInt8.pipe
 
-fileprivate let  kMinusChar = UInt8.minus
-fileprivate let  kLessThanChar = UInt8.lessThan
-fileprivate let  kGreaterThanChar = UInt8.greaterThan
-fileprivate let  kEqualChar = UInt8.equal
-fileprivate let  kTildeChar = UInt8.tilde
-fileprivate let  kTrueChar = UInt8.t
-fileprivate let  kFalseChar = UInt8.f
-fileprivate let  kNullChar = UInt8.n
-fileprivate let  kNotChar = UInt8.bang
-fileprivate let  kPatternChar = UInt8.forwardSlash
-fileprivate let  kIgnoreCaseChar = UInt8.i
+fileprivate let kMinusChar = UInt8.minus
+fileprivate let kLessThanChar = UInt8.lessThan
+fileprivate let kGreaterThanChar = UInt8.greaterThan
+fileprivate let kEqualChar = UInt8.equal
+fileprivate let kTildeChar = UInt8.tilde
+fileprivate let kTrueChar = UInt8.t
+fileprivate let kFalseChar = UInt8.f
+fileprivate let kNullChar = UInt8.n
+fileprivate let kNotChar = UInt8.bang
+fileprivate let kPatternChar = UInt8.forwardSlash
+fileprivate let kIgnoreCaseChar = UInt8.i
 
 final class FilterCompiler {
+    var filter: CharacterIndex
     
+    init?(filter filterString: Hitch) {
+        filter = CharacterIndex(query: filterString)
+        filter.trim()
+        
+        guard filter.current() == .openBrace || filter.last() == .closeBrace else {
+            error("Filter must start with '[' and end with ']'. \(filter)")
+            return nil
+        }
+        
+        filter.advance(1)
+        filter.removeFromEnd(1)
+        filter.trim()
+        
+        guard filter.current() == .questionMark else {
+            error("Filter must start with '[?' and end with ']'. \(filter)")
+            return nil
+        }
+        
+        filter.advance(1)
+        filter.trim()
+        
+        guard filter.current() == .parenOpen || filter.last() == .parenClose else {
+            error("Filter must start with '[?(' and end with ')]'. \(filter)")
+            return nil
+        }
+    }
+    
+    class func compile(filter: Hitch) -> Predicate? {
+        return FilterCompiler(filter: filter)?.compile()
+    }
+    
+    func compile() -> Predicate? {
+        guard let result = readLogicalOR() else { return nil }
+        
+        filter.skipBlanks()
+        
+        guard filter.inBounds() else {
+            error("Expected end of filter expression instead of: \(filter)")
+            return nil
+        }
+        
+        return result
+    }
+    
+    func readLogicalOR() -> ExpressionNode? {
+        var ops = [ExpressionNode]()
+        
+        guard let logicalAND = readLogicalAND() else { return nil }
+        
+        ops.append(logicalAND)
+        
+        while true {
+            let savepoint = filter.position
+            if filter.hasSignificantString(string: kLogicalOperatorOR) == false {
+                filter.position = savepoint
+                break
+            }
+            
+            guard let logicalAND = readLogicalANDOperand() else {
+                filter.position = savepoint
+                break
+            }
+            
+            ops.append(logicalAND)
+        }
+        
+        return ops.count == 1 ? ops.first : LogicalExpressionNode.logicalOr(nodes: ops)
+    }
+    
+    func readLogicalAND() -> ExpressionNode? {
+        var ops = [ExpressionNode]()
+        
+        guard let logicalAND = readLogicalANDOperand() else { return nil }
+        
+        ops.append(logicalAND)
+        
+        while true {
+            let savepoint = filter.position
+            var lerror: String? = nil
+            if filter.hasSignificantString(string: kLogicalOperatorAND) == false {
+                filter.position = savepoint
+                break
+            }
+            
+            guard let logicalAND = readLogicalANDOperand() else {
+                filter.position = savepoint
+                break
+            }
+            
+            ops.append(logicalAND)
+        }
+        
+        return ops.count == 1 ? ops.first : LogicalExpressionNode.logicalAnd(nodes: ops)
+    }
+    
+    func readLogicalANDOperand() -> ExpressionNode? {
+        let savepoint = filter.skipBlanks().position
+        
+        if filter.skipBlanks().current() == kNotChar {
+            guard filter.readSignificantCharacter(character: kNotChar) else { return nil }
+            
+            switch filter.skipBlanks().current() {
+            case kDocContextChar, kEvalContextChar:
+                filter.position = savepoint
+                break
+            default:
+                guard let op = readLogicalANDOperand() else { return nil }
+                return LogicalExpressionNode.logicalNot(node: op)
+            }
+        }
+        
+        if filter.skipBlanks().current() == kOpenParenthesisChar {
+            guard filter.readSignificantCharacter(character: kOpenParenthesisChar) else { return nil }
+            guard let op = readLogicalOR() else { return nil }
+            guard filter.readSignificantCharacter(character: kCloseParenthesisChar) else { return nil }
+            return op
+        }
+        
+        return readExpression()
+    }
+    
+    func readExpression() -> RelationalExpressionNode? {
+        fatalError("TO BE IMPLEMENTED")
+        
+        return nil
+        /*
+        SMJValueNode             *left;
+        SMJRelationalOperator    *operator;
+        SMJValueNode            *right;
+        
+        //
+        left = [self readValueNodeWithError:error];
+        
+        if (!left)
+            return nil;
+        
+        NSInteger savepoint = _filter.position;
+        
+        //
+        operator = [self readRelationalOperatorWithError:nil];
+        
+        if (operator)
+        {
+            SMJValueNode *right = [self readValueNodeWithError:nil];
+            
+            if (right)
+                return [SMJRelationalExpressionNode relationExpressionNodeWithLeftValue:left operator:operator rightValue:right];
+        }
+        
+        //
+        [_filter setPosition:savepoint];
+        
+        if ([left isKindOfClass:[SMJPathNode class]] == NO)
+        {
+            SMSetError(error, 1, @"path node expected");
+            return nil;
+        }
+        
+        SMJPathNode *pathNode = (SMJPathNode *)left;
+        
+        left = [pathNode copyWithExistsCheckAndShouldExists:pathNode.shouldExists];
+        right = pathNode.shouldExists ? [SMJValueNodes valueNodeTRUE] : [SMJValueNodes valueNodeFALSE];
+
+        operator = [SMJRelationalOperator relationalOperatorEXISTS];
+        
+        return [SMJRelationalExpressionNode relationExpressionNodeWithLeftValue:left operator:operator rightValue:right];
+ */
+    }
+
 }
 
 
 /*
-#pragma mark - SMJCompiledFilter - Interface
-
-@interface SMJCompiledFilter : SMJFilter
-
-- (instancetype)initWithPredicate:(id <SMJPredicate>)predicate;
-
-@end
-
-
-
-
 #pragma mark - SMJFilterCompiler
 
 @implementation SMJFilterCompiler
@@ -58,112 +217,7 @@ final class FilterCompiler {
 	SMJCharacterIndex *_filter;
 }
 
-
-
-#pragma mark - SMJFilterCompiler - Instance
-
-- (nullable instancetype)initWithFilterString:(NSString *)filterString error:(NSError **)error
-{
-	self = [super init];
-	
-	if (self)
-	{
-		_filter =  [[SMJCharacterIndex alloc] initWithString:filterString];
-		
-		[_filter trim];
-		
-		if (![_filter currentCharacterIsEqualTo:'['] || ![_filter lastCharacterIsEqualTo:']'])
-		{
-			SMSetError(error, 1, @"Filter must start with '[' and end with ']'. %@", filterString);
-			return nil;
-		}
-		
-		[_filter incrementPositionBy:1];
-		[_filter decrementEndPositionBy:1];
-		
-		[_filter trim];
-		
-		if (![_filter currentCharacterIsEqualTo:'?'])
-		{
-			SMSetError(error, 2, @"Filter must start with '[?' and end with ']'. %@", filterString);
-			return nil;
-		}
-		
-		[_filter incrementPositionBy:1];
-		
-		[_filter trim];
-		
-		if (![_filter currentCharacterIsEqualTo:'('] || ![_filter lastCharacterIsEqualTo:')'])
-		{
-			SMSetError(error, 3, @"Filter must start with '[?(' and end with ')]'. %@", filterString);
-			return nil;
-		}
-	}
-	
-	return self;
-}
-
-
-
 #pragma mark - SMJFilterCompiler - Compile
-
-+ (nullable SMJFilter *)compileFilterString:(NSString *)filterString error:(NSError **)error
-{
-	SMJFilterCompiler *compiler = [[SMJFilterCompiler alloc] initWithFilterString:filterString error:error];
-	
-	if (!compiler)
-		return nil;
-	
-	id <SMJPredicate> predicate = [compiler compileWithError:error];
-	
-	if (!predicate)
-		return nil;
-	
-//	SMJRelationalExpressionNode *pr = predicate;
-	
-	return [[SMJCompiledFilter alloc] initWithPredicate:predicate];
-}
-
-- (nullable id <SMJPredicate>)compileWithError:(NSError **)error
-{
-	SMJExpressionNode *result = [self readLogicalORWithError:error];
-	
-	if (!result)
-		return result;
-	
-	[_filter skipBlanks];
-	
-	if ([_filter inBounds])
-	{
-		SMSetError(error, 1, @"Expected end of filter expression instead of: %@", [_filter stringFromIndex:_filter.position toIndex:_filter.length]);
-		return nil;
-	}
-	
-	return result;
-}
-
-
-- (nullable SMJExpressionNode *)readLogicalORWithError:(NSError **)error
-{
-	NSMutableArray <SMJExpressionNode *> *ops = [NSMutableArray array];
-	
-	SMJExpressionNode *logicalAND = [self readLogicalANDWithError:error];
-	
-	if (!logicalAND)
-		return nil;
-	
-	[ops addObject:logicalAND];
-	
-	while (YES)
-	{
-		NSInteger	savepoint = _filter.position;
-		NSError		*lerror = nil;
-		
-		if ([_filter hasSignificantString:SMJLogicalOperatorOR] == NO)
-		{
-			[_filter setPosition:savepoint];
-			break;
-		}
 		
 		SMJExpressionNode *logicalAND = [self readLogicalANDWithError:&lerror];
 
@@ -261,51 +315,6 @@ final class FilterCompiler {
 	}
 	
 	return [self readExpressionWithError:error];
-}
-
-
-- (SMJRelationalExpressionNode *)readExpressionWithError:(NSError **)error
-{
-	SMJValueNode 			*left;
-	SMJRelationalOperator	*operator;
-	SMJValueNode			*right;
-	
-	//
-	left = [self readValueNodeWithError:error];
-	
-	if (!left)
-		return nil;
-	
-	NSInteger savepoint = _filter.position;
-	
-	//
-	operator = [self readRelationalOperatorWithError:nil];
-	
-	if (operator)
-	{
-		SMJValueNode *right = [self readValueNodeWithError:nil];
-		
-		if (right)
-			return [SMJRelationalExpressionNode relationExpressionNodeWithLeftValue:left operator:operator rightValue:right];
-	}
-	
-	//
-	[_filter setPosition:savepoint];
-	
-	if ([left isKindOfClass:[SMJPathNode class]] == NO)
-	{
-		SMSetError(error, 1, @"path node expected");
-		return nil;
-	}
-	
-	SMJPathNode *pathNode = (SMJPathNode *)left;
-	
-	left = [pathNode copyWithExistsCheckAndShouldExists:pathNode.shouldExists];
-	right = pathNode.shouldExists ? [SMJValueNodes valueNodeTRUE] : [SMJValueNodes valueNodeFALSE];
-
-	operator = [SMJRelationalOperator relationalOperatorEXISTS];
-	
-	return [SMJRelationalExpressionNode relationExpressionNodeWithLeftValue:left operator:operator rightValue:right];
 }
 
 - (nullable SMJLogicalOperator *)readLogicalOperatorWithError:(NSError **)error

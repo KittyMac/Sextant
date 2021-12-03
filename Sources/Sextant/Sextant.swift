@@ -163,6 +163,7 @@ public final class Sextant {
 
     private var cachedPaths = [Hitch: Path]()
     
+    // TODO: PROTECT THIS WITH A LOCK
     private func cachedPath(query: Hitch) -> Path? {
         if let path = cachedPaths[query] {
             return path
