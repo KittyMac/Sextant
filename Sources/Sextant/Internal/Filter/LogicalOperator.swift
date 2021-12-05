@@ -5,7 +5,10 @@ let kLogicalOperatorAND = Hitch("&&")
 let kLogicalOperatorOR = Hitch("||")
 let kLogicalOperatorNOT = Hitch("!")
 
-class LogicalOperator: CustomStringConvertible {
+class LogicalOperator: CustomStringConvertible, Equatable {
+    static func == (lhs: LogicalOperator, rhs: LogicalOperator) -> Bool {
+        return lhs.stringOperator == rhs.stringOperator
+    }
     
     let stringOperator: Hitch
     

@@ -3,7 +3,7 @@ import class Foundation.Bundle
 
 import Sextant
 
-class SextantReturnTypeTests: SextantTestsBase {
+class ReturnTypeTests: TestsBase {
     var root: JsonAny = nil
     
     override func setUp() {

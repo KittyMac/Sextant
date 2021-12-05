@@ -1,0 +1,69 @@
+import Foundation
+import Hitch
+
+fileprivate let typeHitch = Hitch("string")
+
+class StringNode: ValueNode {
+    let value: Hitch
+    let useSingleQuote: Bool
+        
+    init(hitch: Hitch, escape: Bool) {
+        var localValue = hitch
+        
+        if hitch.count > 1 {
+            let start = hitch[0]
+            let end = hitch[hitch.count - 1]
+            
+            if start == .singleQuote && end == .singleQuote {
+                useSingleQuote = true
+                localValue = localValue.substring(1, hitch.count - 2) ?? localValue
+            } else if start == .singleQuote && end == .singleQuote {
+                useSingleQuote = false
+                localValue = localValue.substring(1, hitch.count - 2) ?? localValue
+            } else {
+                useSingleQuote = true
+            }
+        } else {
+            useSingleQuote = false
+        }
+        
+        if escape {
+            self.value = localValue
+            self.value.unescape()
+        } else {
+            self.value = localValue
+        }
+    }
+        
+    override var description: String {
+        if useSingleQuote {
+            return "'\(value.escape())'"
+        }
+        return value.description
+    }
+    
+    override var literalValue: Hitch? {
+        return value
+    }
+    
+    override var typeName: Hitch {
+        return typeHitch
+    }
+}
+
+
+/*
+#pragma mark SMJStringNode
+
+- (NSString *)stringValue
+{
+	NSString *quote = _useSingleQuote ? @"'" : @"\"";
+	
+	return [NSString stringWithFormat:@"%@%@%@", quote, [SMJUtils stringByEscapingString:_string escapeSingleQuote:YES], quote];
+}
+
+- (nullable NSString *)literalValue
+{
+	return _string;
+}
+*/

@@ -2,84 +2,70 @@ import Foundation
 import Hitch
 
 class RelationalExpressionNode: ExpressionNode {
+    let left: ValueNode
+    let relationalOperator: RelationalOperator
+    let right: ValueNode
     
+    init(left: ValueNode,
+         relationalOperator: RelationalOperator,
+         right: ValueNode) {
+        self.left = left
+        self.relationalOperator = relationalOperator
+        self.right = right
+    }
+    
+    override func apply(predicateContext: PredicateContext) -> PredicateApply {
+        var left: ValueNode = self.left
+        var right: ValueNode = self.right
+        
+        if let pathNode = left as? PathNode {
+            var tmp = pathNode
+            
+            // SourceMac-Note: we support the "EXISTS" token, event if it's similar (and so redoundant) to don't use operator and right value.
+            if relationalOperator == .EXISTS && tmp.existsCheck == false {
+                tmp = PathNode(path: tmp.pathString,
+                               prebuiltPath: tmp.path,
+                               existsCheck: tmp.existsCheck,
+                               shouldExists: tmp.shouldExists)
+            }
+            
+            guard let result = tmp.evaluate(context: predicateContext) else {
+                return .error
+            }
+            left = result
+        }
+        
+        if let pathNode = right as? PathNode {
+            guard let result = pathNode.evaluate(context: predicateContext) else {
+                return .error
+            }
+            right = result
+        }
+        
+        guard let evaluator = Evaluator(relationalOperator: relationalOperator) else {
+            return .error
+        }
+        
+        let result = evaluator.evaluate(left: left,
+                                        right: right,
+                                        context: predicateContext)
+        
+        switch result {
+        case .true:
+            return .true
+        case .false:
+            return .false
+        case .error:
+            return .error
+        }
+    }
 }
 
 /*
-#import "SMJRelationalExpressionNode.h"
-
-#import "SMJEvaluatorFactory.h"
-
-
-NS_ASSUME_NONNULL_BEGIN
-
-
-
-#pragma mark - SMJRelationalExpressionNode
-
-@implementation SMJRelationalExpressionNode
-{
-	SMJValueNode *_left;
-	SMJRelationalOperator *_relationalOperator;
-	SMJValueNode *_right;
-}
-
-
-
-#pragma mark - SMJRelationalExpressionNode - Instance
-
-+ (instancetype)relationExpressionNodeWithLeftValue:(SMJValueNode *)leftValue operator:(SMJRelationalOperator *)op rightValue:(SMJValueNode *)rightValue
-{
-	return [[[self class] alloc] initWithLeftValue:leftValue operator:op rightValue:rightValue];
-}
-
-- (instancetype)initWithLeftValue:(SMJValueNode *)leftValue operator:(SMJRelationalOperator *)op rightValue:(SMJValueNode *)rightValue
-{
-	self = [super init];
-	
-	if (self)
-	{
-		_left = leftValue;
-		_right = rightValue;
-		_relationalOperator = op;
-	}
-	
-	return self;
-}
-
-
-
-#pragma mark - SMJRelationalExpressionNode - SMJPredicate
 
 - (SMJPredicateApply)applyWithContext:(id <SMJPredicateContext>)context error:(NSError **)error
 {
-	SMJValueNode *left = _left;
-	SMJValueNode *right = _right;
-	
-	if ([_left isKindOfClass:[SMJPathNode class]])
-	{
-		SMJPathNode *tmp = (SMJPathNode *)_left;
-		
-		// SourceMac-Note: we support the "EXISTS" token, event if it's similar (and so redoundant) to don't use operator and right value.
-		if (_relationalOperator == [SMJRelationalOperator relationalOperatorEXISTS] && tmp.existsCheck == NO)
-			tmp = [tmp copyWithExistsCheckAndShouldExists:tmp.shouldExists];
-		
-		left = [tmp evaluate:context error:error];
-		
-		if (!left)
-			return SMJPredicateApplyError;
-	}
-	
-	if ([_right isKindOfClass:[SMJPathNode class]])
-	{
-		SMJPathNode *tmp = (SMJPathNode *)_right;
-		
-		right = [tmp evaluate:context error:error];
 
-		if (!right)
-			return SMJPredicateApplyError;
-	}
-	
 	id <SMJEvaluator> evaluator = [SMJEvaluatorFactory createEvaluatorForRelationalOperator:_relationalOperator error:error];
 
 	if (!evaluator)

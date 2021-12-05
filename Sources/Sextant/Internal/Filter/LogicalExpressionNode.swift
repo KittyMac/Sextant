@@ -11,11 +11,49 @@ class LogicalExpressionNode: ExpressionNode {
     }
     
     override func apply(predicateContext: PredicateContext) -> PredicateApply {
-        fatalError("TO BE IMPLEMENTED")
+        if op == LogicalOperator.logicalOperatorOR() {
+            for expression in chain {
+                let result = expression.apply(predicateContext: predicateContext)
+                if result == .error {
+                    return result
+                } else if result == .true {
+                    return result
+                }
+            }
+            return .false
+        } else if op == LogicalOperator.logicalOperatorAND() {
+            for expression in chain {
+                let result = expression.apply(predicateContext: predicateContext)
+                if result == .error {
+                    return result
+                } else if result == .false {
+                    return result
+                }
+            }
+            return .true
+        } else {
+            let expression = chain[0]
+            let result = expression.apply(predicateContext: predicateContext)
+            if result == .error {
+                return result
+            }
+            
+            if result == .true {
+                return .false
+            }
+            return .true
+        }
     }
     
     override var description: String {
-        fatalError("TO BE IMPLEMENTED")
+        var result = ""
+        let delimiter = " \(op.stringOperator) "
+        
+        result.append("(")
+        result.append( chain.map { $0.description }.joined(separator: delimiter) )
+        result.append(")")
+        
+        return result
     }
     
     
@@ -43,83 +81,3 @@ class LogicalExpressionNode: ExpressionNode {
         return LogicalExpressionNode(op: LogicalOperator.logicalOperatorAND(), nodes: nodes)
     }
 }
-
-
-/*
-#pragma mark - SMJLogicalExpressionNode - Instance
-
-
-
-
-#pragma mark - SMJLogicalExpressionNode - SMJPredicate
-
-- (SMJPredicateApply)applyWithContext:(id <SMJPredicateContext>)context error:(NSError **)error
-{
-	if (_operator == [SMJLogicalOperator logicalOperatorOR])
-	{
-		for (SMJExpressionNode *expression in _chain)
-		{
-			SMJPredicateApply result = [expression applyWithContext:context error:error];
-			
-			if (result == SMJPredicateApplyError)
-				return SMJPredicateApplyError;
-			else if (result == SMJPredicateApplyTrue)
-				return SMJPredicateApplyTrue;
-		}
-		
-		return SMJPredicateApplyFalse;
-	}
-	else if (_operator == [SMJLogicalOperator logicalOperatorAND])
-	{
-		for (SMJExpressionNode *expression in _chain)
-		{
-			SMJPredicateApply result = [expression applyWithContext:context error:error];
-
-			if (result == SMJPredicateApplyError)
-				return SMJPredicateApplyError;
-			else if (result == SMJPredicateApplyFalse)
-				return SMJPredicateApplyFalse;
-		}
-		
-		return SMJPredicateApplyTrue;
-	}
-	else
-	{
-		SMJExpressionNode *expression = _chain[0];
-		SMJPredicateApply result = [expression applyWithContext:context error:error];
-
-		if (result == SMJPredicateApplyError)
-			return SMJPredicateApplyError;
-		
-		if (result == SMJPredicateApplyFalse)
-			return SMJPredicateApplyTrue;
-		else
-			return SMJPredicateApplyFalse;
-	}
-}
-
-- (NSString *)stringValue
-{
-	NSMutableString		*result = [[NSMutableString alloc] init];
-	NSString			*delimiter = [NSString stringWithFormat:@" %@ ", _operator.stringOperator];
-	
-	[result appendString:@"("];
-	
-	[_chain enumerateObjectsUsingBlock:^(SMJExpressionNode * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		
-		if (idx > 0)
-			[result appendString:delimiter];
-		
-		[result appendString:[obj stringValue]];
-	}];
-	
-	[result appendString:@")"];
-
-	return result;
-}
-
-@end
-
-
-NS_ASSUME_NONNULL_END
-*/

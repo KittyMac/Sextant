@@ -11,7 +11,7 @@ func XCTAssertEqualAny(_ first: Any, _ second: Any) {
 }
 
 
-class SextantTestsBase: XCTestCase {
+class TestsBase: XCTestCase {
     
     func decode(json jsonString: String) -> JsonAny {
         guard let jsonData = jsonString.data(using: .utf8) else { fatalError("unable to create json data") }

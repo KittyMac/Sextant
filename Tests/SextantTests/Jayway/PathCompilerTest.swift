@@ -3,7 +3,7 @@ import class Foundation.Bundle
 
 @testable import Sextant
 
-class SextantPathCompilerTest: SextantTestsBase {
+class PathCompilerTest: TestsBase {
     var root: JsonAny = nil
     
     override func setUp() {
