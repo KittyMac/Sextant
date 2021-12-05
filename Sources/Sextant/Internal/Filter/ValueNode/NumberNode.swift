@@ -1,65 +1,49 @@
 import Foundation
 import Hitch
 
-class NumberNode: ValueNode {
+fileprivate let typeHitch = Hitch("number")
+
+class NumberNode: ValueNode, Equatable {
+    static func == (lhs: NumberNode, rhs: NumberNode) -> Bool {
+        return lhs.intValue == rhs.intValue && lhs.doubleValue == rhs.doubleValue
+    }
     
+    private var intValue: Int? = nil
+    private var doubleValue: Double? = nil
+    
+    init<T: FixedWidthInteger>(value: T) {
+        self.intValue = Int(value)
+    }
+    
+    init(value: Double) {
+        self.doubleValue = value
+    }
+    
+    init(value: Float) {
+        self.doubleValue = Double(value)
+    }
+    
+    init(hitch: Hitch) {
+        let string: String = hitch.description
+        self.intValue = Int(string)
+        self.doubleValue = Double(string)
+    }
+    
+    override var description: String {
+        if let value = intValue {
+            return value.description
+        }
+        if let value = doubleValue {
+            return value.description
+        }
+        return Double.nan.description
+    }
+    
+    override var literalValue: Hitch? {
+        return description.hitch()
+    }
+    
+    override var typeName: Hitch {
+        return typeHitch
+    }
 }
-
-
-/*
-#pragma mark SMJNumberNode
-
-@implementation SMJNumberNode
-{
-	NSNumber *_value;
-}
-
-- (instancetype)initWithString:(NSString *)string
-{
-	self = [super init];
-	
-	if (self)
-	{
-		_value = [SMJUtils numberWithString:string];
-		
-		if (!_value)
-			_value = @0;
-	}
-	
-	return self;
-}
-
-- (instancetype)initWithNumber:(NSNumber *)number
-{
-	self = [super init];
-	
-	if (self)
-	{
-		_value = number;
-	}
-	
-	return self;
-}
-
-- (NSString *)stringValue
-{
-	return [_value stringValue];
-}
-
-- (nullable NSString *)literalValue
-{
-	return [self stringValue];
-}
-
-- (NSString *)typeName
-{
-	return @"number";
-}
-
-- (NSNumber *)underlayingObjectWithError:(NSError **)error
-{
-	return _value;
-}
-
-@end
-*/

@@ -8,6 +8,13 @@ class PathNode: ValueNode {
     let existsCheck: Bool
     let shouldExists: Bool
     
+    init(prebuiltPath: Path) {
+        self.path = prebuiltPath
+        self.pathString = prebuiltPath.description.hitch()
+        self.existsCheck = false
+        self.shouldExists = false
+    }
+    
     init(path pathString: Hitch,
          prebuiltPath: Path,
          existsCheck: Bool,
@@ -27,7 +34,7 @@ class PathNode: ValueNode {
                 return BooleanNode(value: false)
             }
             
-            if let value = evaluationContext.jsonObject() {
+            if evaluationContext.jsonObject() != nil {
                 return BooleanNode(value: true)
             }
             return BooleanNode(value: false)

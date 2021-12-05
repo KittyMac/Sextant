@@ -1,88 +1,41 @@
 import Foundation
 import Hitch
 
+fileprivate let typeHitch = Hitch("json")
+
+
 class JsonNode: ValueNode {
-    
-}
-
-
-/*
-@implementation SMJJsonNode
-{
-    NSString *_jsonString;
-    
-    BOOL    _done;
-    id        _json;
-    NSError    *_error;
-}
-
-- (instancetype)initWithString:(NSString *)string
-{
-    self = [super init];
-    
-    if (self)
-    {
-        _jsonString = [string copy];
+    static func == (lhs: JsonNode, rhs: JsonNode) -> Bool {
+        return false //lhs.jsonString == rhs.jsonString && lhs.json == rhs.json
     }
     
-    return self;
-}
-
-- (instancetype)initWithJsonObject:(id)jsonObject
-{
-    self = [super init];
-    
-    if (self)
-    {
-        _json = jsonObject;
-        _done = YES;
-    }
-    
-    return self;
-}
-
-- (NSString *)stringValue
-{
-    if (!_jsonString)
-    {
-        NSError    *lerror = nil;
-        NSData    *jsonData = [NSJSONSerialization dataWithJSONObject:_json options:NSJSONWritingPrettyPrinted error:&lerror];
+    let jsonString: Hitch?
+    let json: JsonAny
         
-        if (jsonData)
-            _jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    init(hitch: Hitch) {
+        self.jsonString = hitch
+        self.json = nil
     }
     
-    if (!_jsonString)
-        return @"null";
+    init(jsonObject: JsonAny) {
+        self.jsonString = nil
+        self.json = jsonObject
+    }
     
-    return _jsonString;
-}
-
-- (NSString *)typeName
-{
-    return @"json";
-}
-
-- (nullable id)underlayingObjectWithError:(NSError **)error
-{
-    if (!_done)
-    {
-        NSError *lerror = nil;
-        
-        _json = [NSJSONSerialization JSONObjectWithData:[_jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&lerror];
-        _error = lerror;
-        _done = YES;
-                
-        if (_json && [_json isKindOfClass:[NSDictionary class]] == NO && [_json isKindOfClass:[NSArray class]] == NO)
-        {
-            _json = nil;
-            _error = [NSError errorWithDomain:@"SMJValueNodesErrorNode" code:1 userInfo:@{ NSLocalizedDescriptionKey : @"Invalid JSON type" }];
+    override var description: String {
+        if let jsonString = jsonString {
+            return jsonString.description
         }
-    }
-    
-    if (error)
-        *error = _error;
         
-    return _json;
+        if let json = json,
+           let data = try? JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted]),
+           let string = String(data: data, encoding: .utf8){
+            return string
+        }
+        return "null"
+    }
+        
+    override var typeName: Hitch {
+        return typeHitch
+    }
 }
-*/

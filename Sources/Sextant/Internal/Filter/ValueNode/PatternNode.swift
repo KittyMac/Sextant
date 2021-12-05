@@ -8,16 +8,24 @@ class PatternNode: ValueNode {
     let pattern: Hitch
     let flags: Hitch
     
-    //var done: Bool = false
-    //var regex: NSRegularExpression
+    let regex: NSRegularExpression
     
-    init(regex: Hitch) {
+    init?(regex: Hitch) {
         let begin = regex.firstIndex(of: UInt8.forwardSlash) ?? 0
         let end = regex.lastIndex(of: UInt8.forwardSlash) ?? 0
         
         self.hitch = regex
-        self.pattern = regex.substring(begin + 1, end - begin - 1) ?? Hitch()
-        self.flags = regex.substring(end + 1, end) ?? Hitch()
+        self.pattern = regex.substring(begin + 1, end - begin) ?? Hitch()
+        self.flags = regex.substring(end + 1, regex.count) ?? Hitch()
+        
+        let localError = error
+        do {
+            self.regex = try NSRegularExpression(pattern: self.pattern.description,
+                                                 options: PatternFlags(flags))
+        } catch {
+            localError("\(error)")
+            return nil
+        }
     }
     
     override var description: String {

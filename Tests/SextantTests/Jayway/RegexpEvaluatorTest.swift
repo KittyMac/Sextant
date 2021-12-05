@@ -38,22 +38,21 @@ class RegexEvaluatorTest: TestsBase {
         let rootPath = CompiledPath(root: rootPathToken, isRootPath: true)
         
         checkRegex(regex: "/true|false/", valueNode: StringNode(hitch: "true", escape: true), result: true)
+        checkRegex(regex: "/9.*9/", valueNode: NumberNode(hitch: "9979"), result: true)
+        checkRegex(regex: "/fa.*se/", valueNode: BooleanNode(hitch: "false"), result: true)
         
-        //[self checkRegexp:@"/true|false/" valueNode:[SMJValueNodes stringNodeWithString:@"true" escape:YES] expectedResult:YES];
-        //[self checkRegexp:@"/9.*9/" valueNode:[SMJValueNodes numberNodeWithString:@"9979"] expectedResult:YES];
-        //[self checkRegexp:@"/fa.*se/" valueNode:[SMJValueNodes booleanNodeWithString:@"false"] expectedResult:YES];
-        //[self checkRegexp:@"/JsonNode/" valueNode:[SMJValueNodes jsonNodeWithString:@"{ 'some': 'JsonNode' }"] expectedResult:NO];
-        //[self checkRegexp:@"/PathNode/" valueNode:[SMJValueNodes pathNodeWithPath:rootPath] expectedResult:NO];
-        //[self checkRegexp:@"/NullNode/" valueNode:[SMJValueNodes nullNode] expectedResult:NO];
-        //
-        //[self checkRegexp:@"/test/i" valueNode:[SMJValueNodes stringNodeWithString:@"tEsT" escape:YES] expectedResult:YES];
-        //[self checkRegexp:@"/test/" valueNode:[SMJValueNodes stringNodeWithString:@"tEsT" escape:YES] expectedResult:NO];
-        //[self checkRegexp:@"/\u00de/ui" valueNode:[SMJValueNodes stringNodeWithString:@"\u00fe" escape:YES] expectedResult:YES];
-        //
-        //[self checkRegexp:@"/\u00de/" valueNode:[SMJValueNodes stringNodeWithString:@"\u00fe" escape:YES] expectedResult:NO];
-        //
-        //[self checkRegexp:@"/test# code/" valueNode:[SMJValueNodes stringNodeWithString:@"test" escape:YES] expectedResult:NO];
-        //[self checkRegexp:@"/test# code/x" valueNode:[SMJValueNodes stringNodeWithString:@"test" escape:YES] expectedResult:YES];
+        checkRegex(regex: "/JsonNode/", valueNode: JsonNode(hitch: "{ 'some': 'JsonNode' }"), result: false)
+        checkRegex(regex: "/PathNode/", valueNode: PathNode(prebuiltPath: rootPath), result: false)
+        checkRegex(regex: "/NullNode/", valueNode: NullNode(), result: false)
+        
+        checkRegex(regex: "/test/i", valueNode: StringNode(hitch: "tEsT", escape: true), result: true)
+        checkRegex(regex: "/test/", valueNode: StringNode(hitch: "tEsT", escape: true), result: false)
+        
+        checkRegex(regex: #"/\u00de/ui"#, valueNode: StringNode(hitch: #"\u00fe"#, escape: true), result: true)
+        checkRegex(regex: #"/\u00de/"#, valueNode: StringNode(hitch: #"\u00fe"#, escape: true), result: false)
+        
+        checkRegex(regex: "/test# code/", valueNode: StringNode(hitch: "test", escape: true), result: false)
+        checkRegex(regex: "/test# code/x", valueNode: StringNode(hitch: "test", escape: true), result: true)
     }
 }
 

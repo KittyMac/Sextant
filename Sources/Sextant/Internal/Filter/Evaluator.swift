@@ -1,6 +1,10 @@
 import Foundation
 import Hitch
 
+fileprivate typealias EvaluatorBlock = (_ left: ValueNode?,
+                                        _ right: ValueNode?,
+                                        _ context: PredicateContext) -> EvaluatorResult
+
 enum EvaluatorResult {
     case `true`
     case `false`
@@ -9,13 +13,107 @@ enum EvaluatorResult {
 
 class Evaluator {
     
+    fileprivate let block: EvaluatorBlock
+    
     init?(relationalOperator: RelationalOperator) {
-        return nil
+        switch relationalOperator {
+        case .GTE:
+            block = evaluateToBeImplemented
+        case .LTE:
+            block = evaluateToBeImplemented
+        case .EQ:
+            block = evaluateToBeImplemented
+        case .TSEQ:
+            block = evaluateToBeImplemented
+        case .NE:
+            block = evaluateToBeImplemented
+        case .TSNE:
+            block = evaluateToBeImplemented
+        case .LT:
+            block = evaluateToBeImplemented
+        case .GT:
+            block = evaluateToBeImplemented
+        case .REGEX:
+            block = evaluateREGEX
+        case .NIN:
+            block = evaluateToBeImplemented
+        case .IN:
+            block = evaluateToBeImplemented
+        case .CONTAINS:
+            block = evaluateToBeImplemented
+        case .ALL:
+            block = evaluateToBeImplemented
+        case .SIZE:
+            block = evaluateToBeImplemented
+        case .EXISTS:
+            block = evaluateEXISTS
+        case .TYPE:
+            block = evaluateToBeImplemented
+        case .EMPTY:
+            block = evaluateToBeImplemented
+        case .SUBSETOF:
+            block = evaluateToBeImplemented
+        case .ANYOF:
+            block = evaluateToBeImplemented
+        case .NONEOF:
+            block = evaluateToBeImplemented
+        }
     }
     
     func evaluate(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-        fatalError("must be overridden")
+        block(left, right, context)
     }
+}
+
+fileprivate func evaluateToBeImplemented(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    fatalError("TO BE IMPLEMENTED")
+}
+
+fileprivate func evaluateREGEX(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    var regex: NSRegularExpression? = nil
+    var hitch: Hitch? = nil
+    
+    if let left = left as? PatternNode {
+        regex = left.regex
+        hitch = right?.literalValue
+    } else if let right = right as? PatternNode {
+        regex = right.regex
+        hitch = left?.literalValue
+    }
+    
+    guard let regex = regex else {
+        return .error
+    }
+    
+    guard let hitch = hitch else {
+        return .false
+    }
+    
+    let valueAsString = hitch.description
+    let matches = regex.numberOfMatches(in: valueAsString,
+                                        options: [],
+                                        range: NSMakeRange(0, valueAsString.count))
+    
+    if matches > 0 {
+        return .true
+    }
+    return .false
+}
+
+fileprivate func evaluateEXISTS(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    guard let left = left as? BooleanNode else {
+        error("Failed to evaluate EXISTS expression")
+        return .error
+    }
+    guard let right = right as? BooleanNode else {
+        error("Failed to evaluate EXISTS expression")
+        return .error
+    }
+    
+    if left == right {
+        return .true
+    }
+    return .false
 }
 
 
@@ -89,25 +187,6 @@ typedef SMJEvaluatorEvaluate (^SMJEvaluatorGenericBlock)(SMJValueNode *leftNode,
 + (NSDictionary <NSString *, id <SMJEvaluator>> *)buildEvaluatorsMap
 {
 	NSMutableDictionary <NSString *, id <SMJEvaluator>> *map = [[NSMutableDictionary alloc] init];
-	
-	
-	// Exists.
-	map[SMJRelationalOperatorEXISTS] = [SMJEvaluatorGeneric evaluatorWithBlock:^SMJEvaluatorEvaluate(SMJValueNode *leftNode, SMJValueNode *rightNode, id<SMJPredicateContext> context, NSError **error) {
-		
-		if (![leftNode isKindOfClass:[SMJBooleanNode class]] || ![rightNode isKindOfClass:[SMJBooleanNode class]])
-		{
-			SMSetError(error, 1, @"Failed to evaluate EXISTS expression");
-			return SMJEvaluatorEvaluateError;
-		}
-		
-		SMJEqualityResult equality = [leftNode isEqual:rightNode withError:error];
-		
-		if (equality == SMJEqualityError)
-			return SMJEvaluatorEvaluateError;
-		
-		return SMBoolToEvaluateResult(equality == SMJEqualitySame);
-	}];
-	
 	
 	// Not Equals.
 	map[SMJRelationalOperatorNE] = [SMJEvaluatorGeneric evaluatorWithBlock:^SMJEvaluatorEvaluate(SMJValueNode *leftNode, SMJValueNode *rightNode, id<SMJPredicateContext> context, NSError **error) {
@@ -202,33 +281,6 @@ typedef SMJEvaluatorEvaluate (^SMJEvaluatorGenericBlock)(SMJValueNode *leftNode,
 			return SMJEvaluatorEvaluateError;
 		
 		return SMBoolToEvaluateResult(comparison == SMJComparisonSame || comparison == SMJComparisonDifferGreaterThan);
-	}];
-	
-	
-	// Regexp.
-	map[SMJRelationalOperatorREGEX] = [SMJEvaluatorGeneric evaluatorWithBlock:^SMJEvaluatorEvaluate(SMJValueNode *leftNode, SMJValueNode *rightNode, id<SMJPredicateContext> context, NSError **error) {
-		
-		NSRegularExpression	*regexp = nil;
-		NSString			*string = nil;
-		
-		if ([leftNode isKindOfClass:[SMJPatternNode class]] && ![rightNode isKindOfClass:[SMJPatternNode class]])
-		{
-			regexp = [(SMJPatternNode *)leftNode underlayingObjectWithError:error];
-			string = [rightNode literalValue];
-		}
-		else if (![leftNode isKindOfClass:[SMJPatternNode class]] && [rightNode isKindOfClass:[SMJPatternNode class]])
-		{
-			regexp = [(SMJPatternNode *)rightNode underlayingObjectWithError:error];
-			string = [leftNode literalValue];
-		}
-
-		if (!regexp)
-			return SMJEvaluatorEvaluateError;
-		
-		if (regexp && string)
-			return SMBoolToEvaluateResult([regexp numberOfMatchesInString:string options:0 range:NSMakeRange(0, string.length)] > 0);
-		
-		return SMJEvaluatorEvaluateFalse;
 	}];
 	
 	
