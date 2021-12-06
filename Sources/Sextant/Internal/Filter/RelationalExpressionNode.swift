@@ -25,7 +25,7 @@ class RelationalExpressionNode: ExpressionNode {
             if relationalOperator == .EXISTS && tmp.existsCheck == false {
                 tmp = PathNode(path: tmp.pathString,
                                prebuiltPath: tmp.path,
-                               existsCheck: tmp.existsCheck,
+                               existsCheck: true,
                                shouldExists: tmp.shouldExists)
             }
             

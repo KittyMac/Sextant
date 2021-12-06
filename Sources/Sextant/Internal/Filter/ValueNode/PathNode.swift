@@ -77,7 +77,7 @@ struct PathNode: ValueNode {
             let object = context.evaluate(path: path)
             
             if object == nil {
-                return NullNode()
+                return BooleanNode.false
             }
             if let _ = object as? NSNull {
                 return NullNode()

@@ -156,7 +156,7 @@ class PathCompilerTest: TestsBase {
     func test_issue_predicate_or_has_lower_priority_than_and() {
         let json = #"{"logs":[{"id":2}]}"#
         XCTAssertEqual(json.query(values: "$.logs[?(@.x && @.y || @.id)]").count, 1)
-        XCTAssertEqual(json.query(paths: "$.logs[?(@.x && @.y || @.id)]").first as? String, "")
+        XCTAssertEqual(json.query(paths: "$.logs[?(@.x && @.y || @.id)]").first as? String, "$[\'logs\'][0]")
     }
     
     func test_issue_predicate_can_have_double_quotes() {

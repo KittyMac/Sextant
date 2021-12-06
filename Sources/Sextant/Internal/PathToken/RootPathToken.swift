@@ -34,22 +34,18 @@ final class RootPathToken: PathToken {
                            jsonObject: JsonAny,
                            evaluationContext: EvaluationContext) -> EvaluationStatus {
         
-        if isLeaf() {
+        if let next = next {
+            return next.evaluate(currentPath: rootToken,
+                                 parentPath: parentPath,
+                                 jsonObject: jsonObject,
+                                evaluationContext: evaluationContext)
+        } else {
             let op = evaluationContext.forUpdate ? parentPath : Path.nullPath()
             
             return evaluationContext.add(path: rootToken,
                                          operation: op,
                                          jsonObject: jsonObject)
         }
-        
-        if let next = next {
-            return next.evaluate(currentPath: rootToken,
-                                 parentPath: parentPath,
-                                 jsonObject: jsonObject,
-                                evaluationContext: evaluationContext)
-        }
-        
-        return .error("root path token is leaf but next is nil")
     }
     
     override func isTokenDefinite() -> Bool {

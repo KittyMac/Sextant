@@ -50,10 +50,13 @@ class CompiledPath: Path {
         
         let op = context.forUpdate ? Path.newPath(rootObject: rootJsonObject) : Path.nullPath()
         
-        _ = root.evaluate(currentPath: Hitch(),
-                          parentPath: op,
-                          jsonObject: jsonObject,
-                          evaluationContext: context)
+        let result = root.evaluate(currentPath: Hitch(),
+                                   parentPath: op,
+                                   jsonObject: jsonObject,
+                                   evaluationContext: context)
+        if result != .done {
+            return nil
+        }
         
         return context
     }

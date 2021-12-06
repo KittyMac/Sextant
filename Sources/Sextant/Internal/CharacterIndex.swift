@@ -110,8 +110,20 @@ class CharacterIndex: CustomStringConvertible {
         return self
     }
     
+    func compare(hitch: Hitch) -> Bool {
+        let end = hitch.count
+        var idx = 0
+        while inBounds(position: idx + position) && idx < end {
+            if hitch[idx] != charSequence[idx + position] {
+                return false
+            }
+            idx += 1
+        }
+        return idx == end
+    }
+    
     func compareAndAdvance(hitch: Hitch) -> Bool {
-        if charSequence.starts(with: hitch) {
+        if compare(hitch: hitch) {
             advance(hitch.count)
             return true
         }
@@ -202,7 +214,7 @@ class CharacterIndex: CustomStringConvertible {
     func hasSignificantString(string: Hitch) -> Bool {
         skipBlanks()
         
-        guard charSequence.starts(with: string) else { return false }
+        guard compare(hitch: string) else { return false }
         
         advance(string.count)
         return true

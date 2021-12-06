@@ -13,11 +13,13 @@ class LogicalOperator: CustomStringConvertible, Equatable {
     let stringOperator: Hitch
     
     init?(stringOperator: Hitch) {
-        guard stringOperator == kLogicalOperatorAND else { return nil }
-        guard stringOperator == kLogicalOperatorOR else { return nil }
-        guard stringOperator == kLogicalOperatorNOT else { return nil }
-        
-        self.stringOperator = stringOperator
+        if stringOperator == kLogicalOperatorAND ||
+            stringOperator == kLogicalOperatorOR ||
+            stringOperator == kLogicalOperatorNOT {
+            self.stringOperator = stringOperator
+        } else {
+            return nil
+        }
     }
     
     var description: String {

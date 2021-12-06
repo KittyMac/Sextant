@@ -79,7 +79,7 @@ class PathToken: CustomStringConvertible {
                 // Better safe than sorry.
                 
                 if isLeaf() {
-                    return .done
+                    return .error("No results for property path: \(evalPath)")
                 } else {
                     if (isUpstreamDefinite() && isTokenDefinite()) == false {
                         return .done
