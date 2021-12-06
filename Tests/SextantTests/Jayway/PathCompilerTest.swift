@@ -123,9 +123,10 @@ class PathCompilerTest: TestsBase {
     }
     
     func test_issue_predicate_can_have_escaped_backslash_in_prop() {
-        let json = #"{"logs":[{"message":"it\\\\","id":2}]}"#
-        XCTAssertEqual(json.query(values: "$.logs[?(@.message == 'it\\\\')].message").first as? String, #"it\\"#)
-        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == 'it\\\\')].message").first as? String, #"$['logs'][0]['message']"#)
+        // \\ \r \n \\
+        let json = #"{"logs":[{"message":"it\\\r\n\\","id":2}]}"#
+        XCTAssertEqual(json.query(values: #"$.logs[?(@.message == 'it\\\r\n\\')].message"#).first as? String, "it\\\r\n\\")
+        XCTAssertEqual(json.query(paths: #"$.logs[?(@.message == 'it\\\r\n\\')].message"#).first as? String, #"$['logs'][0]['message']"#)
     }
     
     func test_issue_predicate_can_have_bracket_in_regex() {

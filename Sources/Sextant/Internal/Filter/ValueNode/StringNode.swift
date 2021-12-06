@@ -29,7 +29,7 @@ struct StringNode: ValueNode {
         
         if escape {
             self.value = localValue
-            //self.value.unescape()
+            self.value.unescape()
         } else {
             self.value = localValue
         }
