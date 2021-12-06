@@ -510,7 +510,6 @@ final class PathCompiler {
         if ci.current() != .openBrace && ci.nextSignificantCharacter() != beginFilterChar {
             return false
         }
-        guard ci.current() == .openBrace || ci.nextSignificantCharacter() == beginFilterChar else { return false }
         
         let openStatementBracketIndex = ci.position
         let questionMarkIndex = ci.indexOfNextSignificantCharacter(character: beginFilterChar)

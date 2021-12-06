@@ -16,10 +16,10 @@ struct StringNode: ValueNode {
             
             if start == .singleQuote && end == .singleQuote {
                 useSingleQuote = true
-                localValue = localValue.substring(1, hitch.count - 2) ?? localValue
+                localValue = localValue.substring(1, hitch.count - 1) ?? localValue
             } else if start == .singleQuote && end == .singleQuote {
                 useSingleQuote = false
-                localValue = localValue.substring(1, hitch.count - 2) ?? localValue
+                localValue = localValue.substring(1, hitch.count - 1) ?? localValue
             } else {
                 useSingleQuote = true
             }
@@ -29,7 +29,7 @@ struct StringNode: ValueNode {
         
         if escape {
             self.value = localValue
-            self.value.unescape()
+            //self.value.unescape()
         } else {
             self.value = localValue
         }
@@ -55,19 +55,3 @@ struct StringNode: ValueNode {
     }
 }
 
-
-/*
-#pragma mark SMJStringNode
-
-- (NSString *)stringValue
-{
-	NSString *quote = _useSingleQuote ? @"'" : @"\"";
-	
-	return [NSString stringWithFormat:@"%@%@%@", quote, [SMJUtils stringByEscapingString:_string escapeSingleQuote:YES], quote];
-}
-
-- (nullable NSString *)literalValue
-{
-	return _string;
-}
-*/

@@ -123,33 +123,33 @@ class PathCompilerTest: TestsBase {
     }
     
     func test_issue_predicate_can_have_escaped_backslash_in_prop() {
-        let json = #"{"logs":[{"message":"it\\\\\\","id":2}]}"#
-        XCTAssertEqual(json.query(values: "$.logs[?(@.message == 'it\\\\\\')].message").first as? String, #"it\\\"#)
-        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == 'it\\\\\\')].message").first as? String, #"it\\\"#)
+        let json = #"{"logs":[{"message":"it\\\\","id":2}]}"#
+        XCTAssertEqual(json.query(values: "$.logs[?(@.message == 'it\\\\')].message").first as? String, #"it\\"#)
+        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == 'it\\\\')].message").first as? String, #"$['logs'][0]['message']"#)
     }
     
     func test_issue_predicate_can_have_bracket_in_regex() {
         let json = #"{"logs":[{"message":"(it","id":2}]}"#
         XCTAssertEqual(json.query(values: "$.logs[?(@.message =~ /\\(it/)].message").first as? String, #"(it"#)
-        XCTAssertEqual(json.query(paths: "$.logs[?(@.message =~ /\\(it/)].message").first as? String, #"(it"#)
+        XCTAssertEqual(json.query(paths: "$.logs[?(@.message =~ /\\(it/)].message").first as? String, #"$['logs'][0]['message']"#)
     }
     
     func test_issue_predicate_can_have_and_in_regex() {
         let json = #"{"logs":[{"message":"it","id":2}]}"#
         XCTAssertEqual(json.query(values: "$.logs[?(@.message =~ /&&|it/)].message").first as? String, #"it"#)
-        XCTAssertEqual(json.query(paths: "$.logs[?(@.message =~ /&&|it/)].message").first as? String, #"it"#)
+        XCTAssertEqual(json.query(paths: "$.logs[?(@.message =~ /&&|it/)].message").first as? String, #"$['logs'][0]['message']"#)
     }
     
     func test_issue_predicate_can_have_and_in_prop() {
         let json = #"{"logs":[{"message":"&& it","id":2}]}"#
         XCTAssertEqual(json.query(values: "$.logs[?(@.message == '&& it')].message").first as? String, #"&& it"#)
-        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == '&& it')].message").first as? String, #"&& it"#)
+        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == '&& it')].message").first as? String, #"$['logs'][0]['message']"#)
     }
     
     func test_issue_predicate_brackets_must_change_priorities() {
         let json = #"{"logs":[{"id":2}]}"#
         XCTAssertEqual(json.query(values: "$.logs[?(@.message && (@.id == 1 || @.id == 2))].id").count, 0)
-        XCTAssertEqual(json.query(paths: "$.logs[?((@.id == 2 || @.id == 1) && @.message)].id").first as? String, "")
+        XCTAssertEqual(json.query(values: "$.logs[?((@.id == 2 || @.id == 1) && @.message)].id").count, 0)
     }
     
     func test_issue_predicate_or_has_lower_priority_than_and() {
@@ -161,7 +161,7 @@ class PathCompilerTest: TestsBase {
     func test_issue_predicate_can_have_double_quotes() {
         let json = #"{"logs":[{"message":"\"it\"","id":2}]}"#
         XCTAssertEqual(json.query(values: "$.logs[?(@.message == '\"it\"')].message").first as? String, #""it""#)
-        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == '\"it\"')].message").first as? String, #""it""#)
+        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == '\"it\"')].message").first as? String, #"$['logs'][0]['message']"#)
     }
     
     func test_issue_predicate_can_have_single_quotes() {
@@ -179,7 +179,7 @@ class PathCompilerTest: TestsBase {
     func test_issue_predicate_can_have_square_bracket_in_prop() {
         let json = #"{"logs":[{"message":"] it","id":2}]}"#
         XCTAssertEqual(json.query(values: "$.logs[?(@.message == '] it')].message").first as? String, "] it")
-        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == '] it')].message").first as? String, "] it")
+        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == '] it')].message").first as? String, "$['logs'][0]['message']")
     }
     
     func test_a_function_can_be_compiled() {

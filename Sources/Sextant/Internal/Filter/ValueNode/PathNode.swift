@@ -73,47 +73,49 @@ struct PathNode: ValueNode {
             }
             return BooleanNode.false
         } else {
-                        
-            let doc = path.isRootPath() ? context.rootJsonObject : context.jsonObject
-            guard let evaluationContext = path.evaluate(jsonObject: doc,
-                                                        rootJsonObject: context.rootJsonObject) else {
-                return nil
+            
+            let object = context.evaluate(path: path)
+            
+            if object == nil {
+                return NullNode()
             }
-            
-            let object = evaluationContext.jsonObject()
-            
-            if let object = object as? String {
-                return StringNode(hitch: object.hitch(), escape: false)
+            if let _ = object as? NSNull {
+                return NullNode()
+            }
+            if let object = object as? Bool {
+                return BooleanNode(value: object)
+            }
+            if let object = object as? Int {
+                return NumberNode(value: object)
+            }
+            if let object = object as? Double {
+                return NumberNode(value: object)
+            }
+            if let object = object as? Float {
+                return NumberNode(value: object)
+            }
+            if let object = object as? NSNumber {
+                return NumberNode(value: object.doubleValue)
             }
             if let object = object as? Hitch {
                 return StringNode(hitch: object, escape: false)
             }
+            if let object = object as? String {
+                return StringNode(hitch: object.hitch(), escape: false)
+            }
+            if let object = object as? JsonArray {
+                return JsonNode(jsonObject: object)
+            }
+            if let object = object as? JsonDictionary {
+                return JsonNode(jsonObject: object)
+            }
             
-
+            error("Could not convert \(object) to a ValueNode")
+            return nil
         }
         
         return nil
         /*
-            id object = nil;
-            
-            if ([context isKindOfClass:[SMJPredicateContextImpl class]])
-            {
-                //This will use cache for root ($) queries
-                SMJPredicateContextImpl *ctxi = (SMJPredicateContextImpl *)context;
-                
-                object = [ctxi evaluatePath:_path error:error];
-            }
-            else
-            {
-                id doc = _path.rootPath ? context.rootJsonObject : context.jsonObject;
-                id <SMJEvaluationContext> evaluationContext = [_path evaluateJsonObject:doc rootJsonObject:context.rootJsonObject configuration:context.configuration error:error];
-                
-                object = [evaluationContext jsonObjectWithError: error];
-            }
-            
-            if (!object)
-                return nil;
-            
             if ([object isKindOfClass:[NSNumber class]])
             {
                 NSNumber *number = object;
