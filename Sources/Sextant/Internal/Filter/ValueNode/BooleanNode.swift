@@ -5,7 +5,10 @@ fileprivate let trueHitch = Hitch("true")
 fileprivate let falseHitch = Hitch("false")
 fileprivate let typeHitch = Hitch("bool")
 
-class BooleanNode: ValueNode, Equatable {
+struct BooleanNode: ValueNode, Equatable {
+    static let `true` = BooleanNode(value: true)
+    static let `false` = BooleanNode(value: false)
+    
     static func == (lhs: BooleanNode, rhs: BooleanNode) -> Bool {
         return lhs.value == rhs.value
     }
@@ -20,21 +23,25 @@ class BooleanNode: ValueNode, Equatable {
         self.value = hitch.lowercase() == trueHitch
     }
     
-    override var description: String {
+    var description: String {
         if value {
             return "true"
         }
         return "false"
     }
     
-    override var literalValue: Hitch? {
+    var literalValue: Hitch? {
         if value {
             return trueHitch
         }
         return falseHitch
     }
     
-    override var typeName: Hitch {
+    var typeName: Hitch {
         return typeHitch
+    }
+    
+    var numericValue: Double? {
+        return value ? 1 : 0
     }
 }

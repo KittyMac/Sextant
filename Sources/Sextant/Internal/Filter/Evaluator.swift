@@ -18,21 +18,21 @@ class Evaluator {
     init?(relationalOperator: RelationalOperator) {
         switch relationalOperator {
         case .GTE:
-            block = evaluateToBeImplemented
+            block = evaluateGTE
         case .LTE:
-            block = evaluateToBeImplemented
+            block = evaluateLTE
         case .EQ:
-            block = evaluateToBeImplemented
+            block = evaluateEQ
         case .TSEQ:
-            block = evaluateToBeImplemented
+            block = evaluateTSEQ
         case .NE:
-            block = evaluateToBeImplemented
+            block = evaluateNE
         case .TSNE:
-            block = evaluateToBeImplemented
+            block = evaluateTSNE
         case .LT:
-            block = evaluateToBeImplemented
+            block = evaluateLT
         case .GT:
-            block = evaluateToBeImplemented
+            block = evaluateGT
         case .REGEX:
             block = evaluateREGEX
         case .NIN:
@@ -67,6 +67,80 @@ class Evaluator {
 
 fileprivate func evaluateToBeImplemented(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
     fatalError("TO BE IMPLEMENTED")
+}
+
+fileprivate func evaluateGTE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    guard let left = left else { return .false }
+    guard let right = right else { return .false }
+    let result = left.compare(to: right)
+    if result == .greaterThan || result == .same {
+        return .true
+    }
+    return .false
+}
+
+fileprivate func evaluateLTE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    guard let left = left else { return .false }
+    guard let right = right else { return .false }
+    let result = left.compare(to: right)
+    if result == .lessThan || result == .same {
+        return .true
+    }
+    return .false
+}
+
+fileprivate func evaluateEQ(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    guard let left = left else { return .false }
+    guard let right = right else { return .false }
+    let result = left.compare(to: right)
+    if result == .same {
+        return .true
+    }
+    return .false
+}
+
+fileprivate func evaluateTSEQ(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    guard let left = left else { return .false }
+    guard let right = right else { return .false }
+    let result = left.compare(to: right)
+    if result == .same && left.typeName == right.typeName {
+        return .true
+    }
+    return .false
+}
+
+fileprivate func evaluateNE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    if evaluateEQ(left: left, right: right, context: context) == .true {
+        return .false
+    }
+    return .true
+}
+
+fileprivate func evaluateTSNE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    if evaluateTSEQ(left: left, right: right, context: context) == .true {
+        return .false
+    }
+    return .true
+}
+
+fileprivate func evaluateGT(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    guard let left = left else { return .false }
+    guard let right = right else { return .false }
+    let result = left.compare(to: right)
+    if result == .greaterThan {
+        return .true
+    }
+    return .false
+}
+
+fileprivate func evaluateLT(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
+    guard let left = left else { return .false }
+    guard let right = right else { return .false }
+    let result = left.compare(to: right)
+    if result == .lessThan {
+        return .true
+    }
+    return .false
 }
 
 fileprivate func evaluateREGEX(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {

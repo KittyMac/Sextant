@@ -3,7 +3,7 @@ import Hitch
 
 fileprivate let typeHitch = Hitch("number")
 
-class NumberNode: ValueNode, Equatable {
+struct NumberNode: ValueNode, Equatable {
     static func == (lhs: NumberNode, rhs: NumberNode) -> Bool {
         return lhs.intValue == rhs.intValue && lhs.doubleValue == rhs.doubleValue
     }
@@ -29,7 +29,7 @@ class NumberNode: ValueNode, Equatable {
         self.doubleValue = Double(string)
     }
     
-    override var description: String {
+    var description: String {
         if let value = intValue {
             return value.description
         }
@@ -39,11 +39,21 @@ class NumberNode: ValueNode, Equatable {
         return Double.nan.description
     }
     
-    override var literalValue: Hitch? {
+    var literalValue: Hitch? {
         return description.hitch()
     }
     
-    override var typeName: Hitch {
+    var numericValue: Double? {
+        if let double = doubleValue {
+            return double
+        }
+        if let int = intValue {
+            return Double(int)
+        }
+        return nil
+    }
+    
+    var typeName: Hitch {
         return typeHitch
     }
 }

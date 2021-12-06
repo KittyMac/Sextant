@@ -3,7 +3,7 @@ import Hitch
 
 fileprivate let typeHitch = Hitch("pattern")
 
-class PatternNode: ValueNode {
+struct PatternNode: ValueNode {
     let hitch: Hitch
     let pattern: Hitch
     let flags: Hitch
@@ -28,16 +28,20 @@ class PatternNode: ValueNode {
         }
     }
     
-    override var description: String {
+    var description: String {
         return hitch.description
     }
         
-    override var typeName: Hitch {
+    var typeName: Hitch {
         return typeHitch
     }
     
-    override func evaluate(context: PredicateContext) -> ValueNode? {
-        fatalError("TO BE IMPLEMENTED")
+    var literalValue: Hitch? {
+        return nil
+    }
+    
+    var numericValue: Double? {
+        return nil
     }
 }
 

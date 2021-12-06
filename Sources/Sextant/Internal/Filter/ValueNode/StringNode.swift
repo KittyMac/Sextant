@@ -3,7 +3,7 @@ import Hitch
 
 fileprivate let typeHitch = Hitch("string")
 
-class StringNode: ValueNode {
+struct StringNode: ValueNode {
     let value: Hitch
     let useSingleQuote: Bool
         
@@ -35,18 +35,22 @@ class StringNode: ValueNode {
         }
     }
         
-    override var description: String {
+    var description: String {
         if useSingleQuote {
             return "'\(value.escape())'"
         }
         return value.description
     }
     
-    override var literalValue: Hitch? {
+    var literalValue: Hitch? {
         return value
     }
     
-    override var typeName: Hitch {
+    var numericValue: Double? {
+        return value.toDouble()
+    }
+    
+    var typeName: Hitch {
         return typeHitch
     }
 }

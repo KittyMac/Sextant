@@ -10,7 +10,7 @@ final class EvaluationContext {
     var pathResults = [String]()
     var resultIndex = 0
     
-    var evaluationCache = [Hitch:JsonAny]()
+    var evaluationCache = [Hitch: JsonAny]()
     
     var path: Path
     var rootJsonObject: JsonAny

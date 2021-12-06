@@ -3,16 +3,25 @@ import Hitch
 
 fileprivate let typeHitch = Hitch("null")
 
-class NullNode: ValueNode {
+struct NullNode: ValueNode {
+    
     static func == (lhs: NullNode, rhs: NullNode) -> Bool {
         return true
     }
     
-    override var description: String {
+    var description: String {
         return "null"
     }
         
-    override var typeName: Hitch {
+    var typeName: Hitch {
         return typeHitch
+    }
+    
+    var literalValue: Hitch? {
+        nil
+    }
+    
+    var numericValue: Double? {
+        return nil
     }
 }

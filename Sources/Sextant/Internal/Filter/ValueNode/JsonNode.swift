@@ -4,7 +4,7 @@ import Hitch
 fileprivate let typeHitch = Hitch("json")
 
 
-class JsonNode: ValueNode {
+struct JsonNode: ValueNode {
     static func == (lhs: JsonNode, rhs: JsonNode) -> Bool {
         return false //lhs.jsonString == rhs.jsonString && lhs.json == rhs.json
     }
@@ -22,7 +22,7 @@ class JsonNode: ValueNode {
         self.json = jsonObject
     }
     
-    override var description: String {
+    var description: String {
         if let jsonString = jsonString {
             return jsonString.description
         }
@@ -35,7 +35,15 @@ class JsonNode: ValueNode {
         return "null"
     }
         
-    override var typeName: Hitch {
+    var typeName: Hitch {
         return typeHitch
+    }
+    
+    var literalValue: Hitch? {
+        return nil
+    }
+    
+    var numericValue: Double? {
+        return nil
     }
 }

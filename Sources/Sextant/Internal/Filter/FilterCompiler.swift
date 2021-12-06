@@ -34,6 +34,10 @@ fileprivate let kNotChar = UInt8.bang
 fileprivate let kPatternChar = UInt8.forwardSlash
 fileprivate let kIgnoreCaseChar = UInt8.i
 
+fileprivate let nullHitch = Hitch("null")
+fileprivate let trueHitch = Hitch("true")
+fileprivate let falseHitch = Hitch("false")
+
 final class FilterCompiler {
     var filter: CharacterIndex
     
@@ -73,7 +77,7 @@ final class FilterCompiler {
         
         filter.skipBlanks()
         
-        guard filter.inBounds() else {
+        if filter.inBounds() {
             error("Expected end of filter expression instead of: \(filter)")
             return nil
         }
@@ -115,7 +119,6 @@ final class FilterCompiler {
         
         while true {
             let savepoint = filter.position
-            var lerror: String? = nil
             if filter.hasSignificantString(string: kLogicalOperatorAND) == false {
                 filter.position = savepoint
                 break
@@ -159,53 +162,269 @@ final class FilterCompiler {
     }
     
     func readExpression() -> RelationalExpressionNode? {
-        fatalError("TO BE IMPLEMENTED")
+        guard let left = readValueNode() else { return nil }
         
+        let savepoint = filter.position
+        
+        let relationalOperator = readRelationalOperator()
+        if let relationalOperator = relationalOperator,
+           let right = readValueNode() {
+            return RelationalExpressionNode(left: left,
+                                            relationalOperator: relationalOperator,
+                                            right: right)
+        }
+        
+        filter.position = savepoint
+        
+        guard let pathNode = left as? PathNode else {
+            error("path node expected")
+            return nil
+        }
+        
+        return RelationalExpressionNode(left: pathNode,
+                                        relationalOperator: .EXISTS,
+                                        right: pathNode.shouldExists ? BooleanNode.true : BooleanNode.false)
+    }
+    
+    func readRelationalOperator() -> RelationalOperator? {
+        let begin = filter.skipBlanks().position
+        
+        if isRelationalOperatorChar(filter.current()) {
+            while filter.inBounds() && isRelationalOperatorChar(filter.current()) {
+                filter.advance(1)
+            }
+        } else {
+            while filter.inBounds() && filter.current() != .space {
+                filter.advance(1)
+            }
+        }
+        
+        guard let relationalOperator = filter.substring(begin, filter.position) else { return nil }
+        return RelationalOperator(hitch: relationalOperator)
+    }
+    
+    func readValueNode() -> ValueNode? {
+        switch filter.skipBlanks().current() {
+        case kDocContextChar, kEvalContextChar:
+            return readPath()
+        case kNotChar:
+            filter.advance(1)
+            switch filter.skipBlanks().current() {
+            case kDocContextChar, kEvalContextChar:
+                return readPath()
+            default:
+                error("Unexpected character '\(kNotChar)'")
+                return nil
+            }
+        default:
+            return readLiteral()
+        }
+    }
+    
+    func readLiteral() -> ValueNode? {
+        switch filter.skipBlanks().current() {
+            case kSingleQuoteChar:
+                return readStringLiteral(endChar: kSingleQuoteChar)
+            case kDoubleQuoteChar:
+                return readStringLiteral(endChar: kDoubleQuoteChar)
+            case kTrueChar:
+                return readBooleanLiteral()
+            case kFalseChar:
+                return readBooleanLiteral()
+            case kMinusChar:
+                return readNumberLiteral()
+            case kNullChar:
+                return readNullLiteral()
+            case kOpenObjectChar:
+                return readJsonLiteral()
+            case kOpenArrayChar:
+                return readJsonLiteral()
+            case kPatternChar:
+                return readPatternLiteral()
+            default:
+                return readNumberLiteral()
+        }
+    }
+    
+    func readNullLiteral() -> NullNode? {
+        if filter.current() == kNullChar && filter.compareAndAdvance(hitch: nullHitch) {
+            return NullNode()
+        }
+        error("Expected <null> value")
         return nil
-        /*
-        SMJValueNode             *left;
-        SMJRelationalOperator    *operator;
-        SMJValueNode            *right;
+    }
+    
+    func readJsonLiteral() -> JsonNode? {
+        let begin = filter.position
         
-        //
-        left = [self readValueNodeWithError:error];
+        let openChar = filter.current()
         
-        if (!left)
-            return nil;
-        
-        NSInteger savepoint = _filter.position;
-        
-        //
-        operator = [self readRelationalOperatorWithError:nil];
-        
-        if (operator)
-        {
-            SMJValueNode *right = [self readValueNodeWithError:nil];
-            
-            if (right)
-                return [SMJRelationalExpressionNode relationExpressionNodeWithLeftValue:left operator:operator rightValue:right];
+        if openChar != kOpenArrayChar && openChar != kOpenObjectChar {
+            error("internal error")
+            return nil
         }
         
-        //
-        [_filter setPosition:savepoint];
+        let closeChar = openChar == kOpenArrayChar ? kCloseArrayChar : kCloseObjectChar
         
-        if ([left isKindOfClass:[SMJPathNode class]] == NO)
-        {
-            SMSetError(error, 1, @"path node expected");
-            return nil;
+        let closingIndex = filter.indexOfMatchingCloseCharacter(index: filter.position,
+                                                                openChar: openChar,
+                                                                closeChar: closeChar,
+                                                                skipStrings: true,
+                                                                skipRegex: false)
+        if closingIndex >= 0 {
+            error("String not closed. Expected \(kSingleQuoteChar) in \(filter)")
+            return nil
         }
         
-        SMJPathNode *pathNode = (SMJPathNode *)left;
+        filter.position = closingIndex + 1
         
-        left = [pathNode copyWithExistsCheckAndShouldExists:pathNode.shouldExists];
-        right = pathNode.shouldExists ? [SMJValueNodes valueNodeTRUE] : [SMJValueNodes valueNodeFALSE];
-
-        operator = [SMJRelationalOperator relationalOperatorEXISTS];
+        guard let json = filter.substring(begin, filter.position) else {
+            error("internal error")
+            return nil
+        }
         
-        return [SMJRelationalExpressionNode relationExpressionNodeWithLeftValue:left operator:operator rightValue:right];
- */
+        return JsonNode(hitch: json)
+    }
+    
+    func readPatternLiteral() -> PatternNode? {
+        let begin = filter.position
+        var closingIndex = filter.nextIndexOfUnescapedCharacter(character: kPatternChar)
+        
+        guard closingIndex >= 0 else {
+            error("Pattern not closed. Expected \(kPatternChar) in \(filter)")
+            return nil
+        }
+        
+        if filter.inBounds(position: closingIndex + 1) {
+            let equalSignIndex = filter.nextIndexOfCharacter(character: .equal)
+            let endIndex = equalSignIndex >= 0 ? equalSignIndex : filter.nextIndexOfUnescapedCharacter(character: kCloseParenthesisChar)
+            if let flags = filter.substring(closingIndex + 1, endIndex) {
+                closingIndex += flags.count
+            }
+        }
+        filter.position = closingIndex + 1
+        
+        guard let pattern = filter.substring(begin, filter.position) else {
+            error("internal error")
+            return nil
+        }
+        return PatternNode(regex: pattern)
+    }
+    
+    func readStringLiteral(endChar: UInt8) -> StringNode? {
+        let begin = filter.position
+        let closingSingleQuoteIndex = filter.nextIndexOfUnescapedCharacter(character: endChar)
+        
+        guard closingSingleQuoteIndex >= 0 else {
+            error("String literal does not have matching quotes. Expected \(endChar) in \(filter)")
+            return nil
+        }
+        
+        filter.position = closingSingleQuoteIndex + 1
+        
+        guard let stringLiteral = filter.substring(begin, filter.position) else {
+            error("internal error")
+            return nil
+        }
+        
+        return StringNode(hitch: stringLiteral, escape: true)
+    }
+    
+    func readNumberLiteral() -> NumberNode? {
+        let begin = filter.position
+        while filter.inBounds() && filter.isNumberCharacter(index: filter.position) {
+            filter.advance(1)
+        }
+        guard let numberLiteral = filter.substring(begin, filter.position) else {
+            error("internal error")
+            return nil
+        }
+        return NumberNode(hitch: numberLiteral)
     }
 
+    func readBooleanLiteral() -> BooleanNode? {
+        if filter.compareAndAdvance(hitch: trueHitch) {
+            return BooleanNode.true
+        }
+        if filter.compareAndAdvance(hitch: falseHitch) {
+            return BooleanNode.false
+        }
+        error("Expected boolean literal")
+        return nil
+    }
+    
+    func readPath() -> PathNode? {
+        let previousSignificantChar = filter.previousSignificantCharacter()
+        let begin = filter.position
+        
+        filter.advance(1) //skip $ and @
+        
+        while filter.inBounds() {
+            if filter.current() == .openBrace {
+                let closingSquareBracketIndex = filter.indexOfMatchingCloseCharacter(index: filter.position,
+                                                                                     openChar: .openBrace,
+                                                                                     closeChar: .closeBrace,
+                                                                                     skipStrings: true,
+                                                                                     skipRegex: false)
+                
+                guard closingSquareBracketIndex >= 0 else {
+                    error("Square brackets does not match in filter \(filter)")
+                    return nil
+                }
+                
+                filter.position = closingSquareBracketIndex + 1
+            }
+        
+        
+            let closingFunctionBracket = filter.current() == .parenClose && currentCharIsClosingFunctionBracket(lowerBound: begin)
+            let closingLogicalBracket = filter.current() == .parenClose && !closingFunctionBracket
+            
+            if filter.inBounds() == false || isRelationalOperatorChar(filter.current()) || filter.current() == .space || closingLogicalBracket {
+                break
+            }
+            
+            filter.advance(1)
+        }
+        
+        let shouldExists = previousSignificantChar != kNotChar
+        guard let pathString = filter.substring(begin, filter.position) else {
+            return nil
+        }
+        
+        return PathNode(path: pathString,
+                        existsCheck: false,
+                        shouldExists: shouldExists)
+    }
+    
+    func currentCharIsClosingFunctionBracket(lowerBound: Int) -> Bool {
+        if filter.current() != .parenClose {
+            return false
+        }
+        
+        var idx = filter.indexOfPreviousSignificantCharacter()
+        if idx == -1 || filter[idx] != .parenOpen {
+            return false
+        }
+        
+        idx -= 1
+        
+        while filter.inBounds(position: idx) && idx > lowerBound {
+            if filter[idx] == .dot {
+                return true
+            }
+            
+            idx -= 1
+        }
+        return false
+    }
+
+    func isLogicalOperatorChar(_ c: UInt8) -> Bool {
+        return c == kAndChar || c == kOrChar
+    }
+
+    func isRelationalOperatorChar(_ c: UInt8) -> Bool {
+        return c == kLessThanChar || c == kGreaterThanChar || c == kEqualChar || c == kTildeChar || c == kNotChar
+    }
 }
 
 

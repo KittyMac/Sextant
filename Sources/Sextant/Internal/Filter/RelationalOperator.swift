@@ -25,7 +25,7 @@ private let relationalOperatorSUBSETOF = Hitch("SUBSETOF")
 private let relationalOperatorANYOF = Hitch("ANYOF")
 private let relationalOperatorNONEOF = Hitch("NONEOF")
 
-enum RelationalOperator: Hitch {
+enum RelationalOperator {
     case GTE
     case LTE
     case EQ
@@ -93,6 +93,53 @@ enum RelationalOperator: Hitch {
             return relationalOperatorANYOF
         case .NONEOF:
             return relationalOperatorNONEOF
+        }
+    }
+
+    init?(hitch: Hitch) {
+        switch hitch {
+        case relationalOperatorGTE:
+            self = .GTE
+        case relationalOperatorLTE:
+            self = .LTE
+        case relationalOperatorEQ:
+            self = .EQ
+        case relationalOperatorTSEQ:
+            self = .TSEQ
+        case relationalOperatorNE:
+            self = .NE
+        case relationalOperatorTSNE:
+            self = .TSNE
+        case relationalOperatorLT:
+            self = .LT
+        case relationalOperatorGT:
+            self = .GT
+        case relationalOperatorREGEX:
+            self = .REGEX
+        case relationalOperatorNIN:
+            self = .NIN
+        case relationalOperatorIN:
+            self = .IN
+        case relationalOperatorCONTAINS:
+            self = .CONTAINS
+        case relationalOperatorALL:
+            self = .ALL
+        case relationalOperatorSIZE:
+            self = .SIZE
+        case relationalOperatorEXISTS:
+            self = .EXISTS
+        case relationalOperatorTYPE:
+            self = .TYPE
+        case relationalOperatorEMPTY:
+            self = .EMPTY
+        case relationalOperatorSUBSETOF:
+            self = .SUBSETOF
+        case relationalOperatorANYOF:
+            self = .ANYOF
+        case relationalOperatorNONEOF:
+            self = .NONEOF
+        default:
+            return nil
         }
     }
 }

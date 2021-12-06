@@ -8,7 +8,7 @@ final class PredicateContext {
     
     init(jsonObject: JsonAny,
          rootJsonObject: JsonAny,
-         pathCache: [Hitch: Path]) {
+         pathCache: [Hitch: JsonAny]) {
         self.jsonObject = jsonObject
         self.rootJsonObject = rootJsonObject
         self.pathCache = pathCache

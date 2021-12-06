@@ -1,7 +1,9 @@
 import Foundation
 import Hitch
 
-class PathNode: ValueNode {
+fileprivate let typeHitch = Hitch("path")
+
+struct PathNode: ValueNode {
     let pathString: Hitch
     let path: Path
     
@@ -25,19 +27,51 @@ class PathNode: ValueNode {
         self.shouldExists = shouldExists
     }
     
-    override func evaluate(context: PredicateContext) -> ValueNode? {
+    init?(path pathString: Hitch,
+         existsCheck: Bool,
+         shouldExists: Bool) {
+        self.pathString = pathString
+        self.existsCheck = existsCheck
+        self.shouldExists = shouldExists
+        
+        guard let path = PathCompiler.compile(query: pathString) else {
+            return nil
+        }
+        self.path = path
+    }
+
+    var description: String {
+        if existsCheck && shouldExists == false {
+            return "!\(path.description)"
+        }
+        return path.description
+    }
+    
+    var literalValue: Hitch? {
+        return description.hitch()
+    }
+    
+    var numericValue: Double? {
+        return nil
+    }
+    
+    var typeName: Hitch {
+        return typeHitch
+    }
+    
+    func evaluate(context: PredicateContext) -> ValueNode? {
         
         if existsCheck {
             
             guard let evaluationContext = path.evaluate(jsonObject: context.jsonObject,
                                                         rootJsonObject: context.rootJsonObject) else {
-                return BooleanNode(value: false)
+                return BooleanNode.false
             }
             
             if evaluationContext.jsonObject() != nil {
-                return BooleanNode(value: true)
+                return BooleanNode.true
             }
-            return BooleanNode(value: false)
+            return BooleanNode.false
         } else {
                         
             let doc = path.isRootPath() ? context.rootJsonObject : context.jsonObject

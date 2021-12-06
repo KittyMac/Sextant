@@ -1,10 +1,6 @@
 import Foundation
 import Hitch
 
-class PredicatePathToken: PathToken {
-    
-}
-
 class FilterPathTokenPredicate: ScanPredicate {
     let token: PredicatePathToken
     let evaluationContext: EvaluationContext

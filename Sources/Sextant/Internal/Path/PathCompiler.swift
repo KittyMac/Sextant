@@ -421,7 +421,7 @@ final class PathCompiler {
                 break
             } else if c == potentialStringDelimiter {
                 if inProperty {
-                    let nextSignificantChar = ci.nextSignificantCharacterFromIndex(startPosition: readPosition)
+                    let nextSignificantChar = ci.nextSignificantCharacter(index: readPosition)
                     if nextSignificantChar != .closeBrace && nextSignificantChar != .comma {
                         error("Property must be separated by comma or Property must be terminated close square bracket at index \(readPosition)")
                         return false
@@ -488,7 +488,7 @@ final class PathCompiler {
         if inBracket {
             let wildCardIndex = ci.indexOfNextSignificantCharacter(character: wildcardChar)
             
-            if ci.nextSignificantCharacterFromIndex(startPosition: wildCardIndex) != .closeBrace {
+            if ci.nextSignificantCharacter(index: wildCardIndex) != .closeBrace {
                 error("Expected wildcard token to end with ']' on position \(wildCardIndex + 1)")
                 return false
             }
@@ -522,35 +522,30 @@ final class PathCompiler {
         
         guard openBracketIndex >= 0 else { return false }
         
-        let closeBracketIndex = ci.indexOfClosingBracketFromIndex(startPosition: openBracketIndex,
-                                                                  skipStrings: true,
-                                                                  skipRegex: true)
+        let closeBracketIndex = ci.indexOfClosingBracket(index: openBracketIndex,
+                                                         skipStrings: true,
+                                                         skipRegex: true)
         
         guard closeBracketIndex >= 0 else { return false }
         
-        guard ci.nextSignificantCharacterFromIndex(startPosition: closeBracketIndex) == .closeBrace else { return false }
+        guard ci.nextSignificantCharacter(index: closeBracketIndex) == .closeBrace else { return false }
         
         let closeStatementBracketIndex = ci.indexOfNextSignificantCharacter(character: .closeBrace,
                                                                             from: closeBracketIndex)
         
-        let criteria = ci.substring(openStatementBracketIndex, closeStatementBracketIndex + 1)
+        guard let criteria = ci.substring(openStatementBracketIndex, closeStatementBracketIndex + 1) else {
+            return false
+        }
         
+        guard let predicate = FilterCompiler.compile(filter: criteria) else {
+            return false
+        }
         
+        appender.append(token: PredicatePathToken(predicate: predicate))
         
-        fatalError("TO BE IMPLEMENTED")
+        ci.position = closeStatementBracketIndex + 1
         
-        /*
-        id <SMJPredicate> predicate = [SMJFilterCompiler compileFilterString:criteria error:error];
-        
-        if (!predicate)
-            return NO;
-        
-        [appender appendPathToken:[[SMJPredicatePathToken alloc] initWithPredicate:predicate]];
-        
-        [_path setPosition:closeStatementBracketIndex + 1];
-        
-        return _path.positionAtEnd || [self readNextToken:appender error:error];
-         */
+        return ci.positionAtEnd() || readNextToken(appender: appender)
     }
 
 }

@@ -20,31 +20,38 @@ class CharacterIndex: CustomStringConvertible {
         return charSequence.description
     }
     
+    @inlinable @inline(__always)
     func substring(_ from: Int, _ to: Int) -> Hitch? {
         return charSequence.substring(from, to)
     }
     
+    @inlinable @inline(__always)
     func count() -> Int {
         return charSequence.count
     }
     
+    @inlinable @inline(__always)
     func current() -> UInt8 {
         return charSequence[position]
     }
     
+    @inlinable @inline(__always)
     func next() -> UInt8 {
         guard position < endPosition else { return 0 }
         return charSequence[position + 1]
     }
     
+    @inlinable @inline(__always)
     func advance(_ count: Int = 1) {
         position += count
     }
     
+    @inlinable @inline(__always)
     func removeFromEnd(_ count: Int = 1) {
         endPosition = endPosition - count
     }
     
+    @inlinable @inline(__always)
     func positionAtEnd() -> Bool {
         return position >= endPosition
     }
@@ -55,22 +62,27 @@ class CharacterIndex: CustomStringConvertible {
         set(newValue) { charSequence[index] = newValue }
     }
     
+    @inlinable @inline(__always)
     func last() -> UInt8 {
         return charSequence[endPosition]
     }
     
+    @inlinable @inline(__always)
     func first() -> UInt8 {
         return charSequence[position]
     }
     
+    @inlinable @inline(__always)
     func inBounds(position: Int) -> Bool {
         return position >= 0 && position <= endPosition
     }
     
+    @inlinable @inline(__always)
     func inBounds() -> Bool {
         return position >= 0 && position <= endPosition
     }
     
+    @inlinable @inline(__always)
     func hasMoreCharacters() -> Bool {
         return position < endPosition
     }
@@ -98,9 +110,22 @@ class CharacterIndex: CustomStringConvertible {
         return self
     }
     
+    func compareAndAdvance(hitch: Hitch) -> Bool {
+        if charSequence.starts(with: hitch) {
+            advance(hitch.count)
+            return true
+        }
+        return false
+    }
+    
     func nextIndexOfUnescapedCharacter(character: UInt8) -> Int {
         return nextIndexOfUnescapedCharacter(character: character,
                                              from: position)
+    }
+    
+    func isNumberCharacter(index: Int) -> Bool {
+        let character = charSequence[index]
+        return (character >= .zero && character <= .nine) || character == .minus  || character == .dot
     }
 
     func nextIndexOfUnescapedCharacter(character: UInt8,
@@ -120,11 +145,38 @@ class CharacterIndex: CustomStringConvertible {
         return -1
     }
     
+    func indexOfPreviousSignificantCharacter() -> Int {
+        return indexOfPreviousSignificantCharacter(index: position)
+    }
+    
+    func indexOfPreviousSignificantCharacter(index startPosition: Int) -> Int {
+        var readPosition = startPosition - 1;
+        
+        while inBounds() && charSequence[readPosition] == .space {
+            readPosition -= 1
+        }
+        
+        guard inBounds() else {
+            return -1
+        }
+        return readPosition
+    }
+    
+    func previousSignificantCharacter(index startPosition: Int) -> UInt8 {
+        let previousSignificantCharIndex = indexOfPreviousSignificantCharacter(index: startPosition)
+        guard previousSignificantCharIndex >= 0 else { return .space }
+        return charSequence[previousSignificantCharIndex]
+    }
+    
+    func previousSignificantCharacter() -> UInt8 {
+        return previousSignificantCharacter(index: position)
+    }
+    
     func nextSignificantCharacter() -> UInt8 {
-        return nextSignificantCharacterFromIndex(startPosition: position)
+        return nextSignificantCharacter(index: position)
     }
 
-    func nextSignificantCharacterFromIndex(startPosition: Int) -> UInt8 {
+    func nextSignificantCharacter(index startPosition: Int) -> UInt8 {
         var readPosition = startPosition + 1
         
         while inBounds(position: readPosition) && charSequence[readPosition] == .space {
@@ -192,11 +244,11 @@ class CharacterIndex: CustomStringConvertible {
         return -1
     }
     
-    func indexOfMatchingCloseCharacterFromIndex(startPosition: Int,
-                                                openChar: UInt8,
-                                                closeChar: UInt8,
-                                                skipStrings: Bool,
-                                                skipRegex: Bool) -> Int {
+    func indexOfMatchingCloseCharacter(index startPosition: Int,
+                                       openChar: UInt8,
+                                       closeChar: UInt8,
+                                       skipStrings: Bool,
+                                       skipRegex: Bool) -> Int {
         guard charSequence[startPosition] == openChar else {
             error("Expected \(openChar) but found \(charSequence[startPosition])")
             return -1
@@ -253,14 +305,14 @@ class CharacterIndex: CustomStringConvertible {
         return -1
     }
     
-    func indexOfClosingBracketFromIndex(startPosition: Int,
-                                        skipStrings: Bool,
-                                        skipRegex: Bool) -> Int {
-        return indexOfMatchingCloseCharacterFromIndex(startPosition: startPosition,
-                                                      openChar: .parenOpen,
-                                                      closeChar: .parenClose,
-                                                      skipStrings: skipStrings,
-                                                      skipRegex: skipRegex)
+    func indexOfClosingBracket(index startPosition: Int,
+                               skipStrings: Bool,
+                               skipRegex: Bool) -> Int {
+        return indexOfMatchingCloseCharacter(index: startPosition,
+                                             openChar: .parenOpen,
+                                             closeChar: .parenClose,
+                                             skipStrings: skipStrings,
+                                             skipRegex: skipRegex)
     }
 }
 
