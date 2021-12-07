@@ -82,9 +82,6 @@ struct PathNode: ValueNode {
             if let _ = object as? NSNull {
                 return NullNode()
             }
-            if let object = object as? Bool {
-                return BooleanNode(value: object)
-            }
             if let object = object as? Int {
                 return NumberNode(value: object)
             }
@@ -96,6 +93,9 @@ struct PathNode: ValueNode {
             }
             if let object = object as? NSNumber {
                 return NumberNode(value: object.doubleValue)
+            }
+            if let object = object as? Bool {
+                return BooleanNode(value: object)
             }
             if let object = object as? Hitch {
                 return StringNode(hitch: object, escape: false)

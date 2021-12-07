@@ -58,12 +58,15 @@ class CompiledPath: Path {
                                    parentPath: op,
                                    jsonObject: jsonObject,
                                    evaluationContext: context)
-        if result != .done {
-            error("\(result)")
+        switch result {
+        case .error(let message):
+            error("\(message)")
             return nil
+        case .aborted:
+            return nil
+        default:
+            return context
         }
-        
-        return context
     }
     
     override func isDefinite() -> Bool {
