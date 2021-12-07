@@ -168,13 +168,13 @@ class PathCompilerTest: TestsBase {
     func test_issue_predicate_can_have_single_quotes() {
         let json = #"{"logs":[{"message":"'it'","id":2}]}"#
         XCTAssertEqual(json.query(values: "$.logs[?(@.message == \"'it'\")].message").first as? String, #"'it'"#)
-        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == \"'it'\")].message").first as? String, #"'it'"#)
+        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == \"'it'\")].message").first as? String, #"$['logs'][0]['message']"#)
     }
     
     func test_issue_predicate_can_have_single_quotes_escaped() {
         let json = #"{"logs":[{"message":"'it'","id":2}]}"#
         XCTAssertEqual(json.query(values: "$.logs[?(@.message == '\\'it\\'')].message").first as? String, #"'it'"#)
-        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == '\\'it\\'')].message").first as? String, #"'it'"#)
+        XCTAssertEqual(json.query(paths: "$.logs[?(@.message == '\\'it\\'')].message").first as? String, #"$['logs'][0]['message']"#)
     }
     
     func test_issue_predicate_can_have_square_bracket_in_prop() {

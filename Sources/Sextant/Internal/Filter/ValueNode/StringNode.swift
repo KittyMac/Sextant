@@ -17,7 +17,7 @@ struct StringNode: ValueNode {
             if start == .singleQuote && end == .singleQuote {
                 useSingleQuote = true
                 localValue = localValue.substring(1, hitch.count - 1) ?? localValue
-            } else if start == .singleQuote && end == .singleQuote {
+            } else if start == .doubleQuote && end == .doubleQuote {
                 useSingleQuote = false
                 localValue = localValue.substring(1, hitch.count - 1) ?? localValue
             } else {
@@ -33,6 +33,11 @@ struct StringNode: ValueNode {
         } else {
             self.value = localValue
         }
+    }
+    
+    init(hitch: Hitch) {
+        useSingleQuote = false
+        self.value = hitch
     }
         
     var description: String {

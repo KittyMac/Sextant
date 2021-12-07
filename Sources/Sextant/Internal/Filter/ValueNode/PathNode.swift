@@ -101,7 +101,7 @@ struct PathNode: ValueNode {
                 return StringNode(hitch: object, escape: false)
             }
             if let object = object as? String {
-                return StringNode(hitch: object.hitch(), escape: false)
+                return StringNode(hitch: object.hitch())
             }
             if let object = object as? JsonArray {
                 return JsonNode(jsonObject: object)
