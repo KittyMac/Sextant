@@ -32,19 +32,18 @@ class ScanPathToken: PathToken {
                       evaluationContext: EvaluationContext,
                       predicate: ScanPredicate) -> EvaluationStatus
     {
-        if let array = jsonObject as? JsonArray {
-            return walk(array: path,
-                        currentPath: currentPath,
-                        parentPath: parentPath,
-                        jsonObject: array,
-                        evaluationContext: evaluationContext,
-                        predicate: predicate)
-        }
         if let dictionary = jsonObject as? JsonDictionary {
             return walk(object: path,
                         currentPath: currentPath,
                         parentPath: parentPath,
                         jsonObject: dictionary,
+                        evaluationContext: evaluationContext,
+                        predicate: predicate)
+        } else if let array = jsonObject as? JsonArray {
+            return walk(array: path,
+                        currentPath: currentPath,
+                        parentPath: parentPath,
+                        jsonObject: array,
                         evaluationContext: evaluationContext,
                         predicate: predicate)
         }

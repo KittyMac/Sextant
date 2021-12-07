@@ -4,6 +4,13 @@ import class Foundation.Bundle
 import Sextant
 
 func XCTAssertEqualAny(_ first: Any, _ second: Any) {
+    if let first = first as? [String],
+       let second = second as? [String] {
+        XCTAssertEqual(first.sorted().joined(),
+                       second.sorted().joined())
+        return
+    }
+    
     guard let firstData = try? JSONSerialization.data(withJSONObject: first, options: [.sortedKeys]) else { XCTAssertTrue(false); return }
     guard let secondData = try? JSONSerialization.data(withJSONObject: second, options: [.sortedKeys]) else { XCTAssertTrue(false); return }
     XCTAssertEqual(String(data: firstData, encoding: .utf8),

@@ -12,7 +12,8 @@ class FilterPathTokenPredicate: ScanPredicate {
     }
 
     override func matchesJsonObject(jsonObject: JsonAny) -> Bool {
-        fatalError("TO BE IMPLEMENTED")
-        // return [_predicatePathToken acceptJsonObject:jsonObject rootJsonObject:_ctx.rootJsonObject configuration:_ctx.configuration evaluationContext:_ctx];
+        return token.accept(jsonObject: jsonObject,
+                            rootJsonObject: evaluationContext.rootJsonObject,
+                            evaluationContext: evaluationContext)
     }
 }
