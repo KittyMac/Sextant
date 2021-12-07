@@ -2,18 +2,26 @@ import Foundation
 import Hitch
 
 final class FunctionPathToken: PathToken {
-    var fragment: Hitch? = nil
+    var fragment: Hitch
     
-    var functionName: Hitch? = nil
-    var functionParams: [Parameter]? = nil
-    
-    init(fragment: Hitch) {
-        self.fragment = Hitch(hitch: fragment).append(UInt8.parenOpen).append(UInt8.parenClose)
-    }
-    
-    init(name: Hitch,
+    var functionName: Hitch
+    var functionParams: [Parameter]
+        
+    init(fragment: Hitch,
          parameters: [Parameter]) {
-        self.functionName = name
+        
+        if parameters.count == 0 {
+            self.fragment = Hitch(hitch: fragment).append(UInt8.parenOpen).append(UInt8.parenClose)
+        } else {
+            self.fragment = Hitch(hitch: fragment)
+                .append(UInt8.parenOpen)
+                .append(UInt8.dot)
+                .append(UInt8.dot)
+                .append(UInt8.dot)
+                .append(UInt8.parenClose)
+        }
+        
+        self.functionName = self.fragment
         self.functionParams = parameters
     }
     
@@ -29,7 +37,7 @@ final class FunctionPathToken: PathToken {
     }
     
     override func pathFragment() -> String {
-        return "." + (fragment ?? "TO BE IMPLEMENTED").description
+        return "." + fragment.description
     }
 }
 

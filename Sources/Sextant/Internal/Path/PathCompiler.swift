@@ -196,9 +196,9 @@ final class PathCompiler {
         }
         
         if let property = ci.substring(startPosition, endPosition) {
-            if let functionParameters = functionParameters {
-                appender.append(token: FunctionPathToken(name: property,
-                                                         parameters: functionParameters))
+            if isFunction {
+                appender.append(token: FunctionPathToken(fragment: property,
+                                                         parameters: functionParameters ?? []))
             } else {
                 guard let pathToken = PropertyPathToken(properties: [property],
                                                         wrap: UInt8.singleQuote) else { return false }

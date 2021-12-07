@@ -14,6 +14,10 @@ class CompiledPath: Path {
     }
     
     private func invertScannerFunctionRelationshipWithToken(path: RootPathToken) -> RootPathToken {
+        
+        guard path.isFunctionPath() else { return path }
+        guard path.next as? ScanPathToken != nil else { return path }
+        
         var token: PathToken? = path
         var prior: PathToken? = nil
         
