@@ -10,6 +10,11 @@ func XCTAssertEqualAny(_ first: Any, _ second: Any) {
                        second.sorted().joined())
         return
     }
+    if let first = first as? String,
+       let second = second as? String {
+        XCTAssertEqual(first, second)
+        return
+    }
     
     guard let firstData = try? JSONSerialization.data(withJSONObject: first, options: [.sortedKeys]) else { XCTAssertTrue(false); return }
     guard let secondData = try? JSONSerialization.data(withJSONObject: second, options: [.sortedKeys]) else { XCTAssertTrue(false); return }
@@ -22,7 +27,7 @@ class TestsBase: XCTestCase {
     
     func decode(json jsonString: String) -> JsonAny {
         guard let jsonData = jsonString.data(using: .utf8) else { fatalError("unable to create json data") }
-        guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else { fatalError("unable to serialize json string") }
+        guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) else { fatalError("unable to serialize json string") }
         
         return jsonObject
     }

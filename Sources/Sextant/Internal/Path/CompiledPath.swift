@@ -59,6 +59,7 @@ class CompiledPath: Path {
                                    jsonObject: jsonObject,
                                    evaluationContext: context)
         if result != .done {
+            error("\(result)")
             return nil
         }
         
