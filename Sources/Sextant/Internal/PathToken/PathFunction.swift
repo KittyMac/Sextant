@@ -4,15 +4,15 @@ import Hitch
 typealias PathFunctionNumberBlock = (Double) -> Void
 typealias PathFunctionStringBlock = (String) -> Void
 
-private let functionAVG = Hitch("avg()")
-private let functionSTDDEV = Hitch("stddev()")
-private let functionSUM = Hitch("sum()")
-private let functionMIN = Hitch("min()")
-private let functionMAX = Hitch("max()")
-private let functionCONCAT = Hitch("concat()")
-private let functionLENGTH = Hitch("length()")
-private let functionSIZE = Hitch("size()")
-private let functionAPPEND = Hitch("append()")
+private let functionAVG = Hitch("avg")
+private let functionSTDDEV = Hitch("stddev")
+private let functionSUM = Hitch("sum")
+private let functionMIN = Hitch("min")
+private let functionMAX = Hitch("max")
+private let functionCONCAT = Hitch("concat")
+private let functionLENGTH = Hitch("length")
+private let functionSIZE = Hitch("size")
+private let functionAPPEND = Hitch("append")
 
 enum PathFunction {
     case AVG
@@ -49,26 +49,25 @@ enum PathFunction {
     }
 
     init?(hitch: Hitch) {
-        switch hitch {
-        case functionAVG:
+        if (hitch.starts(with: functionAVG)) {
             self = .AVG
-        case functionSTDDEV:
+        } else if (hitch.starts(with: functionSTDDEV)) {
             self = .STDDEV
-        case functionSUM:
+        } else if (hitch.starts(with: functionSUM)) {
             self = .SUM
-        case functionMIN:
+        } else if (hitch.starts(with: functionMIN)) {
             self = .MIN
-        case functionMAX:
+        } else if (hitch.starts(with: functionMAX)) {
             self = .MAX
-        case functionCONCAT:
+        } else if (hitch.starts(with: functionCONCAT)) {
             self = .CONCAT
-        case functionLENGTH:
+        } else if (hitch.starts(with: functionLENGTH)) {
             self = .LENGTH
-        case functionSIZE:
+        } else if (hitch.starts(with: functionSIZE)) {
             self = .SIZE
-        case functionAPPEND:
+        } else if (hitch.starts(with: functionAPPEND)) {
             self = .APPEND
-        default:
+        } else {
             return nil
         }
     }
@@ -107,7 +106,7 @@ enum PathFunction {
             }
             let combined = Hitch(capacity: hitches.reduce(0) { $0 + $1.count })
             hitches.forEach { combined.append($0) }
-            return combined
+            return combined.description
         case .LENGTH, .SIZE:
             if let array = jsonObject as? JsonArray {
                 return array.count
@@ -124,9 +123,10 @@ enum PathFunction {
             return nil
             
         case .APPEND:
-            guard jsonObject as? JsonArray != nil else { return jsonObject }
+            guard let array = jsonObject as? JsonArray else { return jsonObject }
             
             var result = [JsonAny]()
+            result.append(contentsOf: array)
             for param in parameters {
                 result.append(param.value())
             }
@@ -142,7 +142,7 @@ enum PathFunction {
             values.append(contentsOf: array.compactMap { $0 as? Double })
         }
         
-        values.append(contentsOf: parameters.compactMap { $0.value() as? Double })
+        values.append(contentsOf: Parameter.list(parameters: parameters) ?? [])
         
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")
@@ -160,7 +160,7 @@ enum PathFunction {
             values.append(contentsOf: array.compactMap { $0 as? String }.map { Hitch(stringLiteral: $0) } )
         }
         
-        values.append(contentsOf: parameters.compactMap { $0.json })
+        values.append(contentsOf: Parameter.list(parameters: parameters) ?? [])
         
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")

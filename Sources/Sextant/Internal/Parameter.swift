@@ -11,7 +11,7 @@ final class Parameter {
     var lateBinding: ParameterLateBinding? = nil
     
     init(json: Hitch) {
-        self.json = json
+        self.json = Hitch(hitch: json)
     }
     
     init(path: Path) {

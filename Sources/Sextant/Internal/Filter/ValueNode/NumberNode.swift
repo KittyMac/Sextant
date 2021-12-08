@@ -24,9 +24,8 @@ struct NumberNode: ValueNode, Equatable {
     }
     
     init(hitch: Hitch) {
-        let string: String = hitch.description
-        self.intValue = Int(string)
-        self.doubleValue = Double(string)
+        self.intValue = hitch.toInt()
+        self.doubleValue = hitch.toDouble()
     }
     
     var description: String {

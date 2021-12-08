@@ -64,6 +64,32 @@ final class EvaluationContext {
         
         return valueResults
     }
+    
+    func resultsValues() -> JsonArray? {
+        if path.isDefinite() {
+            if (resultIndex == 0 || valueResults.count == 0) {
+                error("No results for path: \(path)")
+                return nil;
+            }
+            
+            return [valueResults[valueResults.count - 1]]
+        }
+        
+        return valueResults
+    }
+    
+    func resultsPaths() -> JsonArray? {
+        if path.isDefinite() {
+            if (resultIndex == 0 || valueResults.count == 0) {
+                error("No results for path: \(path)")
+                return nil;
+            }
+            
+            return [pathResults[pathResults.count - 1]]
+        }
+        
+        return pathResults
+    }
 }
 
 /*

@@ -80,15 +80,19 @@ final class FunctionPathToken: PathToken {
                                                                 rootJsonObject: evaluationContext.rootJsonObject) else {
                         return nil
                     }
-                    return evaluationContext.jsonObject
+                    return evaluationContext.jsonObject()
                 }
                 param.evaluated = true
             }
             
             if let json = param.json {
                 param.lateBinding = { parameter in
-                    return try? JSONSerialization.jsonObject(with: json.dataNoCopy(),
-                                                             options: [])
+                    let value = try? JSONSerialization.jsonObject(with: json.dataNoCopy(),
+                                                                  options: [.fragmentsAllowed])
+                    if let value = value as? String {
+                        return Hitch(stringLiteral: value)
+                    }
+                    return value
                 }
                 param.evaluated = true
             }

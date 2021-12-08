@@ -188,23 +188,20 @@ public final class Sextant {
     
     public func query(_ root: JsonAny,
                       values path: Hitch) -> JsonArray? {
-        guard let path = cachedPath(query: path) else { return [] }
+        guard let path = cachedPath(query: path) else { return nil }
         if let result = path.evaluate(jsonObject: root,
                                       rootJsonObject: root) {
-            if result.jsonObject() != nil {
-                return result.valueResults
-            }
-            return nil
+            return result.resultsValues()
         }
         return nil
     }
     
     public func query(_ root: JsonAny,
                       paths path: Hitch) -> JsonArray? {
-        guard let path = cachedPath(query: path) else { return [] }
+        guard let path = cachedPath(query: path) else { return nil }
         if let result = path.evaluate(jsonObject: root,
                                       rootJsonObject: root) {
-            return result.pathResults
+            return result.resultsPaths()
         }
         return nil
     }
