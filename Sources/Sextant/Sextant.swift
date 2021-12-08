@@ -128,6 +128,13 @@ public extension String {
         guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) else { return [] }
         return Sextant.shared.query(jsonObject, paths: path)
     }
+    
+    func query(values path: String) -> JsonArray {
+        self.query(values: Hitch(stringLiteral: path))
+    }
+    func query(paths path: String) -> JsonArray {
+        self.query(paths: Hitch(stringLiteral: path))
+    }
 }
 
 public extension JsonAny {

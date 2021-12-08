@@ -104,4 +104,21 @@ class TestsBase: XCTestCase {
         ]
     }
     """
+    
+    let jsonTextSeries = """
+        {
+            "urls": [
+                "http://api.worldbank.org/countries/all/?format=json",
+                "http://api.worldbank.org/countries/all/?format=json"
+            ],
+            "text": [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f"
+            ]
+        }
+    """
 }

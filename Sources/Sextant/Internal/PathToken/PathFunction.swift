@@ -102,13 +102,35 @@ enum PathFunction {
         case .MAX:
             return numerals(jsonObject: jsonObject, parameters: parameters)?.max()
         case .CONCAT:
-            fatalError("TO BE IMPLEMENTED")
-        case .LENGTH:
-            fatalError("TO BE IMPLEMENTED")
-        case .SIZE:
-            fatalError("TO BE IMPLEMENTED")
+            guard let hitches = hitches(jsonObject: jsonObject, parameters: parameters) else {
+                return nil
+            }
+            let combined = Hitch(capacity: hitches.reduce(0) { $0 + $1.count })
+            hitches.forEach { combined.append($0) }
+            return combined
+        case .LENGTH, .SIZE:
+            if let array = jsonObject as? JsonArray {
+                return array.count
+            }
+            if let dictionary = jsonObject as? JsonDictionary {
+                return dictionary.count
+            }
+            if let hitch = jsonObject as? Hitch {
+                return hitch.count
+            }
+            if let string = jsonObject as? String {
+                return string.count
+            }
+            return nil
+            
         case .APPEND:
-            fatalError("TO BE IMPLEMENTED")
+            guard jsonObject as? JsonArray != nil else { return jsonObject }
+            
+            var result = [JsonAny]()
+            for param in parameters {
+                result.append(param.value())
+            }
+            return result
         }
     }
     
@@ -121,6 +143,24 @@ enum PathFunction {
         }
         
         values.append(contentsOf: parameters.compactMap { $0.value() as? Double })
+        
+        guard values.count > 0  else {
+            error("Aggregation function attempted to calculate value using empty array")
+            return nil
+        }
+        
+        return values
+    }
+    
+    func hitches(jsonObject: JsonAny,
+                 parameters: [Parameter]) -> [Hitch]? {
+        var values = [Hitch]()
+        
+        if let array = jsonObject as? JsonArray {
+            values.append(contentsOf: array.compactMap { $0 as? String }.map { Hitch(stringLiteral: $0) } )
+        }
+        
+        values.append(contentsOf: parameters.compactMap { $0.json })
         
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")
