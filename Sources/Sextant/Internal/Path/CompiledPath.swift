@@ -62,8 +62,6 @@ class CompiledPath: Path {
         case .error(let message):
             error("\(message)")
             return nil
-        case .aborted:
-            return nil
         default:
             return context
         }

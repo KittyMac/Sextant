@@ -38,7 +38,7 @@ final class RootPathToken: PathToken {
             return next.evaluate(currentPath: rootToken,
                                  parentPath: parentPath,
                                  jsonObject: jsonObject,
-                                evaluationContext: evaluationContext)
+                                 evaluationContext: evaluationContext)
         } else {
             let op = evaluationContext.forUpdate ? parentPath : Path.nullPath()
             

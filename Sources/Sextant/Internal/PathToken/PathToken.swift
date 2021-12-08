@@ -69,6 +69,8 @@ class PathToken: CustomStringConvertible {
                                       property: property,
                                       wrap: .singleQuote)
             
+            let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject, property: property) : Path.nullPath()
+            
             let propertyVal = read(property: property,
                                    jsonObject: jsonObject,
                                    evaluationContext: evaluationContext)
@@ -79,7 +81,15 @@ class PathToken: CustomStringConvertible {
                 // Better safe than sorry.
                 
                 if isLeaf() {
-                    return .aborted
+                    if let jsonObject = jsonObject as? JsonDictionary,
+                       jsonObject.keys.contains(property.description) {
+                        if evaluationContext.add(path: evalPath,
+                                                 operation: path,
+                                                 jsonObject: NSNull()) == .aborted {
+                            return .aborted
+                        }
+                    }
+                    return .done
                 } else {
                     if (isUpstreamDefinite() && isTokenDefinite()) == false {
                         return .done
@@ -87,8 +97,6 @@ class PathToken: CustomStringConvertible {
                     return .error("Missing property in path \(evalPath)")
                 }
             }
-            
-            let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject, property: property) : Path.nullPath()
             
             if let next = next {
                 let result = next.evaluate(currentPath: evalPath,

@@ -3,7 +3,10 @@ import class Foundation.Bundle
 
 import Sextant
 
-func XCTAssertEqualAny(_ first: Any, _ second: Any) {
+func XCTAssertEqualAny(_ first: Any?, _ second: Any?) {
+    guard let first = first else { return XCTAssertTrue(first == nil && second == nil) }
+    guard let second = second else { return XCTAssertTrue(false) }
+    
     if let first = first as? [String],
        let second = second as? [String] {
         XCTAssertEqual(first.sorted().joined(),
@@ -15,6 +18,19 @@ func XCTAssertEqualAny(_ first: Any, _ second: Any) {
         XCTAssertEqual(first, second)
         return
     }
+    if let first = first as? Int,
+       let second = second as? Int {
+        XCTAssertEqual(first, second)
+        return
+    }
+    if let first = first as? Double,
+       let second = second as? Double {
+        XCTAssertEqual(first, second)
+        return
+    }
+    
+    guard first as? JsonDictionary != nil || first as? JsonArray != nil else { return XCTAssertTrue(false) }
+    guard second as? JsonDictionary != nil || second as? JsonArray != nil else { return XCTAssertTrue(false) }
     
     guard let firstData = try? JSONSerialization.data(withJSONObject: first, options: [.sortedKeys]) else { XCTAssertTrue(false); return }
     guard let secondData = try? JSONSerialization.data(withJSONObject: second, options: [.sortedKeys]) else { XCTAssertTrue(false); return }

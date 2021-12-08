@@ -10,7 +10,7 @@ class NumericPathFunctionTest: TestsBase {
     }
     
     func testAverageOfEmptyListNegative() {
-        XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.avg()"), [])
+        XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.avg()"), nil)
     }
     
     func testSumOfDouble() {
@@ -18,7 +18,7 @@ class NumericPathFunctionTest: TestsBase {
     }
     
     func testSumOfEmptyListNegative() {
-        XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.sum()"), [])
+        XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.sum()"), nil)
     }
     
     func testMaxOfDouble() {
@@ -26,7 +26,7 @@ class NumericPathFunctionTest: TestsBase {
     }
     
     func testMaxOfEmptyListNegative() {
-        XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.max()"), [])
+        XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.max()"), nil)
     }
     
     func testMinOfDouble() {
@@ -34,7 +34,7 @@ class NumericPathFunctionTest: TestsBase {
     }
     
     func testMinOfEmptyListNegative() {
-        XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.min()"), [])
+        XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.min()"), nil)
     }
     
     func testStdDevOfDouble() {
@@ -42,6 +42,6 @@ class NumericPathFunctionTest: TestsBase {
     }
     
     func testStddevOfEmptyListNegative() {
-        XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.stddev()"), [])
+        XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.stddev()"), nil)
     }
 }

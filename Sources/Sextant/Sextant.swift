@@ -118,48 +118,48 @@ enum EvaluationStatus: Equatable {
 }
 
 public extension String {
-    func query(values path: Hitch) -> JsonArray {
+    func query(values path: Hitch) -> JsonArray? {
         guard let jsonData = self.data(using: .utf8) else { return [] }
         guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) else { return [] }
         return Sextant.shared.query(jsonObject, values: path)
     }
-    func query(paths path: Hitch) -> JsonArray {
+    func query(paths path: Hitch) -> JsonArray? {
         guard let jsonData = self.data(using: .utf8) else { return [] }
         guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) else { return [] }
         return Sextant.shared.query(jsonObject, paths: path)
     }
     
-    func query(values path: String) -> JsonArray {
+    func query(values path: String) -> JsonArray? {
         self.query(values: Hitch(stringLiteral: path))
     }
-    func query(paths path: String) -> JsonArray {
+    func query(paths path: String) -> JsonArray? {
         self.query(paths: Hitch(stringLiteral: path))
     }
 }
 
 public extension JsonAny {
-    func query(values path: Hitch) -> JsonArray {
+    func query(values path: Hitch) -> JsonArray? {
         return Sextant.shared.query(self, values: path)
     }
-    func query(paths path: Hitch) -> JsonArray {
+    func query(paths path: Hitch) -> JsonArray? {
         return Sextant.shared.query(self, paths: path)
     }
 }
 
 public extension JsonArray {
-    func query(values path: Hitch) -> JsonArray {
+    func query(values path: Hitch) -> JsonArray? {
         return Sextant.shared.query(self, values: path)
     }
-    func query(paths path: Hitch) -> JsonArray {
+    func query(paths path: Hitch) -> JsonArray? {
         return Sextant.shared.query(self, paths: path)
     }
 }
 
 public extension JsonDictionary {
-    func query(values path: Hitch) -> JsonArray {
+    func query(values path: Hitch) -> JsonArray? {
         return Sextant.shared.query(self, values: path)
     }
-    func query(paths path: Hitch) -> JsonArray {
+    func query(paths path: Hitch) -> JsonArray? {
         return Sextant.shared.query(self, paths: path)
     }
 }
@@ -169,9 +169,12 @@ public final class Sextant {
     private init() { }
 
     private var cachedPaths = [Hitch: Path]()
+    private var lock = NSLock()
     
     // TODO: PROTECT THIS WITH A LOCK
     private func cachedPath(query: Hitch) -> Path? {
+        lock.lock(); defer { lock.unlock() }
+        
         if let path = cachedPaths[query] {
             return path
         }
@@ -184,23 +187,26 @@ public final class Sextant {
     }
     
     public func query(_ root: JsonAny,
-                      values path: Hitch) -> JsonArray {
+                      values path: Hitch) -> JsonArray? {
         guard let path = cachedPath(query: path) else { return [] }
         if let result = path.evaluate(jsonObject: root,
                                       rootJsonObject: root) {
-            return result.valueResults
+            if result.jsonObject() != nil {
+                return result.valueResults
+            }
+            return nil
         }
-        return []
+        return nil
     }
     
     public func query(_ root: JsonAny,
-                      paths path: Hitch) -> JsonArray {
+                      paths path: Hitch) -> JsonArray? {
         guard let path = cachedPath(query: path) else { return [] }
         if let result = path.evaluate(jsonObject: root,
                                       rootJsonObject: root) {
             return result.pathResults
         }
-        return []
+        return nil
     }
     
 }
