@@ -4,6 +4,7 @@ import Hitch
 typealias ParameterLateBinding = ((Parameter) -> JsonAny)
 
 final class Parameter {
+    var evaluated: Bool = false
     var json: Hitch? = nil
     var path: Path? = nil
     var cachedValue: JsonAny = nil

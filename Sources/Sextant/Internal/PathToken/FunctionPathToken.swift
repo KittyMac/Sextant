@@ -1,11 +1,14 @@
 import Foundation
 import Hitch
 
+fileprivate let hitchDot = Hitch(".")
+
 final class FunctionPathToken: PathToken {
     var fragment: Hitch
     
     var functionName: Hitch
     var functionParams: [Parameter]
+    var pathFunction: PathFunction?
         
     init(fragment: Hitch,
          parameters: [Parameter]) {
@@ -23,13 +26,73 @@ final class FunctionPathToken: PathToken {
         
         self.functionName = self.fragment
         self.functionParams = parameters
+        self.pathFunction = PathFunction(hitch: self.fragment)
     }
     
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
                            evaluationContext: EvaluationContext) -> EvaluationStatus {
-        fatalError("TO BE IMPLEMENTED")
+        guard let pathFunction = pathFunction else {
+            return .error("Unknown path function \(pathFragment())")
+        }
+        
+        evaluateParameters(currentPath: currentPath,
+                           parentPath: parentPath,
+                           jsonObject: jsonObject,
+                           evaluationContext: evaluationContext)
+        
+        guard let result = pathFunction.invoke(currentPath: currentPath,
+                                               parentPath: parentPath,
+                                               jsonObject: jsonObject,
+                                               evaluationContext: evaluationContext,
+                                               parameters: functionParams) else {
+            return .error("Path function invocation failed for \(pathFragment())")
+        }
+        
+        let evalResult = evaluationContext.add(path: Hitch.combine(currentPath, hitchDot, functionName),
+                                               operation: parentPath,
+                                               jsonObject: result)
+        guard evalResult == .done else { return evalResult }
+        
+        if let next = next {
+            return next.evaluate(currentPath: currentPath,
+                                 parentPath: parentPath,
+                                 jsonObject: result,
+                                 evaluationContext: evaluationContext)
+        }
+        
+        return .done
+    }
+    
+    func evaluateParameters(currentPath: Hitch,
+                            parentPath: Path,
+                            jsonObject: JsonAny,
+                            evaluationContext: EvaluationContext) {
+
+        for param in functionParams {
+            guard param.evaluated == false else { continue }
+            
+            
+            if let path = param.path {
+                param.lateBinding = { parameter in
+                    guard let evaluationContext = path.evaluate(jsonObject: evaluationContext.rootJsonObject,
+                                                                rootJsonObject: evaluationContext.rootJsonObject) else {
+                        return nil
+                    }
+                    return evaluationContext.jsonObject
+                }
+                param.evaluated = true
+            }
+            
+            if let json = param.json {
+                param.lateBinding = { parameter in
+                    return try? JSONSerialization.jsonObject(with: json.dataNoCopy(),
+                                                             options: [])
+                }
+                param.evaluated = true
+            }
+        }
     }
     
     override func isTokenDefinite() -> Bool {
@@ -41,96 +104,3 @@ final class FunctionPathToken: PathToken {
     }
 }
 
-/*
-- (SMJEvaluationStatus)evaluateWithCurrentPath:(NSString *)currentPath parentPathRef:(SMJPathRef *)parent jsonObject:(id)jsonObject evaluationContext:(SMJEvaluationContextImpl *)context error:(NSError **)error
-{
-	id <SMJPathFunction> pathFunction = [SMJPathFunctionFactory pathFunctionForName:_functionName error:error];
-	
-	if (!pathFunction)
-		return SMJEvaluationStatusError;
-	
-	[self evaluateParametersWithCurrentPathString:currentPath parentPathRef:parent jsonObject:jsonObject context:context];
-	
-	id result = [pathFunction invokeWithCurrentPathString:currentPath parentPath:parent jsonObject:jsonObject evaluationContext:context parameters:_functionParams error:error];
-	
-	if (!result)
-		return SMJEvaluationStatusError;
-	
-	if ([context addResult:[NSString stringWithFormat:@"%@.%@", currentPath, _functionName] operation:parent jsonObject:result] == SMJEvaluationContextStatusAborted)
-		return SMJEvaluationStatusAborted;
-	
-	if (self.leaf == NO)
-		return [self.next evaluateWithCurrentPath:currentPath parentPathRef:parent jsonObject:result evaluationContext:context error:error];
-	
-	return SMJEvaluationStatusDone;
-}
-
-- (void)evaluateParametersWithCurrentPathString:(NSString *)currentPath parentPathRef:(SMJPathRef *)parent jsonObject:(id)jsonObject context:(SMJEvaluationContextImpl *)context
-{
-	if (!_functionParams)
-		return;
-	
-	for (SMJParameter *param in _functionParams)
-	{
-		if (param.evaluated)
-			continue;
-		
-		switch (param.type)
-		{
-			case SMJParamTypePath:
-			{
-				SMJParamLateBinding lateBinding = ^ id _Nullable (SMJParameter *parameter, NSError **lateError) {
-					
-					id <SMJPath> path = parameter.path;
-					id <SMJEvaluationContext> evaluationContext = [path evaluateJsonObject:context.rootJsonObject rootJsonObject:context.rootJsonObject configuration:context.configuration error:lateError];
-					
-					if (!evaluationContext)
-						return nil;
-					
-					return [evaluationContext jsonObjectWithError:lateError];
-				};
-				
-				param.lateBinding = lateBinding;
-				param.evaluated = YES;
-				
-				break;
-			}
-			
-			case SMJParamTypeJSON:
-			{
-				SMJParamLateBinding lateBinding = ^ id _Nullable (SMJParameter *parameter, NSError **lateError) {
-					NSString	*jsonString = parameter.jsonString;
-					NSData		*jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-					
-					if (!jsonData)
-						return nil;
-					
-					return [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:lateError];
-				};
-
-				param.lateBinding = lateBinding;
-				param.evaluated = YES;
-				
-				break;
-			}
-		}
-	}
-}
-
-
-
-- (BOOL)isTokenDefinite
-{
-	return YES;
-}
-
-- (NSString *)pathFragment
-{
-	return [@"." stringByAppendingString:_pathFragment];
-}
-
-@end
-
-
-NS_ASSUME_NONNULL_END
-*/
