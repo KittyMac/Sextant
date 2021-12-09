@@ -13,12 +13,18 @@ final class PathCompiler {
         return PathCompiler(query: query)?.compile()
     }
     
-    let ci: CharacterIndex
+    var ci: CharacterIndex
     
     init?(query: Hitch) {
         ci = CharacterIndex(query: query)
         
         ci.trim()
+        
+        if ci[0] != docContextChar && ci[0] != evalContextChar {
+            ci = CharacterIndex(query: query.insert("$.", index: 0))
+            ci.trim()
+        }
+        
         guard isPathContext(ci.current()) else {
             error("Path must start with \(docContextChar) or \(evalContextChar)")
             return nil

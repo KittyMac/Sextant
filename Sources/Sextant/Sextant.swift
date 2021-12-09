@@ -5,6 +5,17 @@ public typealias JsonAny = Any?
 public typealias JsonArray = [JsonAny]
 public typealias JsonDictionary = [String: JsonAny]
 
+func anyEquals(_ a: JsonAny, _ b: JsonAny?) -> Bool {
+    if a == nil && b == nil { return true }
+    if let a = a as? CustomStringConvertible,
+       let b = b as? CustomStringConvertible {
+        if a.description == b.description {
+            return true
+        }
+    }
+    return false
+}
+
 func error(_ error: String) {
     print("Error: " + error)
 }

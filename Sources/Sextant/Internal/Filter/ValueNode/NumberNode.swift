@@ -4,6 +4,8 @@ import Hitch
 fileprivate let typeHitch = Hitch("number")
 
 struct NumberNode: ValueNode, Equatable {
+    static let zero = NumberNode(value: 0)
+    
     static func == (lhs: NumberNode, rhs: NumberNode) -> Bool {
         return lhs.intValue == rhs.intValue && lhs.doubleValue == rhs.doubleValue
     }

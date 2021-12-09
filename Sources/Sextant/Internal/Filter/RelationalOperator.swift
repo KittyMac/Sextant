@@ -12,18 +12,18 @@ private let relationalOperatorTSNE = Hitch("!==")
 private let relationalOperatorLT = Hitch("<")
 private let relationalOperatorGT = Hitch(">")
 private let relationalOperatorREGEX = Hitch("=~")
-private let relationalOperatorNIN = Hitch("NIN")
-private let relationalOperatorIN = Hitch("IN")
-private let relationalOperatorCONTAINS = Hitch("CONTAINS")
-private let relationalOperatorALL = Hitch("ALL")
-private let relationalOperatorSIZE = Hitch("SIZE")
-private let relationalOperatorEXISTS = Hitch("EXISTS")
-private let relationalOperatorTYPE = Hitch("TYPE")
-//private let relationalOperatorMATCHES Hitch("MATCHES"))
-private let relationalOperatorEMPTY = Hitch("EMPTY")
-private let relationalOperatorSUBSETOF = Hitch("SUBSETOF")
-private let relationalOperatorANYOF = Hitch("ANYOF")
-private let relationalOperatorNONEOF = Hitch("NONEOF")
+private let relationalOperatorNIN = Hitch("nin")
+private let relationalOperatorIN = Hitch("in")
+private let relationalOperatorCONTAINS = Hitch("contains")
+private let relationalOperatorALL = Hitch("all")
+private let relationalOperatorSIZE = Hitch("size")
+private let relationalOperatorEXISTS = Hitch("exists")
+private let relationalOperatorTYPE = Hitch("type")
+//private let relationalOperatorMATCHES Hitch("matches"))
+private let relationalOperatorEMPTY = Hitch("empty")
+private let relationalOperatorSUBSETOF = Hitch("subsetof")
+private let relationalOperatorANYOF = Hitch("anyof")
+private let relationalOperatorNONEOF = Hitch("noneof")
 
 enum RelationalOperator {
     case GTE
@@ -97,7 +97,7 @@ enum RelationalOperator {
     }
 
     init?(hitch: Hitch) {
-        switch hitch {
+        switch hitch.lowercase() {
         case relationalOperatorGTE:
             self = .GTE
         case relationalOperatorLTE:

@@ -49,7 +49,7 @@ enum PathFunction {
     }
 
     init?(hitch: Hitch) {
-        if (hitch.starts(with: functionAVG)) {
+        if (hitch.lowercase().starts(with: functionAVG)) {
             self = .AVG
         } else if (hitch.starts(with: functionSTDDEV)) {
             self = .STDDEV
