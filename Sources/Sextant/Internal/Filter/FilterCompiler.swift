@@ -271,7 +271,7 @@ final class FilterCompiler {
                                                                 closeChar: closeChar,
                                                                 skipStrings: true,
                                                                 skipRegex: false)
-        if closingIndex >= 0 {
+        if closingIndex < 0 {
             error("String not closed. Expected \(kSingleQuoteChar) in \(filter)")
             return nil
         }

@@ -6,11 +6,7 @@ import Hitch
 
 class RegexEvaluatorTest: TestsBase {
     
-    func checkRegex(regex: Hitch, valueNode: ValueNode, result expected: Bool) {
-        
-        //let op = RelationalOperator(rawValue: <#T##Hitch#>)
-        
-        
+    func checkRegex(regex: Hitch, valueNode: ValueNode, result expected: Bool) {        
         guard let evaluator = Evaluator(relationalOperator: .REGEX) else {
             XCTFail("Cannot create REGEX evaluator")
             return
@@ -41,7 +37,7 @@ class RegexEvaluatorTest: TestsBase {
         checkRegex(regex: "/9.*9/", valueNode: NumberNode(hitch: "9979"), result: true)
         checkRegex(regex: "/fa.*se/", valueNode: BooleanNode(hitch: "false"), result: true)
         
-        checkRegex(regex: "/JsonNode/", valueNode: JsonNode(hitch: "{ 'some': 'JsonNode' }"), result: false)
+        checkRegex(regex: "/JsonNode/", valueNode: JsonNode(hitch: "{ 'some': 'JsonNode' }"), result: true)
         checkRegex(regex: "/PathNode/", valueNode: PathNode(prebuiltPath: rootPath), result: false)
         checkRegex(regex: "/NullNode/", valueNode: NullNode(), result: false)
         

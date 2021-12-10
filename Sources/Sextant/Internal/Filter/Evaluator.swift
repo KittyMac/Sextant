@@ -80,23 +80,11 @@ fileprivate func evaluateToBeImplemented(left: ValueNode?, right: ValueNode?, co
 }
 
 fileprivate func evaluateGTE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let left = left else { return .false }
-    guard let right = right else { return .false }
-    let result = left.compare(to: right)
-    if result == .greaterThan || result == .same {
-        return .true
-    }
-    return .false
+    return (evaluateEQ(left: left, right: right, context: context) == .true || evaluateGT(left: left, right: right, context: context) == .true) ? .true : .false
 }
 
 fileprivate func evaluateLTE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let left = left else { return .false }
-    guard let right = right else { return .false }
-    let result = left.compare(to: right)
-    if result == .lessThan || result == .same {
-        return .true
-    }
-    return .false
+    return (evaluateEQ(left: left, right: right, context: context) == .true || evaluateLT(left: left, right: right, context: context) == .true) ? .true : .false
 }
 
 fileprivate func evaluateEQ(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
@@ -110,27 +98,15 @@ fileprivate func evaluateEQ(left: ValueNode?, right: ValueNode?, context: Predic
 }
 
 fileprivate func evaluateTSEQ(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let left = left else { return .false }
-    guard let right = right else { return .false }
-    let result = left.compare(to: right)
-    if result == .same && left.typeName == right.typeName {
-        return .true
-    }
-    return .false
+    return (evaluateEQ(left: left, right: right, context: context) == .true && evaluateTYPE(left: left, right: right, context: context) == .true) ? .true : .false
 }
 
 fileprivate func evaluateNE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    if evaluateEQ(left: left, right: right, context: context) == .true {
-        return .false
-    }
-    return .true
+    return evaluateEQ(left: left, right: right, context: context).inverse()
 }
 
 fileprivate func evaluateTSNE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    if evaluateTSEQ(left: left, right: right, context: context) == .true {
-        return .false
-    }
-    return .true
+    return evaluateTSEQ(left: left, right: right, context: context).inverse()
 }
 
 fileprivate func evaluateGT(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
@@ -272,7 +248,10 @@ fileprivate func evaluateALL(left: ValueNode?, right: ValueNode?, context: Predi
 }
 
 fileprivate func evaluateTYPE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    if type(of: left) == type(of: right) {
+    if let right = right as? StringNode {
+        return left?.typeName == right.literalValue ? .true : .false
+    }
+    if left?.typeName == right?.typeName {
         return .true
     }
     return .false
@@ -284,12 +263,18 @@ fileprivate func evaluateSUBSETOF(left: ValueNode?, right: ValueNode?, context: 
     guard let left = left.json as? JsonArray else { return .false }
     guard let right = right.json as? JsonArray else { return .false }
     
+    var count = 0
     for leftObject in left {
-        for rightObject in right where anyEquals(rightObject, leftObject) == false {
-            return .false
+        for rightObject in right where anyEquals(rightObject, leftObject) == true {
+            count += 1
+            break
         }
     }
-    return .true
+    
+    if count == left.count {
+        return .true
+    }
+    return .false
 }
 
 fileprivate func evaluateANYOF(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
@@ -312,6 +297,9 @@ fileprivate func evaluateNONEOF(left: ValueNode?, right: ValueNode?, context: Pr
 
 fileprivate func evaluateEMPTY(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
     guard let right = right as? BooleanNode else { return .false }
+    if left == nil || left is NullNode {
+        return .false
+    }
     
     if right.value {
         return evaluateSIZE(left: left, right: NumberNode.zero, context: context)

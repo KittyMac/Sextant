@@ -4,6 +4,9 @@ import PackageDescription
 
 let package = Package(
     name: "Sextant",
+    platforms: [
+        .macOS(.v10_13)
+    ],
     products: [
         .library(name: "Sextant", targets: ["Sextant"])
     ],

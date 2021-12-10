@@ -18,6 +18,9 @@ protocol ValueNode: CustomStringConvertible {
 
 extension ValueNode {
     func equals(to other: JsonAny) -> ValueComparisonResult {
+        if (other == nil || other is NSNull) && self is NullNode {
+            return .same
+        }
         guard let other = other else { return .differ }
         
         if let other = other as? ValueNode {
@@ -67,9 +70,11 @@ extension ValueNode {
             }
         }
         
+        print("\(self.literalValue) == \(other.literalValue)")
         if self.literalValue == other.literalValue {
             return .same
         }
+        
         return .differ
     }
 }

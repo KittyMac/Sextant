@@ -4,33 +4,30 @@ import Hitch
 fileprivate let typeHitch = Hitch("json")
 
 
-struct JsonNode: ValueNode {
+class JsonNode: ValueNode {
     static func == (lhs: JsonNode, rhs: JsonNode) -> Bool {
         return false //lhs.jsonString == rhs.jsonString && lhs.json == rhs.json
     }
     
-    let jsonString: Hitch?
+    var jsonString: Hitch?
     let json: JsonAny
         
     init(hitch: Hitch) {
         self.jsonString = hitch
-        self.json = nil
+        self.json = try? JSONSerialization.jsonObject(with: hitch.dataNoCopy(), options: [])
     }
     
     init(jsonObject: JsonAny) {
-        self.jsonString = nil
         self.json = jsonObject
+        if let jsonObject = jsonObject,
+           let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: [.sortedKeys]) {
+            self.jsonString = Hitch(data: data)
+        }
     }
     
     var description: String {
-        if let jsonString = jsonString {
-            return jsonString.description
-        }
-        
-        if let json = json,
-           let data = try? JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted]),
-           let string = String(data: data, encoding: .utf8){
-            return string
+        if let value = literalValue {
+            return value.description
         }
         return "null"
     }
@@ -40,7 +37,7 @@ struct JsonNode: ValueNode {
     }
     
     var literalValue: Hitch? {
-        return nil
+        return jsonString
     }
     
     var numericValue: Double? {
