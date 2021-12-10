@@ -45,7 +45,7 @@ final class FilterCompiler {
         filter = CharacterIndex(query: filterString)
         filter.trim()
         
-        guard filter.current() == .openBrace || filter.last() == .closeBrace else {
+        guard filter.current() == .openBrace && filter.last() == .closeBrace else {
             error("Filter must start with '[' and end with ']'. \(filter)")
             return nil
         }
