@@ -21,7 +21,7 @@ class PredicatePathToken: PathToken {
                                                 pathCache: evaluationContext.evaluationCache)
         
         for predicate in predicates {
-            let result = predicate .apply(predicateContext: predicateContext)
+            let result = predicate.apply(predicateContext: predicateContext)
             if result != .true {
                 return false
             }

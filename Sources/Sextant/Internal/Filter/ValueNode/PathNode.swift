@@ -39,6 +39,14 @@ struct PathNode: ValueNode {
         }
         self.path = path
     }
+    
+    func copy(existsCheck: Bool,
+              shouldExists: Bool) -> PathNode {
+        return PathNode(path: pathString,
+                        prebuiltPath: path,
+                        existsCheck: existsCheck,
+                        shouldExists: shouldExists)
+    }
 
     var description: String {
         if existsCheck && shouldExists == false {

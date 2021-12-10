@@ -69,7 +69,8 @@ final class FilterCompiler {
     }
     
     class func compile(filter: Hitch) -> Predicate? {
-        return FilterCompiler(filter: filter)?.compile()
+        guard let predicate = FilterCompiler(filter: filter)?.compile() else { return nil }
+        return CompiledFilter(predicate: predicate)
     }
     
     func compile() -> Predicate? {
@@ -181,7 +182,8 @@ final class FilterCompiler {
             return nil
         }
         
-        return RelationalExpressionNode(left: pathNode,
+        return RelationalExpressionNode(left: pathNode.copy(existsCheck: true,
+                                                            shouldExists: pathNode.shouldExists),
                                         relationalOperator: .EXISTS,
                                         right: pathNode.shouldExists ? BooleanNode.true : BooleanNode.false)
     }
@@ -386,7 +388,7 @@ final class FilterCompiler {
             filter.advance(1)
         }
         
-        let shouldExists = previousSignificantChar != kNotChar
+        let shouldExists = !(previousSignificantChar == kNotChar)
         guard let pathString = filter.substring(begin, filter.position) else {
             return nil
         }

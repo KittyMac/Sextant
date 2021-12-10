@@ -41,10 +41,11 @@ struct StringNode: ValueNode {
     }
         
     var description: String {
+        value.escape()
         if useSingleQuote {
-            return "'\(value.escape())'"
+            return "'\(value)'"
         }
-        return value.description
+        return "\"\(value)\""
     }
     
     var literalValue: Hitch? {

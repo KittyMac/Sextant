@@ -23,9 +23,7 @@ class RelationalExpressionNode: ExpressionNode {
             
             // SourceMac-Note: we support the "EXISTS" token, event if it's similar (and so redoundant) to don't use operator and right value.
             if relationalOperator == .EXISTS && tmp.existsCheck == false {
-                tmp = PathNode(path: tmp.pathString,
-                               prebuiltPath: tmp.path,
-                               existsCheck: true,
+                tmp = tmp.copy(existsCheck: true,
                                shouldExists: tmp.shouldExists)
             }
             
@@ -57,6 +55,14 @@ class RelationalExpressionNode: ExpressionNode {
             return .false
         case .error:
             return .error
+        }
+    }
+    
+    override var description: String {
+        if relationalOperator == .EXISTS {
+            return left.description
+        } else {
+            return "\(left) \(relationalOperator.hitch()) \(right)"
         }
     }
 }
