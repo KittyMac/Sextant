@@ -70,7 +70,6 @@ extension ValueNode {
             }
         }
         
-        print("\(self.literalValue) == \(other.literalValue)")
         if self.literalValue == other.literalValue {
             return .same
         }
