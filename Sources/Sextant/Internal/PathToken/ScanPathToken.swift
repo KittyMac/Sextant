@@ -125,11 +125,15 @@ class ScanPathToken: PathToken {
         }
 
         // Recurse.
+        let evalPath = Hitch(capacity: currentPath.count + 32)
         for property in jsonObject.keys {
             guard let propertyObject = jsonObject[property] else { continue }
-            let evalPath = Hitch.make(path: currentPath,
-                                      property: property.hitch(),
-                                      wrap: .singleQuote)
+
+            Hitch.replace(hitch: evalPath,
+                          path: currentPath,
+                          property: property.hitch(),
+                          wrap: .singleQuote)
+
             let result = walk(path: object,
                               currentPath: evalPath,
                               parentPath: newPath(object: jsonObject, item: property),
