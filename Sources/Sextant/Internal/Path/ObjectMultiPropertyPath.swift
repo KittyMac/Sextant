@@ -1,12 +1,13 @@
 import Foundation
 import Hitch
 
-final class ObjectMultiPropertyPath: Path {
+struct ObjectMultiPropertyPath: Path {
+    let parent: JsonAny
     let properties: [Hitch]
 
     init(object: JsonAny,
          properties: [Hitch]) {
+        parent = object
         self.properties = properties
-        super.init(parent: object)
     }
 }

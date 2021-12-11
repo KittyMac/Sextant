@@ -22,7 +22,7 @@ class WildcardPathToken: PathToken {
             for idx in 0..<array.count {
                 let result = handle(arrayIndex: idx,
                                     currentPath: currentPath,
-                                    jsonObject: jsonObject,
+                                    jsonObject: array,
                                     evaluationContext: evaluationContext)
                 if result != .done {
                     return result

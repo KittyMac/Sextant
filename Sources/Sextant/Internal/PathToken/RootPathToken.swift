@@ -40,7 +40,7 @@ final class RootPathToken: PathToken {
                                  jsonObject: jsonObject,
                                  evaluationContext: evaluationContext)
         } else {
-            let op = evaluationContext.forUpdate ? parentPath : Path.nullPath()
+            let op = evaluationContext.forUpdate ? parentPath : nullPath()
 
             return evaluationContext.add(path: rootToken,
                                          operation: op,

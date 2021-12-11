@@ -21,10 +21,14 @@ class ArrayIndexToken: ArrayPathToken {
         case .error(let message):
             return .error(message)
         case .handle:
+            guard let jsonArray = jsonObject as? JsonArray else {
+                return .done
+            }
+
             for index in indexOperation.indices {
                 let result = handle(arrayIndex: index,
                                     currentPath: currentPath,
-                                    jsonObject: jsonObject,
+                                    jsonObject: jsonArray,
                                     evaluationContext: evaluationContext)
 
                 switch result {

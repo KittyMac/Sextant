@@ -13,15 +13,21 @@ class PerformanceTest: TestsBase {
         large0 = try! JSONSerialization.jsonObject(with: largeData, options: [])
     }
     
-    func testSanity0() {
-        XCTAssertEqualAny(large0.query(values: "$[*]")?.count, 5)
-    }
-    
     func testPerformance0() {
         measure {
-            for x in 1...1000 {
-                large0.query(values: "$..type")
-            }
+            XCTAssertEqualAny(large0.query(values: "$[*]")?.count, 11351)
+        }
+    }
+    
+    func testPerformance1() {
+        measure {
+            XCTAssertEqualAny(large0.query(values: "$..type")?.count, 17906)
+        }
+    }
+    
+    func testPerformance2() {
+        measure {
+            XCTAssertEqualAny(large0.query(values: "$[*]")?.count, 11351)
         }
     }
     

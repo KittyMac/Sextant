@@ -5,6 +5,7 @@ class PathToken: CustomStringConvertible {
     weak var prev: PathToken?
     var next: PathToken?
 
+    @inlinable
     func checkArray(currentPath: Hitch,
                     jsonObject: JsonAny,
                     evaluationContext: EvaluationContext) -> ArrayPathCheck {
@@ -25,15 +26,15 @@ class PathToken: CustomStringConvertible {
         return .error("Filter: \(self) can only be applied to arrays. Current context is: \(jsonObject)")
     }
 
+    @inlinable
     func handle(arrayIndex: Int,
                 currentPath: Hitch,
-                jsonObject: JsonAny,
+                jsonObject: JsonArray,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
-        guard let jsonObject = jsonObject as? JsonArray else { return .done }
 
         let evalPath = Hitch.make(path: currentPath, index: arrayIndex)
-        let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject,
-                                                              item: jsonObject[arrayIndex]) : Path.nullPath()
+        let path = evaluationContext.forUpdate ? newPath(object: jsonObject,
+                                                         item: jsonObject[arrayIndex]) : nullPath()
 
         let effectiveIndex = arrayIndex < 0 ? jsonObject.count + arrayIndex : arrayIndex
 
@@ -58,6 +59,7 @@ class PathToken: CustomStringConvertible {
         return .done
     }
 
+    @inlinable
     func handle(properties: [Hitch],
                 currentPath: Hitch,
                 jsonObject: JsonAny,
@@ -69,7 +71,7 @@ class PathToken: CustomStringConvertible {
                                       property: property,
                                       wrap: .singleQuote)
 
-            let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject, property: property) : Path.nullPath()
+            let path = evaluationContext.forUpdate ? newPath(object: jsonObject, property: property) : nullPath()
 
             let propertyVal = read(property: property,
                                    jsonObject: jsonObject,
@@ -137,7 +139,7 @@ class PathToken: CustomStringConvertible {
                 }
             }
 
-            let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject, properties: properties) : Path.nullPath()
+            let path = evaluationContext.forUpdate ? newPath(object: jsonObject, properties: properties) : nullPath()
 
             if evaluationContext.add(path: evalPath, operation: path, jsonObject: merged) == .aborted {
                 return .aborted
@@ -147,6 +149,7 @@ class PathToken: CustomStringConvertible {
         return .done
     }
 
+    @inlinable
     func has(property: Hitch,
              jsonObject: JsonAny,
              evaluationContext: EvaluationContext) -> Bool {
@@ -155,6 +158,7 @@ class PathToken: CustomStringConvertible {
                     evaluationContext: evaluationContext) != nil
     }
 
+    @inlinable
     func read(property: Hitch,
               jsonObject: JsonAny,
               evaluationContext: EvaluationContext) -> JsonAny {
@@ -172,6 +176,7 @@ class PathToken: CustomStringConvertible {
         return nil
     }
 
+    @inlinable
     func evaluate(currentPath: Hitch,
                   parentPath: Path,
                   jsonObject: JsonAny,
@@ -179,23 +184,28 @@ class PathToken: CustomStringConvertible {
         fatalError("needs to be ovcerwritten")
     }
 
+    @inlinable
     func isRoot() -> Bool {
         return prev == nil
     }
 
+    @inlinable
     func isLeaf() -> Bool {
         return next == nil
     }
 
+    @inlinable
     func isUpstreamDefinite() -> Bool {
         guard let prev = prev else { return true }
         return prev.isTokenDefinite() && prev.isUpstreamDefinite()
     }
 
+    @inlinable
     func isTokenDefinite() -> Bool {
         fatalError("needs to be overwritten")
     }
 
+    @inlinable
     func isPathDefinite() -> Bool {
         if let next = next,
            isTokenDefinite() {
@@ -204,10 +214,12 @@ class PathToken: CustomStringConvertible {
         return isTokenDefinite()
     }
 
+    @inlinable
     func pathFragment() -> String {
         fatalError("needs to be overwritten")
     }
 
+    @inlinable
     @discardableResult
     func append(tail token: PathToken) -> PathToken {
         next = token
@@ -215,11 +227,13 @@ class PathToken: CustomStringConvertible {
         return token
     }
 
+    @inlinable
     @discardableResult
     func append(token: PathToken) -> PathToken {
         return append(tail: token)
     }
 
+    @inlinable
     var description: String {
         if let next = next {
             return pathFragment() + next.description

@@ -1,12 +1,13 @@
 import Foundation
 import Hitch
 
-final class ObjectPropertyPath: Path {
+struct ObjectPropertyPath: Path {
+    let parent: JsonAny
     let property: Hitch
 
     init(object: JsonAny,
          property: Hitch) {
+        parent = object
         self.property = property
-        super.init(parent: object)
     }
 }

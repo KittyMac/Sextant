@@ -1,50 +1,53 @@
 import Foundation
 import Hitch
 
-class Path: CustomStringConvertible {
-    class func newPath(rootObject: JsonAny) -> Path {
-        return RootPath(rootObject: rootObject)
-    }
-    class func newPath(object: JsonAny, item: JsonAny) -> Path {
-        return ArrayIndexPath(object: object, item: item)
-    }
-    class func newPath(object: JsonAny, property: Hitch) -> Path {
-        return ObjectPropertyPath(object: object, property: property)
-    }
-    class func newPath(object: JsonAny, properties: [Hitch]) -> Path {
-        return ObjectMultiPropertyPath(object: object, properties: properties)
-    }
-    class func nullPath() -> Path {
-        return NullPath.shared
-    }
+protocol Path: CustomStringConvertible {
 
-    var parent: JsonAny
+    var parent: JsonAny { get }
 
-    init(parent: JsonAny) {
-        self.parent = parent
-    }
+    func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext?
 
+    func isDefinite() -> Bool
+
+    func isFunctionPath() -> Bool
+
+    func isRootPath() -> Bool
+}
+
+extension Path {
     var description: String {
-        return ""
+        fatalError("TO BE IMPLEMENTED")
     }
 
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext? {
         fatalError("TO BE IMPLEMENTED")
-        // return nil
     }
 
     func isDefinite() -> Bool {
         fatalError("TO BE IMPLEMENTED")
-        // return false
     }
 
     func isFunctionPath() -> Bool {
         fatalError("TO BE IMPLEMENTED")
-        // return false
     }
 
     func isRootPath() -> Bool {
         fatalError("TO BE IMPLEMENTED")
-        // return false
     }
+}
+
+func newPath(rootObject: JsonAny) -> Path {
+    return RootPath(rootObject: rootObject)
+}
+func newPath(object: JsonAny, item: JsonAny) -> Path {
+    return ArrayIndexPath(object: object, item: item)
+}
+func newPath(object: JsonAny, property: Hitch) -> Path {
+    return ObjectPropertyPath(object: object, property: property)
+}
+func newPath(object: JsonAny, properties: [Hitch]) -> Path {
+    return ObjectMultiPropertyPath(object: object, properties: properties)
+}
+func nullPath() -> Path {
+    return NullPath.shared
 }

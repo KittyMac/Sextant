@@ -43,7 +43,7 @@ class ArraySliceToken: PathToken {
             for i in from..<to {
                 let result = handle(arrayIndex: i,
                                     currentPath: currentPath,
-                                    jsonObject: jsonObject,
+                                    jsonObject: array,
                                     evaluationContext: evaluationContext)
 
                 guard result == .done else { return result }

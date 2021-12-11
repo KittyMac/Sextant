@@ -1,7 +1,8 @@
 import Foundation
 import Hitch
 
-final class NullPath: Path {
+struct NullPath: Path {
+    let parent: JsonAny = nil
+
     static let shared = NullPath()
-    private init() { super.init(parent: nil) }
 }

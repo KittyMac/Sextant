@@ -55,13 +55,15 @@ class ScanPathToken: PathToken {
                       jsonObject: JsonArray,
                       evaluationContext: EvaluationContext,
                       predicate: ScanPredicate) -> EvaluationStatus {
+        let evalPath = Hitch(capacity: currentPath.count + 32)
+
         // Evaluate.
         if predicate.matchesJsonObject(jsonObject: jsonObject) {
             if let next = path.next {
                 var idx = 0
 
                 for evalObject in jsonObject {
-                    let evalPath = Hitch.make(path: currentPath, index: idx)
+                    Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
 
                     let result = next.evaluate(currentPath: evalPath,
                                                parentPath: parentPath,
@@ -88,10 +90,11 @@ class ScanPathToken: PathToken {
         // Recurse.
         var idx = 0
         for evalObject in jsonObject {
-            let evalPath = Hitch.make(path: currentPath, index: idx)
+            Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
+
             let result = walk(path: path,
                               currentPath: evalPath,
-                              parentPath: Path.newPath(object: jsonObject, item: evalObject),
+                              parentPath: newPath(object: jsonObject, item: evalObject),
                               jsonObject: evalObject,
                               evaluationContext: evaluationContext,
                               predicate: predicate)
@@ -129,7 +132,7 @@ class ScanPathToken: PathToken {
                                       wrap: .singleQuote)
             let result = walk(path: object,
                               currentPath: evalPath,
-                              parentPath: Path.newPath(object: jsonObject, item: property),
+                              parentPath: newPath(object: jsonObject, item: property),
                               jsonObject: propertyObject,
                               evaluationContext: evaluationContext,
                               predicate: predicate)

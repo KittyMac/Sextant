@@ -1,9 +1,10 @@
 import Foundation
 import Hitch
 
-final class RootPath: Path {
+struct RootPath: Path {
+    var parent: JsonAny
 
     init(rootObject: JsonAny) {
-        super.init(parent: rootObject)
+        parent = rootObject
     }
 }

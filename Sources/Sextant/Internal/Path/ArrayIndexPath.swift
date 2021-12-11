@@ -1,12 +1,12 @@
 import Foundation
 import Hitch
 
-final class ArrayIndexPath: Path {
-    var item: JsonAny
+struct ArrayIndexPath: Path {
+    let parent: JsonAny
+    let item: JsonAny
 
     init(object: JsonAny, item: JsonAny) {
+        parent = object
         self.item = item
-
-        super.init(parent: object)
     }
 }

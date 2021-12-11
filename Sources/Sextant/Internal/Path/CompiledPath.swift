@@ -1,15 +1,16 @@
 import Foundation
 import Hitch
 
-class CompiledPath: Path {
+struct CompiledPath: Path {
+    let parent: JsonAny
     var root: RootPathToken
     let rootPath: Bool
 
     init(root: RootPathToken, isRootPath: Bool) {
+        parent = root
         rootPath = isRootPath
-        self.root = root
-        super.init(parent: nil)
 
+        self.root = root
         self.root = invertScannerFunctionRelationshipWithToken(path: root)
     }
 
@@ -48,11 +49,11 @@ class CompiledPath: Path {
         return path
     }
 
-    override func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext? {
+    func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext? {
         let context = EvaluationContext(path: self,
                                         rootJsonObject: rootJsonObject)
 
-        let op = context.forUpdate ? Path.newPath(rootObject: rootJsonObject) : Path.nullPath()
+        let op = context.forUpdate ? newPath(rootObject: rootJsonObject) : nullPath()
 
         let result = root.evaluate(currentPath: Hitch(),
                                    parentPath: op,
@@ -67,19 +68,19 @@ class CompiledPath: Path {
         }
     }
 
-    override func isDefinite() -> Bool {
+    func isDefinite() -> Bool {
         return root.isPathDefinite()
     }
 
-    override func isFunctionPath() -> Bool {
+    func isFunctionPath() -> Bool {
         return root.isFunctionPath()
     }
 
-    override func isRootPath() -> Bool {
+    func isRootPath() -> Bool {
         return rootPath
     }
 
-    override var description: String {
+    var description: String {
         return root.description
     }
 }
