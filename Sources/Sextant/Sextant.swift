@@ -95,6 +95,16 @@ extension Hitch {
         hitch.append(UInt8.closeBrace)
     }
 
+    @inlinable
+    class func replace(hitch: Hitch, path: Hitch, property: String, wrap: UInt8) {
+        hitch.replace(with: path)
+        hitch.append(UInt8.openBrace)
+        hitch.append(wrap)
+        hitch.append(property)
+        hitch.append(wrap)
+        hitch.append(UInt8.closeBrace)
+    }
+
     // Hitch.make(path: currentPath, property: properties.joined(delimiter: .comma, wrap: .singleQuote))
 }
 

@@ -9,12 +9,23 @@ class ScanPathToken: PathToken {
                            evaluationContext: EvaluationContext) -> EvaluationStatus {
         guard let next = next else { return .done }
 
-        return walk(path: next,
-                    currentPath: currentPath,
-                    parentPath: parentPath,
-                    jsonObject: jsonObject,
-                    evaluationContext: evaluationContext,
-                    predicate: ScanPredicate.create(target: next, evaluationContext: evaluationContext))
+        if let array = jsonObject as? JsonArray {
+            return walk(array: next,
+                        currentPath: currentPath,
+                        parentPath: parentPath,
+                        jsonObject: array,
+                        evaluationContext: evaluationContext,
+                        predicate: ScanPredicate.create(target: next, evaluationContext: evaluationContext))
+        }
+        if let dictionary = jsonObject as? JsonDictionary {
+            return walk(object: next,
+                        currentPath: currentPath,
+                        parentPath: parentPath,
+                        jsonObject: dictionary,
+                        evaluationContext: evaluationContext,
+                        predicate: ScanPredicate.create(target: next, evaluationContext: evaluationContext))
+        }
+        return .done
     }
 
     override func isTokenDefinite() -> Bool {
@@ -25,36 +36,13 @@ class ScanPathToken: PathToken {
         return ".."
     }
 
-    private func walk(path: PathToken,
-                      currentPath: Hitch,
-                      parentPath: Path,
-                      jsonObject: JsonAny,
-                      evaluationContext: EvaluationContext,
-                      predicate: ScanPredicate) -> EvaluationStatus {
-        if let dictionary = jsonObject as? JsonDictionary {
-            return walk(object: path,
-                        currentPath: currentPath,
-                        parentPath: parentPath,
-                        jsonObject: dictionary,
-                        evaluationContext: evaluationContext,
-                        predicate: predicate)
-        } else if let array = jsonObject as? JsonArray {
-            return walk(array: path,
-                        currentPath: currentPath,
-                        parentPath: parentPath,
-                        jsonObject: array,
-                        evaluationContext: evaluationContext,
-                        predicate: predicate)
-        }
-        return .done
-    }
-
-    private func walk(array path: PathToken,
-                      currentPath: Hitch,
-                      parentPath: Path,
-                      jsonObject: JsonArray,
-                      evaluationContext: EvaluationContext,
-                      predicate: ScanPredicate) -> EvaluationStatus {
+    @inlinable
+    func walk(array path: PathToken,
+              currentPath: Hitch,
+              parentPath: Path,
+              jsonObject: JsonArray,
+              evaluationContext: EvaluationContext,
+              predicate: ScanPredicate) -> EvaluationStatus {
         let evalPath = Hitch(capacity: currentPath.count + 32)
 
         // Evaluate.
@@ -90,29 +78,43 @@ class ScanPathToken: PathToken {
         // Recurse.
         var idx = 0
         for evalObject in jsonObject {
-            Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
-
-            let result = walk(path: path,
-                              currentPath: evalPath,
-                              parentPath: newPath(object: jsonObject, item: evalObject),
-                              jsonObject: evalObject,
-                              evaluationContext: evaluationContext,
-                              predicate: predicate)
-            if result != .done {
-                return result
+            if let array = evalObject as? JsonArray {
+                Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
+                let result = walk(array: path,
+                                  currentPath: evalPath,
+                                  parentPath: newPath(object: jsonObject, item: evalObject),
+                                  jsonObject: array,
+                                  evaluationContext: evaluationContext,
+                                  predicate: predicate)
+                if result != .done {
+                    return result
+                }
+            } else if let dictionary = evalObject as? JsonDictionary {
+                Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
+                let result = walk(object: path,
+                                  currentPath: evalPath,
+                                  parentPath: newPath(object: jsonObject, item: evalObject),
+                                  jsonObject: dictionary,
+                                  evaluationContext: evaluationContext,
+                                  predicate: predicate)
+                if result != .done {
+                    return result
+                }
             }
+
             idx += 1
         }
 
         return .done
     }
 
-    private func walk(object: PathToken,
-                      currentPath: Hitch,
-                      parentPath: Path,
-                      jsonObject: JsonDictionary,
-                      evaluationContext: EvaluationContext,
-                      predicate: ScanPredicate) -> EvaluationStatus {
+    @inlinable
+    func walk(object: PathToken,
+              currentPath: Hitch,
+              parentPath: Path,
+              jsonObject: JsonDictionary,
+              evaluationContext: EvaluationContext,
+              predicate: ScanPredicate) -> EvaluationStatus {
         // Evaluate.
         if predicate.matchesJsonObject(jsonObject: jsonObject) {
             let result = object.evaluate(currentPath: currentPath,
@@ -129,19 +131,34 @@ class ScanPathToken: PathToken {
         for property in jsonObject.keys {
             guard let propertyObject = jsonObject[property] else { continue }
 
-            Hitch.replace(hitch: evalPath,
-                          path: currentPath,
-                          property: property.hitch(),
-                          wrap: .singleQuote)
-
-            let result = walk(path: object,
-                              currentPath: evalPath,
-                              parentPath: newPath(object: jsonObject, item: property),
-                              jsonObject: propertyObject,
-                              evaluationContext: evaluationContext,
-                              predicate: predicate)
-            if result != .done {
-                return result
+            if let array = propertyObject as? JsonArray {
+                Hitch.replace(hitch: evalPath,
+                              path: currentPath,
+                              property: property,
+                              wrap: .singleQuote)
+                let result = walk(array: object,
+                                  currentPath: evalPath,
+                                  parentPath: newPath(object: jsonObject, item: property),
+                                  jsonObject: array,
+                                  evaluationContext: evaluationContext,
+                                  predicate: predicate)
+                if result != .done {
+                    return result
+                }
+            } else if let dictionary = propertyObject as? JsonDictionary {
+                Hitch.replace(hitch: evalPath,
+                              path: currentPath,
+                              property: property,
+                              wrap: .singleQuote)
+                let result = walk(object: object,
+                                  currentPath: evalPath,
+                                  parentPath: newPath(object: jsonObject, item: property),
+                                  jsonObject: dictionary,
+                                  evaluationContext: evaluationContext,
+                                  predicate: predicate)
+                if result != .done {
+                    return result
+                }
             }
         }
 
