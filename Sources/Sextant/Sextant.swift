@@ -182,7 +182,6 @@ public final class Sextant {
     private var cachedPaths = [Hitch: Path]()
     private var lock = NSLock()
     
-    // TODO: PROTECT THIS WITH A LOCK
     private func cachedPath(query: Hitch) -> Path? {
         lock.lock(); defer { lock.unlock() }
         
