@@ -78,23 +78,24 @@ class ScanPathToken: PathToken {
         // Recurse.
         var idx = 0
         for evalObject in jsonObject {
-            if let array = evalObject as? JsonArray {
-                Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
-                let result = walk(array: path,
-                                  currentPath: evalPath,
-                                  parentPath: newPath(object: jsonObject, item: evalObject),
-                                  jsonObject: array,
-                                  evaluationContext: evaluationContext,
-                                  predicate: predicate)
-                if result != .done {
-                    return result
-                }
-            } else if let dictionary = evalObject as? JsonDictionary {
+
+            if let dictionary = evalObject as? JsonDictionary {
                 Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
                 let result = walk(object: path,
                                   currentPath: evalPath,
                                   parentPath: newPath(object: jsonObject, item: evalObject),
                                   jsonObject: dictionary,
+                                  evaluationContext: evaluationContext,
+                                  predicate: predicate)
+                if result != .done {
+                    return result
+                }
+            } else if let array = evalObject as? JsonArray {
+                Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
+                let result = walk(array: path,
+                                  currentPath: evalPath,
+                                  parentPath: newPath(object: jsonObject, item: evalObject),
+                                  jsonObject: array,
                                   evaluationContext: evaluationContext,
                                   predicate: predicate)
                 if result != .done {
@@ -128,24 +129,8 @@ class ScanPathToken: PathToken {
 
         // Recurse.
         let evalPath = Hitch(capacity: currentPath.count + 32)
-        for property in jsonObject.keys {
-            guard let propertyObject = jsonObject[property] else { continue }
-
-            if let array = propertyObject as? JsonArray {
-                Hitch.replace(hitch: evalPath,
-                              path: currentPath,
-                              property: property,
-                              wrap: .singleQuote)
-                let result = walk(array: object,
-                                  currentPath: evalPath,
-                                  parentPath: newPath(object: jsonObject, item: property),
-                                  jsonObject: array,
-                                  evaluationContext: evaluationContext,
-                                  predicate: predicate)
-                if result != .done {
-                    return result
-                }
-            } else if let dictionary = propertyObject as? JsonDictionary {
+        for (property, propertyObject) in jsonObject {
+            if let dictionary = propertyObject as? JsonDictionary {
                 Hitch.replace(hitch: evalPath,
                               path: currentPath,
                               property: property,
@@ -154,6 +139,20 @@ class ScanPathToken: PathToken {
                                   currentPath: evalPath,
                                   parentPath: newPath(object: jsonObject, item: property),
                                   jsonObject: dictionary,
+                                  evaluationContext: evaluationContext,
+                                  predicate: predicate)
+                if result != .done {
+                    return result
+                }
+            } else if let array = propertyObject as? JsonArray {
+                Hitch.replace(hitch: evalPath,
+                              path: currentPath,
+                              property: property,
+                              wrap: .singleQuote)
+                let result = walk(array: object,
+                                  currentPath: evalPath,
+                                  parentPath: newPath(object: jsonObject, item: property),
+                                  jsonObject: array,
                                   evaluationContext: evaluationContext,
                                   predicate: predicate)
                 if result != .done {
