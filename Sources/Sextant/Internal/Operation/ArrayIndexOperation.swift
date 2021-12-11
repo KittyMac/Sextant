@@ -16,11 +16,12 @@ final class ArrayIndexOperation: CustomStringConvertible {
         indices.reserveCapacity(tokens.count)
 
         for token in tokens {
-            guard let token = token.toInt() else {
+            if let token = token.toInt() {
+                indices.append(token)
+            } else {
                 error("Failed to parse token in ArrayIndexOperation: \(token)")
                 return nil
             }
-            indices.append(token)
         }
     }
 

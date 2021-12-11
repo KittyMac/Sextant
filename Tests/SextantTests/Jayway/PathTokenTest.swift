@@ -49,6 +49,13 @@ class PathTokenTest: TestsBase {
         XCTAssertTrue(makePathReturningTail(tokens: [WildcardPathToken(), makePTT("bar"), makePTT("baz")
         ])?.isUpstreamDefinite() ?? false)
     }
-    
 }
 
+extension PathTokenTest {
+    static var allTests : [(String, (PathTokenTest) -> () throws -> Void)] {
+        return [
+            ("test_is_upstream_definite_in_simple_case", test_is_upstream_definite_in_simple_case),
+            ("test_is_upstream_definite_in_complex_case", test_is_upstream_definite_in_complex_case),
+        ]
+    }
+}

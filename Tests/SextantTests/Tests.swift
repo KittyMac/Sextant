@@ -3,11 +3,6 @@ import class Foundation.Bundle
 
 import Sextant
 
-class Tests: TestsBase {
-
-    func testSimple1() {
-        
-    }
-    
+class SextantTests: TestsBase {
     
 }

@@ -87,7 +87,7 @@ final class FunctionPathToken: PathToken {
             if let json = param.json {
                 param.lateBinding = { _ in
                     let value = try? JSONSerialization.jsonObject(with: json.dataNoCopy(),
-                                                                  options: [.fragmentsAllowed])
+                                                                  options: [.allowFragments])
                     if let value = value as? String {
                         return Hitch(stringLiteral: value)
                     }

@@ -276,3 +276,38 @@ class JsonPathTest: TestsBase {
         XCTAssertEqualAny(jsonDocument1.query(values: "$['boo','foo][?(@ =~ /bar/)]"), nil)
     }
 }
+
+extension JsonPathTest {
+    static var allTests : [(String, (JsonPathTest) -> () throws -> Void)] {
+        return [
+            ("test_missing_prop", test_missing_prop),
+            ("test_bracket_notation_with_dots", test_bracket_notation_with_dots),
+            ("test_null_object_in_path", test_null_object_in_path),
+            ("test_array_start_expands", test_array_start_expands),
+            ("test_bracket_notation_can_be_used_in_path", test_bracket_notation_can_be_used_in_path),
+            ("test_filter_an_array", test_filter_an_array),
+            ("test_filter_an_array_on_index", test_filter_an_array_on_index),
+            ("test_read_path_with_colon", test_read_path_with_colon),
+            ("test_read_document_from_root", test_read_document_from_root),
+            ("test_read_store_book_1", test_read_store_book_1),
+            ("test_read_store_book_wildcard", test_read_store_book_wildcard),
+            ("test_read_store_book_author", test_read_store_book_author),
+            ("test_all_authors", test_all_authors),
+            ("test_all_store_properties", test_all_store_properties),
+            ("test_all_prices_in_store", test_all_prices_in_store),
+            ("test_access_array_by_index_from_tail", test_access_array_by_index_from_tail),
+            ("test_read_store_book_index_0_and_1", test_read_store_book_index_0_and_1),
+            ("test_read_store_book_pull_first_2", test_read_store_book_pull_first_2),
+            ("test_read_store_book_filter_by_isbn", test_read_store_book_filter_by_isbn),
+            ("test_all_books_cheaper_than_10", test_all_books_cheaper_than_10),
+            ("test_all_books", test_all_books),
+            ("test_dot_in_predicate_works", test_dot_in_predicate_works),
+            ("test_dots_in_predicate_works", test_dots_in_predicate_works),
+            ("test_all_books_with_category_reference", test_all_books_with_category_reference),
+            ("test_all_members_of_all_documents", test_all_members_of_all_documents),
+            ("test_access_index_out_of_bounds_does_not_throw_exception", test_access_index_out_of_bounds_does_not_throw_exception),
+            ("test_exists_filter_with_nested_path", test_exists_filter_with_nested_path),
+            ("test_prevent_stack_overflow_error_when_unclosed_property", test_prevent_stack_overflow_error_when_unclosed_property)
+        ]
+    }
+}

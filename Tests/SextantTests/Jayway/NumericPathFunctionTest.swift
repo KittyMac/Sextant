@@ -45,3 +45,20 @@ class NumericPathFunctionTest: TestsBase {
         XCTAssertEqualAny(jsonNumberSeries.query(values: "$.empty.stddev()"), nil)
     }
 }
+
+extension NumericPathFunctionTest {
+    static var allTests : [(String, (NumericPathFunctionTest) -> () throws -> Void)] {
+        return [
+            ("testAverageOfDoubles", testAverageOfDoubles),
+            ("testAverageOfEmptyListNegative", testAverageOfEmptyListNegative),
+            ("testSumOfDouble", testSumOfDouble),
+            ("testSumOfEmptyListNegative", testSumOfEmptyListNegative),
+            ("testMaxOfDouble", testMaxOfDouble),
+            ("testMaxOfEmptyListNegative", testMaxOfEmptyListNegative),
+            ("testMinOfDouble", testMinOfDouble),
+            ("testMinOfEmptyListNegative", testMinOfEmptyListNegative),
+            ("testStdDevOfDouble", testStdDevOfDouble),
+            ("testStddevOfEmptyListNegative", testStddevOfEmptyListNegative)
+        ]
+    }
+}

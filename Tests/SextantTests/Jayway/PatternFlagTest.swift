@@ -21,3 +21,11 @@ class PatternFlagTest: TestsBase {
         XCTAssertEqual(PatternFlags("dixmsuU"), RegexFlags([.useUnixLineSeparators, .caseInsensitive, .allowCommentsAndWhitespace, .anchorsMatchLines, .dotMatchesLineSeparators]))
     }
 }
+
+extension PatternFlagTest {
+    static var allTests : [(String, (PatternFlagTest) -> () throws -> Void)] {
+        return [
+            ("testParseFlags", testParseFlags),
+        ]
+    }
+}

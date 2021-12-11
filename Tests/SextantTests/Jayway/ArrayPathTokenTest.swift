@@ -44,3 +44,16 @@ class ArrayPathTokenTest: TestsBase {
     }
     
 }
+
+extension ArrayPathTokenTest {
+    static var allTests : [(String, (ArrayPathTokenTest) -> () throws -> Void)] {
+        return [
+            ("test_array_can_select_multiple_indexes", test_array_can_select_multiple_indexes),
+            ("test_array_can_be_sliced_to_2", test_array_can_be_sliced_to_2),
+            ("test_array_can_be_sliced_to_2_from_tail", test_array_can_be_sliced_to_2_from_tail),
+            ("test_array_can_be_sliced_from_2", test_array_can_be_sliced_from_2),
+            ("test_array_can_be_sliced_from_2_from_tail", test_array_can_be_sliced_from_2_from_tail),
+            ("test_array_can_be_sliced_between", test_array_can_be_sliced_between)
+        ]
+    }
+}

@@ -109,3 +109,24 @@ class InlineFilterTest: TestsBase {
     }
 }
 
+extension InlineFilterTest {
+    static var allTests : [(String, (InlineFilterTest) -> () throws -> Void)] {
+        return [
+            ("test_root_context_can_be_referred_in_predicate", test_root_context_can_be_referred_in_predicate),
+            ("test_multiple_context_object_can_be_refered", test_multiple_context_object_can_be_refered),
+            ("test_simple_inline_or_statement_evaluates", test_simple_inline_or_statement_evaluates),
+            ("test_no_path_ref_in_filter_hit_all", test_no_path_ref_in_filter_hit_all),
+            ("test_no_path_ref_in_filter_hit_none", test_no_path_ref_in_filter_hit_none),
+            ("test_path_can_be_on_either_side_of_operator", test_path_can_be_on_either_side_of_operator),
+            ("test_path_can_be_on_both_side_of_operator", test_path_can_be_on_both_side_of_operator),
+            ("test_patterns_can_be_evaluated", test_patterns_can_be_evaluated),
+            ("test_patterns_can_be_evaluated_with_ignore_case", test_patterns_can_be_evaluated_with_ignore_case),
+            ("test_negate_exists_check", test_negate_exists_check),
+            ("test_negate_exists_check_primitive", test_negate_exists_check_primitive),
+            ("test_equality_check_does_not_break_evaluation", test_equality_check_does_not_break_evaluation),
+            ("test_lt_check_does_not_break_evaluation", test_lt_check_does_not_break_evaluation),
+            ("test_escape_pattern", test_escape_pattern),
+            ("test_filter_evaluation_does_not_break_path_evaluation", test_filter_evaluation_does_not_break_path_evaluation)
+        ]
+    }
+}

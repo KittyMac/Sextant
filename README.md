@@ -8,10 +8,10 @@ The original [Stefan Goessner JsonPath implemenentation](https://goessner.net/ar
 
 ## Goals
 
-- [x] Provide a complete JSONPath implementation
-- [ ] Provide a high performance implemenation
-- [ ] Provide an implementation which will work on all platforms Swift supports
-- [x] Provide a simple and straight-forward API
+- [x] Simple API
+- [x] Full JSONPath implementation
+- [x] High performance
+- [x] Linux support
 
 ## Usage
 

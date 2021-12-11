@@ -122,3 +122,16 @@ class MultiPropTest: TestsBase {
     }
     
 }
+
+extension MultiPropTest {
+    static var allTests : [(String, (MultiPropTest) -> () throws -> Void)] {
+        return [
+            ("test_multi_prop_can_be_read_from_root", test_multi_prop_can_be_read_from_root),
+            ("test_multi_props_can_be_non_leafs", test_multi_props_can_be_non_leafs),
+            ("test_nonexistent_non_leaf_multi_props_ignored", test_nonexistent_non_leaf_multi_props_ignored),
+            ("test_multi_props_with_post_filter", test_multi_props_with_post_filter),
+            ("test_deep_scan_does_not_affect_non_leaf_multi_props", test_deep_scan_does_not_affect_non_leaf_multi_props),
+            ("test_multi_props_can_be_in_the_middle", test_multi_props_can_be_in_the_middle)
+        ]
+    }
+}

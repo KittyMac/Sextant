@@ -190,3 +190,42 @@ class PathCompilerTest: TestsBase {
         XCTAssertEqual(PathCompiler.compile(query: "$.aaa.foo(5,10,15)")?.description, "$['aaa'].foo(...)")
     }
 }
+
+extension PathCompilerTest {
+    static var allTests : [(String, (PathCompilerTest) -> () throws -> Void)] {
+        return [
+            ("test_a_root_path_must_be_followed_by_period_or_bracket", test_a_root_path_must_be_followed_by_period_or_bracket),
+            ("test_a_root_path_can_be_compiled", test_a_root_path_can_be_compiled),
+            ("test_a_path_may_not_end_with_period", test_a_path_may_not_end_with_period),
+            ("test_a_path_may_not_end_with_period_2", test_a_path_may_not_end_with_period_2),
+            ("test_a_path_may_not_end_with_scan", test_a_path_may_not_end_with_scan),
+            ("test_a_path_may_not_end_with_scan_2", test_a_path_may_not_end_with_scan_2),
+            ("test_a_property_token_can_be_compiled", test_a_property_token_can_be_compiled),
+            ("test_a_bracket_notation_property_token_can_be_compiled", test_a_bracket_notation_property_token_can_be_compiled),
+            ("test_a_multi_property_token_can_be_compiled", test_a_multi_property_token_can_be_compiled),
+            ("test_a_property_chain_can_be_compiled", test_a_property_chain_can_be_compiled),
+            ("test_a_property_may_not_contain_blanks", test_a_property_may_not_contain_blanks),
+            ("test_a_wildcard_can_be_compiled", test_a_wildcard_can_be_compiled),
+            ("test_a_wildcard_can_follow_a_property", test_a_wildcard_can_follow_a_property),
+            ("test_an_array_index_path_can_be_compiled", test_an_array_index_path_can_be_compiled),
+            ("test_an_array_slice_path_can_be_compiled", test_an_array_slice_path_can_be_compiled),
+            ("test_a_scan_token_can_be_parsed", test_a_scan_token_can_be_parsed),
+            ("test_array_indexes_must_be_separated_by_commas", test_array_indexes_must_be_separated_by_commas),
+            ("test_trailing_comma_after_list_is_not_accepted", test_trailing_comma_after_list_is_not_accepted),
+            ("test_accept_only_a_single_comma_between_indexes", test_accept_only_a_single_comma_between_indexes),
+            ("test_property_must_be_separated_by_commas", test_property_must_be_separated_by_commas),
+            ("test_an_inline_criteria_can_be_parsed", test_an_inline_criteria_can_be_parsed),
+            ("test_issue_predicate_can_have_escaped_backslash_in_prop", test_issue_predicate_can_have_escaped_backslash_in_prop),
+            ("test_issue_predicate_can_have_bracket_in_regex", test_issue_predicate_can_have_bracket_in_regex),
+            ("test_issue_predicate_can_have_and_in_regex", test_issue_predicate_can_have_and_in_regex),
+            ("test_issue_predicate_can_have_and_in_prop", test_issue_predicate_can_have_and_in_prop),
+            ("test_issue_predicate_brackets_must_change_priorities", test_issue_predicate_brackets_must_change_priorities),
+            ("test_issue_predicate_or_has_lower_priority_than_and", test_issue_predicate_or_has_lower_priority_than_and),
+            ("test_issue_predicate_can_have_double_quotes", test_issue_predicate_can_have_double_quotes),
+            ("test_issue_predicate_can_have_single_quotes", test_issue_predicate_can_have_single_quotes),
+            ("test_issue_predicate_can_have_single_quotes_escaped", test_issue_predicate_can_have_single_quotes_escaped),
+            ("test_issue_predicate_can_have_square_bracket_in_prop", test_issue_predicate_can_have_square_bracket_in_prop),
+            ("test_a_function_can_be_compiled", test_a_function_can_be_compiled)
+        ]
+    }
+}

@@ -38,8 +38,7 @@ class PropertyPathToken: PathToken {
             if isUpstreamDefinite() == false {
                 return .done
             }
-            let m = (jsonObject == nil) ? "null" : jsonObject.debugDescription
-            return .error("Expected to find an object with property \(pathFragment()) in path \(currentPath) but found '\(m)'. This is not a json object.")
+            return .error("Expected to find an object with property \(pathFragment()) in path \(currentPath) but found something that is not a json object.")
         }
 
         if singlePropertyCase() || multiPropertyMergeCase() {

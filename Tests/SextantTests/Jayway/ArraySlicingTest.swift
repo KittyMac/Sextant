@@ -43,3 +43,19 @@ class ArraySlicingTest: TestsBase {
         XCTAssertEqualAny(jsonArray.query(values: "$[0,1,2]"), [ 1, 3, 5 ])
     }
 }
+
+extension ArraySlicingTest {
+    static var allTests : [(String, (ArraySlicingTest) -> () throws -> Void)] {
+        return [
+            ("test_get_by_position", test_get_by_position),
+            ("test_get_from_index", test_get_from_index),
+            ("test_get_between_index", test_get_between_index),
+            ("test_get_between_index_2", test_get_between_index_2),
+            ("test_get_between_index_3", test_get_between_index_3),
+            ("test_get_between_index_out_of_bounds", test_get_between_index_out_of_bounds),
+            ("test_get_from_tail_index", test_get_from_tail_index),
+            ("test_get_from_tail", test_get_from_tail),
+            ("test_get_indexes", test_get_indexes)
+        ]
+    }
+}

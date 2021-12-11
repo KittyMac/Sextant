@@ -31,3 +31,16 @@ class ArrayIndexFilterTest: TestsBase {
         XCTAssertEqualAny(json.query(values: "$[-3]"), [8])
     }
 }
+
+extension ArrayIndexFilterTest {
+    static var allTests : [(String, (ArrayIndexFilterTest) -> () throws -> Void)] {
+        return [
+            ("test_tail_does_not_throw_when_index_out_of_bounds", test_tail_does_not_throw_when_index_out_of_bounds),
+            ("test_head_does_not_throw_when_index_out_of_bounds", test_head_does_not_throw_when_index_out_of_bounds),
+            ("test_head_grabs_correct", test_head_grabs_correct),
+            ("test_tail_grabs_correct", test_tail_grabs_correct),
+            ("test_head_tail_grabs_correct", test_head_tail_grabs_correct),
+            ("test_can_access_items_from_end_with_negative_index", test_can_access_items_from_end_with_negative_index)
+        ]
+    }
+}

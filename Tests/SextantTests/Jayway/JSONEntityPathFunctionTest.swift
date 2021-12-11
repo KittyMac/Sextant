@@ -75,3 +75,15 @@ class JSONEntityPathFunctionTest: TestsBase {
         XCTAssertEqualAny(jsonBatch.query(values: path), [12.2, 17])
     }
 }
+
+extension JSONEntityPathFunctionTest {
+    static var allTests : [(String, (JSONEntityPathFunctionTest) -> () throws -> Void)] {
+        return [
+            ("testLengthOfTextArray", testLengthOfTextArray),
+            ("testLengthOfNumberArray", testLengthOfNumberArray),
+            ("testLengthOfStructure", testLengthOfStructure),
+            ("testPredicateWithFunctionCallSingleMatch", testPredicateWithFunctionCallSingleMatch),
+            ("testPredicateWithFunctionCallTwoMatches", testPredicateWithFunctionCallTwoMatches)
+        ]
+    }
+}

@@ -192,21 +192,16 @@ class ScanPathTokenTests: TestsBase {
 
 }
 
-/*
-
-
-
-
-
-
-
-
-
-
-
-
-@end
-
-
-NS_ASSUME_NONNULL_END
-*/
+extension ScanPathTokenTests {
+    static var allTests : [(String, (ScanPathTokenTests) -> () throws -> Void)] {
+        return [
+            ("test_a_document_can_be_scanned_for_property", test_a_document_can_be_scanned_for_property),
+            ("test_a_document_can_be_scanned_for_property_path", test_a_document_can_be_scanned_for_property_path),
+            ("test_a_document_can_be_scanned_for_wildcard", test_a_document_can_be_scanned_for_wildcard),
+            ("test_a_document_can_be_scanned_for_wildcard2", test_a_document_can_be_scanned_for_wildcard2),
+            ("test_a_document_can_be_scanned_for_wildcard3", test_a_document_can_be_scanned_for_wildcard3),
+            ("test_a_document_can_be_scanned_for_predicate_match", test_a_document_can_be_scanned_for_predicate_match),
+            ("test_a_document_can_be_scanned_for_existence", test_a_document_can_be_scanned_for_existence)
+        ]
+    }
+}

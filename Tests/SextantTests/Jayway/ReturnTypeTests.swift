@@ -21,7 +21,7 @@ class ReturnTypeTests: TestsBase {
     }
     
     func test_assert_longs_can_be_read() {
-        XCTAssertEqualAny(root.query(values: "$.long-max-property"), [UINT64_MAX])
+        XCTAssertEqualAny(root.query(values: "$.long-max-property"), [SIZE_MAX])
         XCTAssertEqualAny(root.query(paths: "$.long-max-property"), ["$['long-max-property']"])
     }
     
@@ -54,5 +54,19 @@ class ReturnTypeTests: TestsBase {
             "$['store']['book'][2]['author']",
             "$['store']['book'][3]['author']"
         ])
+    }
+}
+
+extension ReturnTypeTests {
+    static var allTests : [(String, (ReturnTypeTests) -> () throws -> Void)] {
+        return [
+            ("test_assert_strings_can_be_read", test_assert_strings_can_be_read),
+            ("test_assert_ints_can_be_read", test_assert_ints_can_be_read),
+            ("test_assert_longs_can_be_read", test_assert_longs_can_be_read),
+            ("test_assert_boolean_values_can_be_read", test_assert_boolean_values_can_be_read),
+            ("test_assert_arrays_can_be_read", test_assert_arrays_can_be_read),
+            ("test_assert_maps_can_be_read", test_assert_maps_can_be_read),
+            ("test_a_path_evaluation_can_be_returned_as_PATH_LIST", test_a_path_evaluation_can_be_returned_as_PATH_LIST)
+        ]
     }
 }

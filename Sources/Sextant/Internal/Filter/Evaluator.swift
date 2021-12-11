@@ -130,24 +130,19 @@ private func evaluateLT(left: ValueNode?, right: ValueNode?, context: PredicateC
 }
 
 private func evaluateREGEX(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    var regex: NSRegularExpression?
-    var hitch: Hitch?
+    var regex0: NSRegularExpression?
+    var hitch0: Hitch?
 
     if let left = left as? PatternNode {
-        regex = left.regex
-        hitch = right?.literalValue
+        regex0 = left.regex
+        hitch0 = right?.literalValue
     } else if let right = right as? PatternNode {
-        regex = right.regex
-        hitch = left?.literalValue
+        regex0 = right.regex
+        hitch0 = left?.literalValue
     }
 
-    guard let regex = regex else {
-        return .error
-    }
-
-    guard let hitch = hitch else {
-        return .false
-    }
+    guard let regex = regex0 else { return .error }
+    guard let hitch = hitch0 else { return .false }
 
     let valueAsString = hitch.description
     let matches = regex.numberOfMatches(in: valueAsString,
@@ -230,10 +225,8 @@ private func evaluateCONTAINS(left: ValueNode?, right: ValueNode?, context: Pred
 }
 
 private func evaluateALL(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let left = left as? JsonNode else { return .false }
-    guard let right = right as? JsonNode else { return .false }
-    guard let left = left.json as? JsonArray else { return .false }
-    guard let right = right.json as? JsonArray else { return .false }
+    guard let left = (left as? JsonNode)?.json as? JsonArray else { return .false }
+    guard let right = (right as? JsonNode)?.json as? JsonArray else { return .false }
 
     for rightObject in right {
         var hasValue = false
@@ -258,10 +251,8 @@ private func evaluateTYPE(left: ValueNode?, right: ValueNode?, context: Predicat
 }
 
 private func evaluateSUBSETOF(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let left = left as? JsonNode else { return .false }
-    guard let right = right as? JsonNode else { return .false }
-    guard let left = left.json as? JsonArray else { return .false }
-    guard let right = right.json as? JsonArray else { return .false }
+    guard let left = (left as? JsonNode)?.json as? JsonArray else { return .false }
+    guard let right = (right as? JsonNode)?.json as? JsonArray else { return .false }
 
     var count = 0
     for leftObject in left {
@@ -278,10 +269,8 @@ private func evaluateSUBSETOF(left: ValueNode?, right: ValueNode?, context: Pred
 }
 
 private func evaluateANYOF(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let left = left as? JsonNode else { return .false }
-    guard let right = right as? JsonNode else { return .false }
-    guard let left = left.json as? JsonArray else { return .false }
-    guard let right = right.json as? JsonArray else { return .false }
+    guard let left = (left as? JsonNode)?.json as? JsonArray else { return .false }
+    guard let right = (right as? JsonNode)?.json as? JsonArray else { return .false }
 
     for leftObject in left {
         for rightObject in right where anyEquals(rightObject, leftObject) {

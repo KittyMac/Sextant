@@ -113,3 +113,15 @@ class PredicatePathTokenTests: TestsBase {
     }
 }
 
+extension PredicatePathTokenTests {
+    static var allTests : [(String, (PredicatePathTokenTests) -> () throws -> Void)] {
+        return [
+            ("test_a_filter_predicate_can_be_evaluated_on_string_criteria", test_a_filter_predicate_can_be_evaluated_on_string_criteria),
+            ("test_a_filter_predicate_can_be_evaluated_on_int_criteria", test_a_filter_predicate_can_be_evaluated_on_int_criteria),
+            ("test_a_filter_predicate_can_be_evaluated_on_decimal_criteria", test_a_filter_predicate_can_be_evaluated_on_decimal_criteria),
+            ("test_multiple_criteria_can_be_used", test_multiple_criteria_can_be_used),
+            ("test_field_existence_can_be_checked", test_field_existence_can_be_checked),
+            ("test_boolean_criteria_evaluates", test_boolean_criteria_evaluates)
+        ]
+    }
+}

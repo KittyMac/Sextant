@@ -56,3 +56,22 @@ class NestedFunctionTest: TestsBase {
         XCTAssertEqualAny(jsonNumberSeries.query(values: "$.numbers.append(0, 1, 2"), nil)
     }
 }
+
+extension NestedFunctionTest {
+    static var allTests : [(String, (NestedFunctionTest) -> () throws -> Void)] {
+        return [
+            ("testParameterAverageFunctionCall", testParameterAverageFunctionCall),
+            ("testArrayAverageFunctionCall", testArrayAverageFunctionCall),
+            ("testArrayAverageFunctionCallWithParameters", testArrayAverageFunctionCallWithParameters),
+            ("testJsonInnerArgumentArray", testJsonInnerArgumentArray),
+            ("testSimpleLiteralArgument", testSimpleLiteralArgument),
+            ("testStringConcat", testStringConcat),
+            ("testStringConcatWithJSONParameter", testStringConcatWithJSONParameter),
+            ("testAppendNumber", testAppendNumber),
+            ("testAppendTextAndNumberThenSum", testAppendTextAndNumberThenSum),
+            ("testErrantCloseBraceNegative", testErrantCloseBraceNegative),
+            ("testErrantCloseBracketNegative", testErrantCloseBracketNegative),
+            ("testUnclosedFunctionCallNegative", testUnclosedFunctionCallNegative)
+        ]
+    }
+}

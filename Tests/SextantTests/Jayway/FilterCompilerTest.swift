@@ -98,3 +98,17 @@ class FilterCompilerTest: TestsBase {
     }
 
 }
+
+extension FilterCompilerTest {
+    static var allTests : [(String, (FilterCompilerTest) -> () throws -> Void)] {
+        return [
+            ("test_valid_filters_compile", test_valid_filters_compile),
+            ("test_string_quote_style_is_serialized", test_string_quote_style_is_serialized),
+            ("test_string_can_contain_path_chars", test_string_can_contain_path_chars),
+            ("test_invalid_path_when_string_literal_is_unquoted", test_invalid_path_when_string_literal_is_unquoted),
+            ("test_or_has_lower_priority_than_and", test_or_has_lower_priority_than_and),
+            ("test_invalid_filters_does_not_compile", test_invalid_filters_does_not_compile),
+            ("test_not_exists_filter", test_not_exists_filter),
+        ]
+    }
+}

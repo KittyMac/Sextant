@@ -3,9 +3,9 @@ import class Foundation.Bundle
 
 import Sextant
 
-func XCTAssertEqualAny(_ first: Any?, _ second: Any?) {
-    guard let first = first else { return XCTAssertTrue(first == nil && second == nil) }
-    guard let second = second else { return XCTAssertTrue(false) }
+func XCTAssertEqualAny(_ inFirst: Any?, _ inSecond: Any?) {
+    guard let first = inFirst else { return XCTAssertTrue(inFirst == nil && inSecond == nil) }
+    guard let second = inSecond else { return XCTAssertTrue(false) }
     
     if let first = first as? [String],
        let second = second as? [String] {
@@ -39,7 +39,7 @@ func XCTAssertEqualAny(_ first: Any?, _ second: Any?) {
 }
 
 
-class TestsBase: XCTestCase {
+public class TestsBase: XCTestCase {
     
     func decode(json jsonString: String) -> JsonAny {
         guard let jsonData = jsonString.data(using: .utf8) else { fatalError("unable to create json data") }
@@ -54,7 +54,7 @@ class TestsBase: XCTestCase {
     {
         "string-property": "string-value",
         "int-max-property": \(UINT32_MAX),
-        "long-max-property": \(UINT64_MAX),
+        "long-max-property": \(SIZE_MAX),
         "boolean-property": true,
         "null-property": null,
         "int-small-property": 1,

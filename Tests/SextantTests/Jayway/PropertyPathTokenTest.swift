@@ -58,3 +58,15 @@ class PropertyPathTokenTests: TestsBase {
     }
 }
  
+extension PropertyPathTokenTests {
+    static var allTests : [(String, (PropertyPathTokenTests) -> () throws -> Void)] {
+        return [
+            ("test_property_not_found", test_property_not_found),
+            ("test_property_not_found_deep", test_property_not_found_deep),
+            ("test_property_not_found_option_throw", test_property_not_found_option_throw),
+            ("test_map_value_can_be_read_from_map", test_map_value_can_be_read_from_map),
+            ("test_map_value_can_be_read_from_array", test_map_value_can_be_read_from_array),
+            ("test_map_value_can_be_read_from_child_map", test_map_value_can_be_read_from_child_map)
+        ]
+    }
+}

@@ -33,5 +33,15 @@ class ExamplesTest: TestsBase {
             XCTAssertEqualAny(arrayOfResults[0], "Hello")
         }
     }
-    
 }
+
+extension ExamplesTest {
+    static var allTests : [(String, (ExamplesTest) -> () throws -> Void)] {
+        return [
+            ("testSimple0", testSimple0),
+            ("testSimple1", testSimple1),
+            ("testSimple2", testSimple2),
+        ]
+    }
+}
+

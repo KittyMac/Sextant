@@ -45,27 +45,14 @@ class NullHandlingTest: TestsBase {
         XCTAssertEqualAny(jsonDocumentNull.query(values: "$.children[*].age"), [0, nil])
     }
 }
-/*
-- (void)test_the_age_of_all_with_age_defined
-{
-	[self checkResultForJSONString:_jsonDocument jsonPathString:@"$.children[*].age" expectedResult:@[ @0, [NSNull null]]];
+
+extension NullHandlingTest {
+    static var allTests : [(String, (NullHandlingTest) -> () throws -> Void)] {
+        return [
+            ("test_not_defined_property_throws_PathNotFoundException", test_not_defined_property_throws_PathNotFoundException),
+            ("test_last_token_defaults_to_null", test_last_token_defaults_to_null),
+            ("test_null_property_returns_null", test_null_property_returns_null),
+            ("test_the_age_of_all_with_age_defined", test_the_age_of_all_with_age_defined),
+        ]
+    }
 }
-
-- (void)test_path2
-{
-	[self checkResultForJSONString:@"{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}" jsonPathString:@"a[?(@.b==4)].c" expectedResult:@[]];
-}
-
-- (void)test_path
-{
-	[self checkResultForJSONString:@"{\"a\":[{\"b\":1,\"c\":2},{\"b\":5,\"c\":2}]}"
-					jsonPathString:@"a[?(@.b==5)].d"
-					 configuration:[SMJConfiguration configurationWithOption:SMJOptionDefaultPathLeafToNull]
-					expectedResult:@[ [NSNull null] ]];
-}
-
-@end
-
-
-NS_ASSUME_NONNULL_END
-*/

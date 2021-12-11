@@ -46,28 +46,13 @@ class ComplianceTest: TestsBase {
     }
 }
 
-
-/*#pragma mark - SMJComplianceTest
-
-@interface SMJComplianceTest : SMJBaseTest
-@end
-
-@implementation SMJComplianceTest
-
-- (void)test_four
-{
-
-	[self checkResultForJSONString:json jsonPathString:@"$.menu.items[?(@)]" expectedError:NO];
-	
-	[self checkResultForJSONString:json jsonPathString:@"$.menu.items[?(@.id == 'ViewSVG')].id" expectedResult:@[ @"ViewSVG" ]];
-
-	[self checkResultForJSONString:json jsonPathString:@"$.menu.items[?(@ && @.id == 'ViewSVG')].id" expectedResult:@[ @"ViewSVG" ]];
-
-	[self checkResultForJSONString:json jsonPathString:@"$.menu.items[?(@ && @.id && !@.label)].id" expectedResult:@[ @"Open", @"Quality", @"Pause", @"Mute", @"Copy", @"Help" ]];
+extension ComplianceTest {
+    static var allTests : [(String, (ComplianceTest) -> () throws -> Void)] {
+        return [
+            ("test_two", test_one),
+            ("test_two", test_two),
+            ("test_three", test_three),
+            ("test_four", test_four)
+        ]
+    }
 }
-
-@end
-
-
-NS_ASSUME_NONNULL_END
-*/

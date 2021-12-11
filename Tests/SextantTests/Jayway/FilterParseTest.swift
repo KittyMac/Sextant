@@ -31,3 +31,12 @@ class FilterParseTest: TestsBase {
     }
 
 }
+
+extension FilterParseTest {
+    static var allTests : [(String, (FilterParseTest) -> () throws -> Void)] {
+        return [
+            ("test_a_filter_can_be_parsed", test_a_filter_can_be_parsed),
+            ("test_an_invalid_filter_can_not_be_parsed", test_an_invalid_filter_can_not_be_parsed),
+        ]
+    }
+}

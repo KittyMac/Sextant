@@ -105,3 +105,29 @@ class DeepScanTest: TestsBase {
         XCTAssertEqualAny(json.query(values: "$..array[0]"), [["object1":["name":"robert"]]])
     }
 }
+
+extension DeepScanTest {
+    static var allTests : [(String, (DeepScanTest) -> () throws -> Void)] {
+        return [
+            ("test_when_deep_scanning_non_array_subscription_is_ignored", test_when_deep_scanning_non_array_subscription_is_ignored),
+            ("test_when_deep_scanning_null_subscription_is_ignored", test_when_deep_scanning_null_subscription_is_ignored),
+            ("test_when_deep_scanning_array_index_oob_is_ignored", test_when_deep_scanning_array_index_oob_is_ignored),
+            ("test_definite_upstream_illegal_array_access_throws", test_definite_upstream_illegal_array_access_throws),
+            ("test_when_deep_scanning_illegal_property_access_is_ignored", test_when_deep_scanning_illegal_property_access_is_ignored),
+            ("test_when_deep_scanning_illegal_predicate_is_ignored", test_when_deep_scanning_illegal_predicate_is_ignored),
+            ("test_when_deep_scanning_require_properties_is_ignored_on_scan_target", test_when_deep_scanning_require_properties_is_ignored_on_scan_target),
+            ("test_when_deep_scanning_require_properties_is_ignored_on_scan_target_but_not_on_children", test_when_deep_scanning_require_properties_is_ignored_on_scan_target_but_not_on_children),
+            ("test_when_deep_scanning_leaf_multi_props_work", test_when_deep_scanning_leaf_multi_props_work),
+            ("test_require_single_property_ok", test_require_single_property_ok),
+            ("test_require_single_property", test_require_single_property),
+            ("test_require_multi_property_all_match", test_require_multi_property_all_match),
+            ("test_require_multi_property_some_match", test_require_multi_property_some_match),
+            ("test_scan_for_single_property", test_scan_for_single_property),
+            ("test_scan_for_property_path", test_scan_for_property_path),
+            ("test_scan_for_property_path_missing_required_property", test_scan_for_property_path_missing_required_property),
+            ("test_scans_can_be_filtered", test_scans_can_be_filtered),
+            ("test_scan_with_a_function_filter", test_scan_with_a_function_filter),
+            ("test_deepScanPathDefault", test_deepScanPathDefault)
+        ]
+    }
+}
