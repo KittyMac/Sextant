@@ -26,6 +26,13 @@ class ArraySliceToken: PathToken {
             var from = operation.from ?? 0
             var to = operation.to ?? array.count
             
+            if from < 0 {
+                from = array.count + from
+            }
+            if to < 0 {
+                to = array.count + to
+            }
+            
             from = max(0, from)
             to = min(array.count, to)
             
