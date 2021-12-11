@@ -9,9 +9,9 @@ class LogicalOperator: CustomStringConvertible, Equatable {
     static func == (lhs: LogicalOperator, rhs: LogicalOperator) -> Bool {
         return lhs.stringOperator == rhs.stringOperator
     }
-    
+
     let stringOperator: Hitch
-    
+
     init?(stringOperator: Hitch) {
         if stringOperator == kLogicalOperatorAND ||
             stringOperator == kLogicalOperatorOR ||
@@ -21,11 +21,11 @@ class LogicalOperator: CustomStringConvertible, Equatable {
             return nil
         }
     }
-    
+
     var description: String {
         return stringOperator.description
     }
-    
+
     class func logicalOperatorAND() -> LogicalOperator {
         guard let op = LogicalOperator(stringOperator: kLogicalOperatorAND) else {
             fatalError("Unable to create basic AND logical operator")

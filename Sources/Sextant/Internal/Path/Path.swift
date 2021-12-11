@@ -17,34 +17,34 @@ class Path: CustomStringConvertible {
     class func nullPath() -> Path {
         return NullPath.shared
     }
-    
+
     var parent: JsonAny
-    
+
     init(parent: JsonAny) {
         self.parent = parent
     }
-    
+
     var description: String {
         return ""
     }
-    
+
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext? {
         fatalError("TO BE IMPLEMENTED")
-        //return nil
+        // return nil
     }
-    
+
     func isDefinite() -> Bool {
         fatalError("TO BE IMPLEMENTED")
-        //return false
+        // return false
     }
-    
+
     func isFunctionPath() -> Bool {
         fatalError("TO BE IMPLEMENTED")
-        //return false
+        // return false
     }
-    
+
     func isRootPath() -> Bool {
         fatalError("TO BE IMPLEMENTED")
-        //return false
+        // return false
     }
 }

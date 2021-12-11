@@ -19,7 +19,7 @@ private let relationalOperatorALL = Hitch("ALL")
 private let relationalOperatorSIZE = Hitch("SIZE")
 private let relationalOperatorEXISTS = Hitch("EXISTS")
 private let relationalOperatorTYPE = Hitch("TYPE")
-//private let relationalOperatorMATCHES Hitch("matches"))
+// private let relationalOperatorMATCHES Hitch("matches"))
 private let relationalOperatorEMPTY = Hitch("EMPTY")
 private let relationalOperatorSUBSETOF = Hitch("SUBSETOF")
 private let relationalOperatorANYOF = Hitch("ANYOF")
@@ -32,7 +32,7 @@ enum RelationalOperator {
 
     case TSEQ
     case NE
-    
+
     case TSNE
     case LT
     case GT
@@ -44,13 +44,13 @@ enum RelationalOperator {
     case SIZE
     case EXISTS
     case TYPE
-    //case MATCHES
+    // case MATCHES
     case EMPTY
     case SUBSETOF
-    
+
     case ANYOF
     case NONEOF
-    
+
     func hitch() -> Hitch {
         switch self {
         case .GTE:

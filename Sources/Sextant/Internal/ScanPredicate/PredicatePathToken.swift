@@ -2,24 +2,24 @@ import Foundation
 import Hitch
 
 class PredicatePathToken: PathToken {
-    
+
     var predicates: [Predicate]
-    
+
     init(predicate: Predicate) {
         self.predicates = [predicate]
     }
-    
+
     init(predicates: [Predicate]) {
         self.predicates = predicates
     }
-    
+
     func accept(jsonObject: JsonAny,
                 rootJsonObject: JsonAny,
                 evaluationContext: EvaluationContext) -> Bool {
         let predicateContext = PredicateContext(jsonObject: jsonObject,
                                                 rootJsonObject: rootJsonObject,
                                                 pathCache: evaluationContext.evaluationCache)
-        
+
         for predicate in predicates {
             let result = predicate.apply(predicateContext: predicateContext)
             if result != .true {
@@ -28,7 +28,7 @@ class PredicatePathToken: PathToken {
         }
         return true
     }
-    
+
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -38,7 +38,7 @@ class PredicatePathToken: PathToken {
                       rootJsonObject: evaluationContext.rootJsonObject,
                       evaluationContext: evaluationContext) {
                 let op = evaluationContext.forUpdate ? parentPath : Path.nullPath()
-                
+
                 if let next = next {
                     let result = next.evaluate(currentPath: currentPath,
                                                parentPath: op,
@@ -70,17 +70,17 @@ class PredicatePathToken: PathToken {
             }
         } else {
             if isUpstreamDefinite() {
-                return .error("Filter: \(description) can not be applied to primitives. Current context is: \(jsonObject ?? "nil")");
+                return .error("Filter: \(description) can not be applied to primitives. Current context is: \(jsonObject ?? "nil")")
             }
         }
-        
+
         return .done
     }
-    
+
     override func isTokenDefinite() -> Bool {
         return false
     }
-    
+
     override func pathFragment() -> String {
         let writer = Hitch()
         writer.append(UInt8.openBrace)
@@ -94,7 +94,6 @@ class PredicatePathToken: PathToken {
         return writer.description
     }
 }
-
 
 /*
 - (SMJEvaluationStatus)evaluateWithCurrentPath:(NSString *)currentPath parentPathRef:(SMJPathRef *)parent jsonObject:(id)jsonObject evaluationContext:(SMJEvaluationContextImpl *)context error:(NSError **)error

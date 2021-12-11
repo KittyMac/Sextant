@@ -23,26 +23,26 @@ func error(_ error: String) {
 extension Hitch {
     class func combine(_ parts: Hitch...) -> Hitch {
         guard parts.count > 0 else { return Hitch() }
-        
+
         var total = 0
         parts.forEach { total += $0.count }
-        
+
         let buffer = Hitch(capacity: total)
         parts.forEach { buffer.append($0) }
         return buffer
     }
-    
+
     class func make(path: Hitch, index: Int) -> Hitch {
         let clone = Hitch(hitch: path)
         clone.reserveCapacity(clone.count + 32)
-        
+
         clone.append(UInt8.openBrace)
         clone.append(number: index)
         clone.append(UInt8.closeBrace)
-        
+
         return clone
     }
-    
+
     class func make(path: Hitch, property: Hitch) -> Hitch {
         let clone = Hitch(hitch: path)
         clone.reserveCapacity(clone.count + property.count + 2)
@@ -51,7 +51,7 @@ extension Hitch {
         clone.append(UInt8.closeBrace)
         return clone
     }
-    
+
     class func make(path: Hitch, property: Hitch, wrap: UInt8) -> Hitch {
         let clone = Hitch(hitch: path)
         clone.reserveCapacity(clone.count + property.count + 4)
@@ -62,19 +62,19 @@ extension Hitch {
         clone.append(UInt8.closeBrace)
         return clone
     }
-    
+
     // Hitch.make(path: currentPath, property: properties.joined(delimiter: .comma, wrap: .singleQuote))
 }
 
 extension Array where Element == Hitch {
     func joined(delimiter: UInt8, wrap: UInt8) -> Hitch {
         guard count > 0 else { return Hitch() }
-        
+
         var total = 0
         forEach { total += $0.count + 2 }
-        
+
         let buffer = Hitch(capacity: total)
-        
+
         forEach { part in
             if buffer.count > 0 {
                 buffer.append(delimiter)
@@ -83,7 +83,7 @@ extension Array where Element == Hitch {
             buffer.append(part)
             buffer.append(wrap)
         }
-        
+
         return buffer
     }
 }
@@ -92,7 +92,7 @@ enum ArrayPathCheck: Equatable {
     case handle
     case skip
     case error(String)
-    
+
     static func == (lhs: ArrayPathCheck, rhs: ArrayPathCheck) -> Bool {
         switch (lhs, rhs) {
         case (.error, .error):
@@ -112,7 +112,7 @@ enum EvaluationStatus: Equatable {
     case done
     case aborted
     case error(_ error: String)
-    
+
     static func == (lhs: EvaluationStatus, rhs: EvaluationStatus) -> Bool {
         switch (lhs, rhs) {
         case (.error, .error):
@@ -139,7 +139,7 @@ public extension String {
         guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) else { return [] }
         return Sextant.shared.query(jsonObject, paths: path)
     }
-    
+
     func query(values path: String) -> JsonArray? {
         self.query(values: Hitch(stringLiteral: path))
     }
@@ -181,21 +181,21 @@ public final class Sextant {
 
     private var cachedPaths = [Hitch: Path]()
     private var lock = NSLock()
-    
+
     private func cachedPath(query: Hitch) -> Path? {
         lock.lock(); defer { lock.unlock() }
-        
+
         if let path = cachedPaths[query] {
             return path
         }
-        
+
         guard let pathCompiler = PathCompiler(query: query) else { return nil }
         guard let path = pathCompiler.compile() else { return nil }
-        
+
         cachedPaths[query] = path
         return path
     }
-    
+
     public func query(_ root: JsonAny,
                       values path: Hitch) -> JsonArray? {
         guard let path = cachedPath(query: path) else { return nil }
@@ -205,7 +205,7 @@ public final class Sextant {
         }
         return nil
     }
-    
+
     public func query(_ root: JsonAny,
                       paths path: Hitch) -> JsonArray? {
         guard let path = cachedPath(query: path) else { return nil }
@@ -215,5 +215,5 @@ public final class Sextant {
         }
         return nil
     }
-    
+
 }

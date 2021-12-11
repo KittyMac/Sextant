@@ -1,86 +1,86 @@
 import Foundation
 import Hitch
 
-fileprivate let docContextChar = UInt8.dollarSign
-fileprivate let evalContextChar = UInt8.atMark
-fileprivate let wildcardChar = UInt8.astericks
-fileprivate let beginFilterChar = UInt8.questionMark
-fileprivate let splitChar = UInt8.colon
+private let docContextChar = UInt8.dollarSign
+private let evalContextChar = UInt8.atMark
+private let wildcardChar = UInt8.astericks
+private let beginFilterChar = UInt8.questionMark
+private let splitChar = UInt8.colon
 
 final class PathCompiler {
-    
+
     class func compile(query: Hitch) -> Path? {
         return PathCompiler(query: query)?.compile()
     }
-    
+
     var ci: CharacterIndex
-    
+
     init?(query: Hitch) {
         ci = CharacterIndex(query: query)
-        
+
         ci.trim()
-        
+
         if ci[0] != docContextChar && ci[0] != evalContextChar {
             ci = CharacterIndex(query: query.insert("$.", index: 0))
             ci.trim()
         }
-        
+
         guard isPathContext(ci.current()) else {
             error("Path must start with \(docContextChar) or \(evalContextChar)")
             return nil
         }
-        
+
         if ci.last() == UInt8.dot {
             error("Path must not end with a '.' or '..'")
             return nil
         }
     }
-    
+
     func compile() -> CompiledPath? {
         guard let root = readContextToken() else { return nil }
-        
+
         return CompiledPath(root: root, isRootPath: root.rootToken[0] == UInt8.dollarSign)
     }
-    
+
     private func readContextToken() -> RootPathToken? {
-        
+
         readWhitespace()
-        
+
         guard isPathContext(ci.current()) else {
             error("Path must start with '$' or '@'")
             return nil
         }
-        
+
         let pathToken = RootPathToken(root: ci.current())
         guard ci.positionAtEnd() == false else { return pathToken }
-        
+
         ci.advance()
-        
+
         guard ci.current() == .dot || ci.current() == .openBrace else {
             error("Illegal character at position \(ci.position) expected '.' or '[' and found \(ci.current())")
             return nil
         }
-        
+
         guard readNextToken(appender: pathToken) else { return nil }
-        
+
         return pathToken
     }
-    
+
     private func readWhitespace() {
         while ci.inBounds() {
             guard isWhitespace(ci.current()) else { break }
             ci.advance()
         }
     }
-    
+
     private func isWhitespace(_ c: UInt8) -> Bool {
         return c == UInt8.space || c == UInt8.tab || c == UInt8.lineFeed || c == UInt8.carriageReturn
     }
-    
+
     private func isPathContext(_ c: UInt8) -> Bool {
         return c == docContextChar || c == evalContextChar
     }
-    
+
     private func readNextToken(appender: PathToken) -> Bool {
         switch ci.current() {
         case .openBrace:
@@ -120,7 +120,7 @@ final class PathCompiler {
             return true
         }
     }
-    
+
     private func readDotToken(appender: PathToken) -> Bool {
         if ci.current() == .dot && ci.next() == .dot {
             appender.append(token: ScanPathToken())
@@ -131,26 +131,26 @@ final class PathCompiler {
         } else {
             ci.advance(1)
         }
-        
+
         if ci.current() == .dot {
             error("Character '.' on position \(ci.position) is not valid.")
             return false
         }
-        
+
         return readNextToken(appender: appender)
     }
-    
+
     private func readPropertyOrFunctionToken(appender: PathToken) -> Bool {
         if ci.current() == .openBrace || ci.current() == wildcardChar || ci.current() == .dot || ci.current() == .space {
             return false
         }
-        
+
         let startPosition = ci.position
         var readPosition = startPosition
         var endPosition = 0
-        
+
         var isFunction = false
-        
+
         while ci.inBounds(position: readPosition) {
             let c = ci[readPosition]
             if c == .space {
@@ -166,27 +166,27 @@ final class PathCompiler {
             }
             readPosition += 1
         }
-        
+
         if endPosition == 0 {
             endPosition = ci.count()
         }
-        
-        var functionParameters: [Parameter]? = nil
-        
+
+        var functionParameters: [Parameter]?
+
         if isFunction {
             if ci.inBounds(position: readPosition + 1) {
                 // read the next token to determine if we have a simple no-args function call
                 let c = ci[readPosition + 1]
-                
+
                 if c != .parenClose {
                     ci.position = endPosition + 1
-                    
+
                     // parse the arguments of the function - arguments that are inner queries or JSON objet(s)
                     guard let functionName = ci.substring(startPosition, endPosition) else {
                         error("Failed to extract function name, position: \(readPosition)")
                         return false
                     }
-                    
+
                     functionParameters = parseFunctionParameters(functionName)
                     if functionParameters == nil {
                         return false
@@ -200,7 +200,7 @@ final class PathCompiler {
         } else {
             ci.position = readPosition
         }
-        
+
         if let property = ci.substring(startPosition, endPosition) {
             if isFunction {
                 appender.append(token: FunctionPathToken(fragment: property,
@@ -208,52 +208,52 @@ final class PathCompiler {
             } else {
                 guard let pathToken = PropertyPathToken(properties: [property],
                                                         wrap: UInt8.singleQuote) else { return false }
-                
+
                 appender.append(token: pathToken)
             }
         }
-        
+
         return ci.positionAtEnd() || readNextToken(appender: appender)
     }
-    
+
     private func parseFunctionParameters(_ funcName: Hitch) -> [Parameter]? {
-        
+
         enum Type {
             case unknown
             case json
             case path
         }
-        
+
         var type: Type = .unknown
-        
+
         // Parenthesis starts at 1 since we're marking the start of a function call, the close paren will denote the
         // last parameter boundary
-        
+
         var groupParen = 1, groupBracket = 0, groupBrace = 0, groupQuote = 0
         var endOfStream = false
         var priorChar: UInt8 = 0
-        
+
         var parameters = [Parameter]()
         let parameter = Hitch()
-        
+
         while ci.inBounds() && endOfStream == false {
             let c = ci.current()
-            
+
             ci.advance(1)
-            
+
             // we're at the start of the stream, and don't know what type of parameter we have
             if type == .unknown {
                 if isWhitespace(c) {
                     continue
                 }
-                
+
                 if c == .openBrace || (c >= .zero && c <= .nine) || c == .doubleQuote {
                     type = .json
                 } else if isPathContext(c) {
                     type = .path // read until we reach a terminating comma and we've reset grouping to zero
                 }
             }
-            
+
             switch c {
             case .doubleQuote:
                 if priorChar != .backSlash && groupQuote > 0 {
@@ -298,15 +298,15 @@ final class PathCompiler {
                         parameter.append(c)
                     }
                 }
-                
+
                 // In this state we've reach the end of a function parameter and we can pass along the parameter string
                 // to the parser
-                if (groupQuote == 0 && groupBrace == 0 && groupBracket == 0 && ((groupParen == 0 && c == .parenClose) || groupParen == 1)) {
+                if groupQuote == 0 && groupBrace == 0 && groupBracket == 0 && ((groupParen == 0 && c == .parenClose) || groupParen == 1) {
                     endOfStream = (0 == groupParen)
-                    
+
                     if type != .unknown {
-                        var param: Parameter? = nil
-                        
+                        var param: Parameter?
+
                         switch type {
                         case .json:
                             param = Parameter(json: parameter)
@@ -318,7 +318,7 @@ final class PathCompiler {
                         default:
                             break
                         }
-                        
+
                         if let param = param {
                             parameters.append(param)
                         }
@@ -329,45 +329,44 @@ final class PathCompiler {
             default:
                 break
             }
-            
+
             if type != .unknown && !(c == .comma && groupBrace == 0 && groupBracket == 0 && groupParen == 1) {
                 parameter.append(c)
             }
-            
+
             priorChar = c
         }
-        
+
         if groupBrace != 0 || groupParen != 0 || groupBracket != 0 {
             error("Arguments to function: '\(funcName)' are not closed properly.")
             return nil
         }
-        
-        
+
         return parameters
     }
-    
+
     private func readArrayToken(appender: PathToken) -> Bool {
         // like: [1], [1,2, n], [1:], [1:2], [:2]
-        guard ci.current() == .openBrace else  { return false }
-        
+        guard ci.current() == .openBrace else { return false }
+
         let nextSignificantChar = ci.nextSignificantCharacter()
-        
+
         if (nextSignificantChar >= .zero && nextSignificantChar <= .nine) == false &&
             nextSignificantChar != .minus &&
             nextSignificantChar != splitChar {
             return false
         }
-        
+
         let expressionBeginIndex = ci.position + 1
         let expressionEndIndex = ci.nextIndexOfCharacter(character: .closeBrace, from: expressionBeginIndex)
-        
+
         guard expressionEndIndex >= 0 else { return false }
-        
+
         guard let expression = ci.substring(expressionBeginIndex, expressionEndIndex) else { return false }
         expression.trim()
-        
+
         guard expression[0] != .astericks else { return false }
-        
+
         for c in expression {
             if (c >= .zero && c <= .nine) == false &&
                 c != .comma &&
@@ -377,9 +376,9 @@ final class PathCompiler {
                 return false
             }
         }
-        
+
         let isSliceOperation = expression.contains(.colon)
-        
+
         if isSliceOperation {
             guard let operation = ArraySliceOperation(expression) else { return false }
             appender.append(token: ArraySliceToken(operation: operation))
@@ -387,34 +386,34 @@ final class PathCompiler {
             guard let operation = ArrayIndexOperation(expression) else { return false }
             appender.append(token: ArrayIndexToken(operation: operation))
         }
-        
+
         ci.position = expressionEndIndex + 1
-        
+
         return ci.positionAtEnd() || readNextToken(appender: appender)
     }
-    
+
     private func readBracketPropertyToken(appender: PathToken) -> Bool {
         // like: ['foo']
-        guard ci.current() == .openBrace else  { return false }
-        
+        guard ci.current() == .openBrace else { return false }
+
         let potentialStringDelimiter = ci.nextSignificantCharacter()
         guard potentialStringDelimiter == .singleQuote || potentialStringDelimiter == .doubleQuote else {
             return false
         }
-        
+
         var properties = [Hitch]()
-        
+
         var startPosition = ci.position + 1
         var readPosition = startPosition
         var endPosition = 0
-        
+
         var inProperty = false
         var inEscape = false
         var lastSignificantWasComma = false
-        
+
         while ci.inBounds(position: readPosition) {
             let c = ci[readPosition]
-            
+
             if inEscape {
                 inEscape = false
             } else if c == .backSlash {
@@ -432,17 +431,17 @@ final class PathCompiler {
                         error("Property must be separated by comma or Property must be terminated close square bracket at index \(readPosition)")
                         return false
                     }
-                    
+
                     endPosition = readPosition
-                    
+
                     guard let prop = ci.substring(startPosition, endPosition) else {
                         error("Failed to extract property at \(readPosition)")
                         return false
                     }
-                    
+
                     prop.unescape()
                     properties.append(prop)
-                    
+
                     inProperty = false
                 } else {
                     startPosition = readPosition + 1
@@ -456,29 +455,29 @@ final class PathCompiler {
                 }
                 lastSignificantWasComma = true
             }
-            
+
             readPosition += 1
         }
-        
+
         if inProperty {
             error("Property has not been closed - missing closing \(potentialStringDelimiter)")
             return false
         }
-        
+
         let endBracketIndex = ci.indexOfNextSignificantCharacter(character: .closeBrace,
                                                                  from: endPosition) + 1
         ci.position = endBracketIndex
-        
+
         guard let pathToken = PropertyPathToken(properties: properties,
                                                 wrap: potentialStringDelimiter) else {
             return false
         }
-        
+
         appender.append(token: pathToken)
-        
+
         return ci.positionAtEnd() || readNextToken(appender: appender)
     }
-    
+
     private func readWildCardToken(appender: PathToken) -> Bool {
         // like: [*]
         // like: *
@@ -486,70 +485,70 @@ final class PathCompiler {
         if inBracket && ci.nextSignificantCharacter() != wildcardChar {
             return false
         }
-        
+
         if ci.current() != wildcardChar && ci.hasMoreCharacters() == false {
             return false
         }
-        
+
         if inBracket {
             let wildCardIndex = ci.indexOfNextSignificantCharacter(character: wildcardChar)
-            
+
             if ci.nextSignificantCharacter(index: wildCardIndex) != .closeBrace {
                 error("Expected wildcard token to end with ']' on position \(wildCardIndex + 1)")
                 return false
             }
-            
+
             let bracketCloseIndex = ci.indexOfNextSignificantCharacter(character: .closeBrace, from: wildCardIndex)
             ci.position = bracketCloseIndex + 1
         } else {
             ci.advance(1)
         }
-        
+
         appender.append(token: WildcardPathToken())
-        
+
         return ci.positionAtEnd() || readNextToken(appender: appender)
     }
-    
+
     private func readFilterToken(appender: PathToken) -> Bool {
         // like: [?(...)]
-        
+
         if ci.current() != .openBrace && ci.nextSignificantCharacter() != beginFilterChar {
             return false
         }
-        
+
         let openStatementBracketIndex = ci.position
         let questionMarkIndex = ci.indexOfNextSignificantCharacter(character: beginFilterChar)
-        
+
         guard questionMarkIndex >= 0 else { return false }
-        
+
         let openBracketIndex = ci.indexOfNextSignificantCharacter(character: .parenOpen,
                                                                   from: questionMarkIndex)
-        
+
         guard openBracketIndex >= 0 else { return false }
-        
+
         let closeBracketIndex = ci.indexOfClosingBracket(index: openBracketIndex,
                                                          skipStrings: true,
                                                          skipRegex: true)
-        
+
         guard closeBracketIndex >= 0 else { return false }
-        
+
         guard ci.nextSignificantCharacter(index: closeBracketIndex) == .closeBrace else { return false }
-        
+
         let closeStatementBracketIndex = ci.indexOfNextSignificantCharacter(character: .closeBrace,
                                                                             from: closeBracketIndex)
-        
+
         guard let criteria = ci.substring(openStatementBracketIndex, closeStatementBracketIndex + 1) else {
             return false
         }
-        
+
         guard let predicate = FilterCompiler.compile(filter: criteria) else {
             return false
         }
-        
+
         appender.append(token: PredicatePathToken(predicate: predicate))
-        
+
         ci.position = closeStatementBracketIndex + 1
-        
+
         return ci.positionAtEnd() || readNextToken(appender: appender)
     }
 

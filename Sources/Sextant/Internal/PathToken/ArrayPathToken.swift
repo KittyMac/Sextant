@@ -2,11 +2,8 @@ import Foundation
 import Hitch
 
 class ArrayPathToken: PathToken {
-    
-    
-    
-}
 
+}
 
 /*
 #import "SMJArrayPathToken.h"

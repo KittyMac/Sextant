@@ -24,7 +24,7 @@ enum PathFunction {
     case LENGTH
     case SIZE
     case APPEND
-    
+
     func hitch() -> Hitch {
         switch self {
         case .AVG:
@@ -49,35 +49,35 @@ enum PathFunction {
     }
 
     init?(hitch: Hitch) {
-        if (hitch.lowercase().starts(with: functionAVG)) {
+        if hitch.lowercase().starts(with: functionAVG) {
             self = .AVG
-        } else if (hitch.starts(with: functionSTDDEV)) {
+        } else if hitch.starts(with: functionSTDDEV) {
             self = .STDDEV
-        } else if (hitch.starts(with: functionSUM)) {
+        } else if hitch.starts(with: functionSUM) {
             self = .SUM
-        } else if (hitch.starts(with: functionMIN)) {
+        } else if hitch.starts(with: functionMIN) {
             self = .MIN
-        } else if (hitch.starts(with: functionMAX)) {
+        } else if hitch.starts(with: functionMAX) {
             self = .MAX
-        } else if (hitch.starts(with: functionCONCAT)) {
+        } else if hitch.starts(with: functionCONCAT) {
             self = .CONCAT
-        } else if (hitch.starts(with: functionLENGTH)) {
+        } else if hitch.starts(with: functionLENGTH) {
             self = .LENGTH
-        } else if (hitch.starts(with: functionSIZE)) {
+        } else if hitch.starts(with: functionSIZE) {
             self = .SIZE
-        } else if (hitch.starts(with: functionAPPEND)) {
+        } else if hitch.starts(with: functionAPPEND) {
             self = .APPEND
         } else {
             return nil
         }
     }
-    
+
     func invoke(currentPath: Hitch,
                 parentPath: Path,
                 jsonObject: JsonAny,
                 evaluationContext: EvaluationContext,
                 parameters: [Parameter]) -> JsonAny {
-        
+
         switch self {
         case .AVG:
             guard let numerals = numerals(jsonObject: jsonObject, parameters: parameters) else {
@@ -88,11 +88,11 @@ enum PathFunction {
             guard let numerals = numerals(jsonObject: jsonObject, parameters: parameters) else {
                 return nil
             }
-            
+
             let sum = numerals.reduce(0.0, +)
             let sumSq = numerals.reduce(0.0) { $0 + ($1 * $1) }
             let count = Double(numerals.count)
-            
+
             return sqrt((sumSq / count) - (sum * sum / count / count))
         case .SUM:
             return numerals(jsonObject: jsonObject, parameters: parameters)?.reduce(0, +)
@@ -121,10 +121,10 @@ enum PathFunction {
                 return string.count
             }
             return nil
-            
+
         case .APPEND:
             guard let array = jsonObject as? JsonArray else { return jsonObject }
-            
+
             var result = [JsonAny]()
             result.append(contentsOf: array)
             for param in parameters {
@@ -133,40 +133,40 @@ enum PathFunction {
             return result
         }
     }
-    
+
     func numerals(jsonObject: JsonAny,
                   parameters: [Parameter]) -> [Double]? {
         var values = [Double]()
-        
+
         if let array = jsonObject as? JsonArray {
             values.append(contentsOf: array.compactMap { $0 as? Double })
         }
-        
+
         values.append(contentsOf: Parameter.list(parameters: parameters) ?? [])
-        
+
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")
             return nil
         }
-        
+
         return values
     }
-    
+
     func hitches(jsonObject: JsonAny,
                  parameters: [Parameter]) -> [Hitch]? {
         var values = [Hitch]()
-        
+
         if let array = jsonObject as? JsonArray {
-            values.append(contentsOf: array.compactMap { $0 as? String }.map { Hitch(stringLiteral: $0) } )
+            values.append(contentsOf: array.compactMap { $0 as? String }.map { Hitch(stringLiteral: $0) })
         }
-        
+
         values.append(contentsOf: Parameter.list(parameters: parameters) ?? [])
-        
+
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")
             return nil
         }
-        
+
         return values
     }
 }

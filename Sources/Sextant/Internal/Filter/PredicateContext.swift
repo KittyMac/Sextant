@@ -5,7 +5,7 @@ final class PredicateContext {
     var jsonObject: JsonAny
     var rootJsonObject: JsonAny
     var pathCache: [Hitch: JsonAny]
-    
+
     init(jsonObject: JsonAny,
          rootJsonObject: JsonAny,
          pathCache: [Hitch: JsonAny]) {
@@ -13,10 +13,10 @@ final class PredicateContext {
         self.rootJsonObject = rootJsonObject
         self.pathCache = pathCache
     }
-    
+
     func evaluate(path: Path) -> JsonAny {
         var result: JsonAny = nil
-        
+
         if path.isRootPath() {
             let pathString = path.description.hitch()
             if let obj = pathCache[pathString] {
@@ -26,7 +26,7 @@ final class PredicateContext {
                                                             rootJsonObject: rootJsonObject) else {
                     return nil
                 }
-                
+
                 result = evaluationContext.jsonObject()
                 if let result = result {
                     pathCache[pathString] = result
@@ -39,7 +39,7 @@ final class PredicateContext {
             }
             result = evaluationContext.jsonObject()
         }
-        
+
         return result
     }
 }

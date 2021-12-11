@@ -2,12 +2,12 @@ import Foundation
 import Hitch
 
 class WildcardPathToken: PathToken {
-    
+
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
                            evaluationContext: EvaluationContext) -> EvaluationStatus {
-        
+
         if let dictionary = jsonObject as? JsonDictionary {
             for property in dictionary.keys {
                 let result = handle(properties: [property.hitch()],
@@ -29,14 +29,14 @@ class WildcardPathToken: PathToken {
                 }
             }
         }
-        
+
         return .done
     }
-    
+
     override func isTokenDefinite() -> Bool {
         return false
     }
-    
+
     override func pathFragment() -> String {
         return "[*]"
     }

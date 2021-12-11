@@ -1,22 +1,22 @@
 import Foundation
 import Hitch
 
-fileprivate let typeHitch = Hitch("path")
+private let typeHitch = Hitch("path")
 
 struct PathNode: ValueNode {
     let pathString: Hitch
     let path: Path
-    
+
     let existsCheck: Bool
     let shouldExists: Bool
-    
+
     init(prebuiltPath: Path) {
         self.path = prebuiltPath
         self.pathString = prebuiltPath.description.hitch()
         self.existsCheck = false
         self.shouldExists = false
     }
-    
+
     init(path pathString: Hitch,
          prebuiltPath: Path,
          existsCheck: Bool,
@@ -26,20 +26,20 @@ struct PathNode: ValueNode {
         self.existsCheck = existsCheck
         self.shouldExists = shouldExists
     }
-    
+
     init?(path pathString: Hitch,
          existsCheck: Bool,
          shouldExists: Bool) {
         self.pathString = pathString
         self.existsCheck = existsCheck
         self.shouldExists = shouldExists
-        
+
         guard let path = PathCompiler.compile(query: pathString) else {
             return nil
         }
         self.path = path
     }
-    
+
     func copy(existsCheck: Bool,
               shouldExists: Bool) -> PathNode {
         return PathNode(path: pathString,
@@ -54,36 +54,36 @@ struct PathNode: ValueNode {
         }
         return path.description
     }
-    
+
     var literalValue: Hitch? {
         return description.hitch()
     }
-    
+
     var numericValue: Double? {
         return nil
     }
-    
+
     var typeName: Hitch {
         return typeHitch
     }
-    
+
     func evaluate(context: PredicateContext) -> ValueNode? {
-        
+
         if existsCheck {
-            
+
             guard let evaluationContext = path.evaluate(jsonObject: context.jsonObject,
                                                         rootJsonObject: context.rootJsonObject) else {
                 return BooleanNode.false
             }
-            
+
             if evaluationContext.jsonObject() != nil {
                 return BooleanNode.true
             }
             return BooleanNode.false
         } else {
-            
+
             let object = context.evaluate(path: path)
-            
+
             if object == nil {
                 return BooleanNode.false
             }
@@ -117,10 +117,10 @@ struct PathNode: ValueNode {
             if let object = object as? JsonDictionary {
                 return JsonNode(jsonObject: object)
             }
-            
+
             error("Could not convert \(object ?? "nil") to a ValueNode")
             return nil
         }
     }
-    
+
 }

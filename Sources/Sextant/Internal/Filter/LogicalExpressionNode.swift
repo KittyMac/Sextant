@@ -4,12 +4,12 @@ import Hitch
 class LogicalExpressionNode: ExpressionNode {
     var op: LogicalOperator
     var chain: [ExpressionNode]
-    
+
     init(op: LogicalOperator, nodes: [ExpressionNode]) {
         self.op = op
         self.chain = nodes
     }
-    
+
     override func apply(predicateContext: PredicateContext) -> PredicateApply {
         if op == LogicalOperator.logicalOperatorOR() {
             for expression in chain {
@@ -37,27 +37,25 @@ class LogicalExpressionNode: ExpressionNode {
             if result == .error {
                 return result
             }
-            
+
             if result == .true {
                 return .false
             }
             return .true
         }
     }
-    
+
     override var description: String {
         var result = ""
         let delimiter = " \(op.stringOperator) "
-        
+
         result.append("(")
         result.append( chain.map { $0.description }.joined(separator: delimiter) )
         result.append(")")
-        
+
         return result
     }
-    
-    
-    
+
     class func logicalNot(node: ExpressionNode) -> LogicalExpressionNode {
         return LogicalExpressionNode(op: LogicalOperator.logicalOperatorNOT(), nodes: [node])
     }

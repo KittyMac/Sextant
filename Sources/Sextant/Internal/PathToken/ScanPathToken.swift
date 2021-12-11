@@ -8,7 +8,7 @@ class ScanPathToken: PathToken {
                            jsonObject: JsonAny,
                            evaluationContext: EvaluationContext) -> EvaluationStatus {
         guard let next = next else { return .done }
-        
+
         return walk(path: next,
                     currentPath: currentPath,
                     parentPath: parentPath,
@@ -16,22 +16,21 @@ class ScanPathToken: PathToken {
                     evaluationContext: evaluationContext,
                     predicate: ScanPredicate.create(target: next, evaluationContext: evaluationContext))
     }
-    
+
     override func isTokenDefinite() -> Bool {
         return false
     }
-    
+
     override func pathFragment() -> String {
         return ".."
     }
-    
+
     private func walk(path: PathToken,
                       currentPath: Hitch,
                       parentPath: Path,
                       jsonObject: JsonAny,
                       evaluationContext: EvaluationContext,
-                      predicate: ScanPredicate) -> EvaluationStatus
-    {
+                      predicate: ScanPredicate) -> EvaluationStatus {
         if let dictionary = jsonObject as? JsonDictionary {
             return walk(object: path,
                         currentPath: currentPath,
@@ -49,22 +48,21 @@ class ScanPathToken: PathToken {
         }
         return .done
     }
-    
+
     private func walk(array path: PathToken,
                       currentPath: Hitch,
                       parentPath: Path,
                       jsonObject: JsonArray,
                       evaluationContext: EvaluationContext,
-                      predicate: ScanPredicate) -> EvaluationStatus
-    {
+                      predicate: ScanPredicate) -> EvaluationStatus {
         // Evaluate.
         if predicate.matchesJsonObject(jsonObject: jsonObject) {
             if let next = path.next {
                 var idx = 0
-                
+
                 for evalObject in jsonObject {
                     let evalPath = Hitch.make(path: currentPath, index: idx)
-                    
+
                     let result = next.evaluate(currentPath: evalPath,
                                                parentPath: parentPath,
                                                jsonObject: evalObject,
@@ -72,10 +70,10 @@ class ScanPathToken: PathToken {
                     if result != .done {
                         return result
                     }
-                    
+
                     idx += 1
                 }
-                
+
             } else {
                 let result = path.evaluate(currentPath: currentPath,
                                            parentPath: parentPath,
@@ -86,7 +84,7 @@ class ScanPathToken: PathToken {
                 }
             }
         }
-        
+
         // Recurse.
         var idx = 0
         for evalObject in jsonObject {
@@ -102,17 +100,16 @@ class ScanPathToken: PathToken {
             }
             idx += 1
         }
-        
+
         return .done
     }
-    
+
     private func walk(object: PathToken,
                       currentPath: Hitch,
                       parentPath: Path,
                       jsonObject: JsonDictionary,
                       evaluationContext: EvaluationContext,
-                      predicate: ScanPredicate) -> EvaluationStatus
-    {
+                      predicate: ScanPredicate) -> EvaluationStatus {
         // Evaluate.
         if predicate.matchesJsonObject(jsonObject: jsonObject) {
             let result = object.evaluate(currentPath: currentPath,
@@ -123,7 +120,7 @@ class ScanPathToken: PathToken {
                 return result
             }
         }
-        
+
         // Recurse.
         for property in jsonObject.keys {
             guard let propertyObject = jsonObject[property] else { continue }
@@ -140,8 +137,7 @@ class ScanPathToken: PathToken {
                 return result
             }
         }
-        
+
         return .done
     }
 }
-

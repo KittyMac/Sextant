@@ -1,7 +1,6 @@
 import Foundation
 import Hitch
 
-
 func PatternFlags(_ hitch: Hitch) -> NSRegularExpression.Options {
     var options = NSRegularExpression.Options()
     for c in hitch {

@@ -11,7 +11,7 @@ enum ValueComparisonResult {
 
 protocol ValueNode: CustomStringConvertible {
     var typeName: Hitch { get }
-    
+
     var literalValue: Hitch? { get }
     var numericValue: Double? { get }
 }
@@ -22,18 +22,18 @@ extension ValueNode {
             return .same
         }
         guard let other = other else { return .differ }
-        
+
         if let other = other as? ValueNode {
             return compare(to: other)
         }
-        
+
         if let literalValue = literalValue {
             if let other = other as? String,
                literalValue.description == other {
                 return .same
             }
             if let other = other as? Hitch,
-               literalValue.description == other{
+               literalValue.description == other {
                 return .same
             }
             if let other = other as? CustomStringConvertible,
@@ -41,12 +41,12 @@ extension ValueNode {
                 return .same
             }
         }
-        
+
         return .differ
     }
-    
+
     func compare(to other: ValueNode) -> ValueComparisonResult {
-        
+
         if let number1 = numericValue,
            let number2 = other.numericValue {
             if number1 == number2 {
@@ -57,7 +57,7 @@ extension ValueNode {
                 return .greaterThan
             }
         }
-        
+
         if let hitch1 = literalValue,
            let hitch2 = other.literalValue {
             let d = hitch1.compare(other: hitch2)
@@ -69,11 +69,11 @@ extension ValueNode {
                 return .greaterThan
             }
         }
-        
+
         if self.literalValue == other.literalValue {
             return .same
         }
-        
+
         return .differ
     }
 }

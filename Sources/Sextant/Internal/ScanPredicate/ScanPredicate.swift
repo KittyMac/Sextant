@@ -19,7 +19,7 @@ class ScanPredicate {
         }
         return FakePredicate()
     }
-    
+
     func matchesJsonObject(jsonObject: JsonAny) -> Bool {
         return false
     }

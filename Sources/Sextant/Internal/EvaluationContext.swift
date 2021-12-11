@@ -3,37 +3,37 @@ import Hitch
 
 final class EvaluationContext {
     let forUpdate = false
-    
+
     var updateOperations = [Path]()
-    
+
     var valueResults = JsonArray()
     var pathResults = [String]()
     var resultIndex = 0
-    
+
     var evaluationCache = [Hitch: JsonAny]()
-    
+
     var path: Path
     var rootJsonObject: JsonAny
-    
+
     init(path: Path,
          rootJsonObject: JsonAny) {
-        
+
         self.path = path
         self.rootJsonObject = rootJsonObject
     }
-    
+
     func add(path: Hitch,
              operation: Path,
              jsonObject: JsonAny) -> EvaluationStatus {
         if forUpdate {
             updateOperations.append(operation)
         }
-        
+
         valueResults.append(jsonObject)
         pathResults.append(path.description)
-        
+
         resultIndex += 1
-        
+
         // TODO: listeners and continuations
         /*
          NSArray     *evaluationListeners = _configuration.evaluationListeners;
@@ -51,43 +51,43 @@ final class EvaluationContext {
          */
         return .done
     }
-    
+
     func jsonObject() -> JsonAny {
         if path.isDefinite() {
-            if (resultIndex == 0 || valueResults.count == 0) {
+            if resultIndex == 0 || valueResults.count == 0 {
                 error("No results for path: \(path)")
-                return nil;
+                return nil
             }
-            
+
             return valueResults[valueResults.count - 1]
         }
-        
+
         return valueResults
     }
-    
+
     func resultsValues() -> JsonArray? {
         if path.isDefinite() {
-            if (resultIndex == 0 || valueResults.count == 0) {
+            if resultIndex == 0 || valueResults.count == 0 {
                 error("No results for path: \(path)")
-                return nil;
+                return nil
             }
-            
+
             return [valueResults[valueResults.count - 1]]
         }
-        
+
         return valueResults
     }
-    
+
     func resultsPaths() -> JsonArray? {
         if path.isDefinite() {
-            if (resultIndex == 0 || valueResults.count == 0) {
+            if resultIndex == 0 || valueResults.count == 0 {
                 error("No results for path: \(path)")
-                return nil;
+                return nil
             }
-            
+
             return [pathResults[pathResults.count - 1]]
         }
-        
+
         return pathResults
     }
 }

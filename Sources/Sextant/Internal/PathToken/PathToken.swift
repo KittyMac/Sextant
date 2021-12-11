@@ -4,7 +4,7 @@ import Hitch
 class PathToken: CustomStringConvertible {
     weak var prev: PathToken?
     var next: PathToken?
-    
+
     func checkArray(currentPath: Hitch,
                     jsonObject: JsonAny,
                     evaluationContext: EvaluationContext) -> ArrayPathCheck {
@@ -14,33 +14,33 @@ class PathToken: CustomStringConvertible {
             }
             return .error("The path \(currentPath) is null")
         }
-        
+
         if jsonObject as? JsonArray != nil {
             return .handle
         }
-        
+
         if isUpstreamDefinite() == false {
             return .skip
         }
         return .error("Filter: \(self) can only be applied to arrays. Current context is: \(jsonObject)")
     }
-    
+
     func handle(arrayIndex: Int,
                 currentPath: Hitch,
                 jsonObject: JsonAny,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
         guard let jsonObject = jsonObject as? JsonArray else { return .done }
-        
+
         let evalPath = Hitch.make(path: currentPath, index: arrayIndex)
         let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject,
                                                               item: jsonObject[arrayIndex]) : Path.nullPath()
-        
+
         let effectiveIndex = arrayIndex < 0 ? jsonObject.count + arrayIndex : arrayIndex
-        
+
         guard effectiveIndex >= 0 && effectiveIndex < jsonObject.count else { return .done }
-        
+
         let evalHit = jsonObject[effectiveIndex]
-        
+
         if isLeaf() {
             if evaluationContext.add(path: evalPath,
                                      operation: path,
@@ -54,23 +54,23 @@ class PathToken: CustomStringConvertible {
                                  jsonObject: evalHit,
                                  evaluationContext: evaluationContext)
         }
-        
+
         return .done
     }
-    
+
     func handle(properties: [Hitch],
                 currentPath: Hitch,
                 jsonObject: JsonAny,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
-        
+
         if properties.count == 1 {
             let property = properties[0]
             let evalPath = Hitch.make(path: currentPath,
                                       property: property,
                                       wrap: .singleQuote)
-            
+
             let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject, property: property) : Path.nullPath()
-            
+
             let propertyVal = read(property: property,
                                    jsonObject: jsonObject,
                                    evaluationContext: evaluationContext)
@@ -79,7 +79,7 @@ class PathToken: CustomStringConvertible {
                 // so this code is quite dangerous (I'd rather rewrite it & move to PropertyPathToken and implemented
                 // WildcardPathToken as a dynamic multi prop case of PropertyPathToken).
                 // Better safe than sorry.
-                
+
                 if isLeaf() {
                     if let jsonObject = jsonObject as? JsonDictionary,
                        jsonObject.keys.contains(property.description) {
@@ -97,7 +97,7 @@ class PathToken: CustomStringConvertible {
                     return .error("Missing property in path \(evalPath)")
                 }
             }
-            
+
             if let next = next {
                 let result = next.evaluate(currentPath: evalPath,
                                            parentPath: path,
@@ -114,12 +114,11 @@ class PathToken: CustomStringConvertible {
         } else {
             let evalPath = Hitch.make(path: currentPath,
                                       property: properties.joined(delimiter: .comma, wrap: .singleQuote))
-            
+
             var merged = [String: JsonAny]()
             for property in properties {
                 var propertyVal: JsonAny = nil
-                
-                
+
                 if has(property: property,
                        jsonObject: jsonObject,
                        evaluationContext: evaluationContext) {
@@ -132,22 +131,22 @@ class PathToken: CustomStringConvertible {
                 } else {
                     continue
                 }
-                
+
                 if let propertyVal = propertyVal {
                     merged[property.description] = propertyVal
                 }
             }
-            
+
             let path = evaluationContext.forUpdate ? Path.newPath(object: jsonObject, properties: properties) : Path.nullPath()
-            
+
             if evaluationContext.add(path: evalPath, operation: path, jsonObject: merged) == .aborted {
                 return .aborted
             }
         }
-        
+
         return .done
     }
-    
+
     func has(property: Hitch,
              jsonObject: JsonAny,
              evaluationContext: EvaluationContext) -> Bool {
@@ -155,16 +154,16 @@ class PathToken: CustomStringConvertible {
                     jsonObject: jsonObject,
                     evaluationContext: evaluationContext) != nil
     }
-    
+
     func read(property: Hitch,
               jsonObject: JsonAny,
               evaluationContext: EvaluationContext) -> JsonAny {
         if let jsonObject = jsonObject as? JsonDictionary {
             return jsonObject[property.description] ?? nil
         }
-        //if let jsonObject = jsonObject as? [Hitch: JsonAny] {
+        // if let jsonObject = jsonObject as? [Hitch: JsonAny] {
         //    return jsonObject[property] ?? nil
-        //}
+        // }
         if let jsonObject = jsonObject as? JsonArray {
             guard let index = property.toInt() else { return nil }
             guard index >= 0 && index < jsonObject.count else { return nil }
@@ -172,31 +171,31 @@ class PathToken: CustomStringConvertible {
         }
         return nil
     }
-    
+
     func evaluate(currentPath: Hitch,
                   parentPath: Path,
                   jsonObject: JsonAny,
                   evaluationContext: EvaluationContext) -> EvaluationStatus {
         fatalError("needs to be ovcerwritten")
     }
-    
+
     func isRoot() -> Bool {
         return prev == nil
     }
-    
+
     func isLeaf() -> Bool {
         return next == nil
     }
-    
+
     func isUpstreamDefinite() -> Bool {
         guard let prev = prev else { return true }
         return prev.isTokenDefinite() && prev.isUpstreamDefinite()
     }
-    
+
     func isTokenDefinite() -> Bool {
         fatalError("needs to be overwritten")
     }
-    
+
     func isPathDefinite() -> Bool {
         if let next = next,
            isTokenDefinite() {
@@ -204,23 +203,23 @@ class PathToken: CustomStringConvertible {
         }
         return isTokenDefinite()
     }
-    
+
     func pathFragment() -> String {
         fatalError("needs to be overwritten")
     }
-    
+
     @discardableResult
     func append(tail token: PathToken) -> PathToken {
         next = token
         next?.prev = self
         return token
     }
-    
+
     @discardableResult
     func append(token: PathToken) -> PathToken {
         return append(tail: token)
     }
-    
+
     var description: String {
         if let next = next {
             return pathFragment() + next.description
@@ -228,7 +227,6 @@ class PathToken: CustomStringConvertible {
         return pathFragment()
     }
 }
-
 
 /*
  #import "SMJPathToken.h"

@@ -15,7 +15,7 @@ class Filter: Predicate {
     var description: String {
         fatalError("should be overwritten")
     }
-    
+
     func apply(predicateContext: PredicateContext) -> PredicateApply {
         fatalError("should be overwritten")
     }

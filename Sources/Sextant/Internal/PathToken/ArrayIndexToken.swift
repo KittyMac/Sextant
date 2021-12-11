@@ -3,11 +3,11 @@ import Hitch
 
 class ArrayIndexToken: ArrayPathToken {
     let indexOperation: ArrayIndexOperation
-    
+
     init(operation: ArrayIndexOperation) {
         self.indexOperation = operation
     }
-    
+
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -26,7 +26,7 @@ class ArrayIndexToken: ArrayPathToken {
                                     currentPath: currentPath,
                                     jsonObject: jsonObject,
                                     evaluationContext: evaluationContext)
-                
+
                 switch result {
                 case .error, .aborted:
                     return result
@@ -35,14 +35,14 @@ class ArrayIndexToken: ArrayPathToken {
                 }
             }
         }
-        
+
         return .done
     }
-    
+
     override func isTokenDefinite() -> Bool {
         return indexOperation.isSingleIndexOperation()
     }
-    
+
     override func pathFragment() -> String {
         return indexOperation.description
     }
