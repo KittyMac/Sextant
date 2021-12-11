@@ -14,20 +14,38 @@ class PerformanceTest: TestsBase {
     }
     
     func testPerformance0() {
+        let path: Hitch = "$[*]"
+        
+        XCTAssertEqualAny(large0.query(values: path)?.count, 11351)
         measure {
-            XCTAssertEqualAny(large0.query(values: "$[*]")?.count, 11351)
+            _ = large0.query(values: path)
         }
     }
     
     func testPerformance1() {
+        let path: Hitch = "$..type"
+        
+        XCTAssertEqualAny(large0.query(values: path)?.count, 17906)
         measure {
-            XCTAssertEqualAny(large0.query(values: "$..type")?.count, 17906)
+            _ = large0.query(values: path)
         }
     }
     
     func testPerformance2() {
+        let path: Hitch = "$[*].payload[?(@.ref == 'master')]"
+        
+        XCTAssertEqualAny(large0.query(values: path)?.count, 388)
         measure {
-            XCTAssertEqualAny(large0.query(values: "$[*]")?.count, 11351)
+            _ = large0.query(values: path)
+        }
+    }
+    
+    func testPerformance3() {
+        let path: Hitch = "$..repo[?(@.name =~ /-/)]"
+        
+        XCTAssertEqualAny(large0.query(values: path)?.count, 4209)
+        measure {
+            _ = large0.query(values: path)
         }
     }
     
