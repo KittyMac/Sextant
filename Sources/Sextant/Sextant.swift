@@ -172,16 +172,32 @@ enum EvaluationStatus: Equatable {
     }
 }
 
-public extension String {
+public extension Data {
     func query(values path: Hitch) -> JsonArray? {
-        guard let jsonData = self.data(using: .utf8) else { return [] }
-        guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) else { return [] }
+        guard let jsonObject = try? JSONSerialization.jsonObject(with: self, options: []) else { return [] }
         return Sextant.shared.query(jsonObject, values: path)
     }
     func query(paths path: Hitch) -> JsonArray? {
-        guard let jsonData = self.data(using: .utf8) else { return [] }
-        guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) else { return [] }
+        guard let jsonObject = try? JSONSerialization.jsonObject(with: self, options: []) else { return [] }
         return Sextant.shared.query(jsonObject, paths: path)
+    }
+
+    func query(values path: String) -> JsonArray? {
+        self.query(values: Hitch(stringLiteral: path))
+    }
+    func query(paths path: String) -> JsonArray? {
+        self.query(paths: Hitch(stringLiteral: path))
+    }
+}
+
+public extension String {
+    func query(values path: Hitch) -> JsonArray? {
+        guard let jsonData = self.data(using: .utf8) else { return [] }
+        return jsonData.query(values: path)
+    }
+    func query(paths path: Hitch) -> JsonArray? {
+        guard let jsonData = self.data(using: .utf8) else { return [] }
+        return jsonData.query(paths: path)
     }
 
     func query(values path: String) -> JsonArray? {
