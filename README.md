@@ -18,54 +18,42 @@ The original [Stefan Goessner JsonPath implemenentation](https://goessner.net/ar
 
 
 ```swift
-/*
- * Each call to Sextant's query() method will return a results array on success and nil on error.
- * Extensions are provided for Data, String, [Any?], and [String:Any?].
- */
- 
-let json = #"["Hello","World"]"#
-if let arrayOfResults = json.query(values: "$[0]") {
-	// arrayOfResults is ["Hello"]
+/// Each call to Sextant's query(values: ) will return an array on success and nil on failure
+func testSimple0() {
+    let json = #"["Hello","World"]"#
+    guard let results = json.query(values: "$[0]") else { return XCTFail() }
+    XCTAssertEqualAny(results[0], "Hello")
 }
 ```
 
 ```swift
-/*
- * You can avoid the extensions and call query on the Sextant singleton directly.
- */
- 
-let json = #"["Hello","World"]"#
-guard let jsonData = json.data(using: .utf8) else { return }
-guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) else { return }
+/// You can avoid the provided extensions and call query on the Sextant singleton directly
+func testSimple1() {
+    let json = #"["Hello","World"]"#
+    guard let jsonData = json.data(using: .utf8) else { return }
+    guard let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: []) else { return }
+    guard let results = Sextant.shared.query(jsonObject, values: "$[0]") else { return XCTFail() }
+    XCTAssertEqualAny(results[0], "Hello")
+}
+```
+
+```swift
+/// Works with any existing JSON-like structure
+func testSimple2() {
+    let data = [ "Hello", "World" ]
+    guard let results = data.query(values: "$[0]") else { return XCTFail() }
+    XCTAssertEqualAny(results[0], "Hello")
+}
+```
+
+```swift
+/// Automatically coverts to simple tuples
+func testSimple3() {
+    let json = #"{"name":"Rocco","age":42}"#
     
-if let arrayOfResults = Sextant.shared.query(jsonObject, values: "$[0]") {
-	// arrayOfResults is ["Hello"]
-}
-```
-
-```swift
-/*
- * Works with any existing JSON-like structure.
- */
-
-let data = [
-    "Hello",
-    "World"
-]
-if let arrayOfResults = Sextant.shared.query(data, values: "$[0]") {
-    // arrayOfResults is ["Hello"]
-}
-```
-
-```swift
-/*
- * Use the spread() method to convert the array of results to simple typed tuples.
- */
-
-let json = #"{"name":"Rocco","age":42}"#
-if let values: (String?, Int?) = Sextant.shared.query(json, values: "$[0]")?.spread() {
-	// values.0 is "Rocco"
-	// values.1 is 42
+    guard let person: (name: String?, age: Int?) = Sextant.shared.query(json.parsed(), value: "$.['name','age']") else { return XCTFail() }
+    XCTAssertEqual(person.name, "Rocco")
+    XCTAssertEqual(person.age, 42)
 }
 ```
 

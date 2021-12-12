@@ -5,361 +5,157 @@ public typealias JsonAny = Any?
 public typealias JsonArray = [JsonAny]
 public typealias JsonDictionary = [String: JsonAny]
 
-func anyEquals(_ a: JsonAny, _ b: JsonAny?) -> Bool {
-    if a == nil && b == nil { return true }
-    if let a = a as? CustomStringConvertible,
-       let b = b as? CustomStringConvertible {
-        if a.description == b.description {
-            return true
-        }
-    }
-    return false
-}
+/// The exposed API for performing JSON path queries works like this:
+/// 1. All practical incoming data types should be handled (ie, you can perform against a String, or Data, or Any?)
+/// 2. All practical outgoing data type should be handled (ie, you can receive JsonArray of all results, or a String of the first result)
+/// 3. Should support easy codable integration, both array and single results
+///
+/// Supported incoming data types should be:
+/// String, Hitch, Data, JsonAny
+///
+/// Supported outgoing data types for all results should be:
+/// JsonArray, Decodable
+///
+/// Supported outgoing data types for just the first result should be:
+/// String, Hitch, Int, Double, Decodable, JsonAny
+///
+/// 1. Sextant singleton has all of the code
+/// 2. Extensions should be thin wrapper to call Sextant singleton methods
+/// 3. Should support sending single path or a union of many path results
 
-func error(_ error: String) {
-    // #if DEBUG
-    // print("Error: " + error)
-    // #endif
-}
+// MARK: - Incoming Extensions - Parsing
 
-extension Hitch {
-    class func combine(_ parts: Hitch...) -> Hitch {
-        guard parts.count > 0 else { return Hitch() }
-
-        var total = 0
-        parts.forEach { total += $0.count }
-
-        let buffer = Hitch(capacity: total)
-        parts.forEach { buffer.append($0) }
-        return buffer
-    }
-
-    @discardableResult
+public extension Hitch {
     @inlinable
-    class func make(path: Hitch, index: Int) -> Hitch {
-        let clone = Hitch(hitch: path)
-        clone.reserveCapacity(clone.count + 32)
-
-        clone.append(UInt8.openBrace)
-        clone.append(number: index)
-        clone.append(UInt8.closeBrace)
-
-        return clone
-    }
-
-    @discardableResult
-    @inlinable
-    class func make(path: Hitch, property: Hitch) -> Hitch {
-        let clone = Hitch(hitch: path)
-        clone.reserveCapacity(clone.count + property.count + 2)
-        clone.append(UInt8.openBrace)
-        clone.append(property)
-        clone.append(UInt8.closeBrace)
-        return clone
-    }
-
-    @discardableResult
-    @inlinable
-    class func make(path: Hitch, property: Hitch, wrap: UInt8) -> Hitch {
-        let clone = Hitch(hitch: path)
-        clone.reserveCapacity(clone.count + property.count + 4)
-        clone.append(UInt8.openBrace)
-        clone.append(wrap)
-        clone.append(property)
-        clone.append(wrap)
-        clone.append(UInt8.closeBrace)
-        return clone
-    }
-
-    @inlinable
-    class func replace(hitch: Hitch, path: Hitch, index: Int) {
-        hitch.replace(with: path)
-        hitch.append(UInt8.openBrace)
-        hitch.append(number: index)
-        hitch.append(UInt8.closeBrace)
-    }
-
-    @inlinable
-    class func replace(hitch: Hitch, path: Hitch, property: Hitch) {
-        hitch.replace(with: path)
-        hitch.append(UInt8.openBrace)
-        hitch.append(property)
-        hitch.append(UInt8.closeBrace)
-    }
-
-    @inlinable
-    class func replace(hitch: Hitch, path: Hitch, property: Hitch, wrap: UInt8) {
-        hitch.replace(with: path)
-        hitch.append(UInt8.openBrace)
-        hitch.append(wrap)
-        hitch.append(property)
-        hitch.append(wrap)
-        hitch.append(UInt8.closeBrace)
-    }
-
-    @inlinable
-    class func replace(hitch: Hitch, path: Hitch, property: String, wrap: UInt8) {
-        hitch.replace(with: path)
-        hitch.append(UInt8.openBrace)
-        hitch.append(wrap)
-        hitch.append(property)
-        hitch.append(wrap)
-        hitch.append(UInt8.closeBrace)
-    }
-
-    // Hitch.make(path: currentPath, property: properties.joined(delimiter: .comma, wrap: .singleQuote))
-}
-
-extension Array where Element == Hitch {
-    func joined(delimiter: UInt8, wrap: UInt8) -> Hitch {
-        guard count > 0 else { return Hitch() }
-
-        var total = 0
-        forEach { total += $0.count + 2 }
-
-        let buffer = Hitch(capacity: total)
-
-        forEach { part in
-            if buffer.count > 0 {
-                buffer.append(delimiter)
-            }
-            buffer.append(wrap)
-            buffer.append(part)
-            buffer.append(wrap)
-        }
-
-        return buffer
-    }
-}
-
-enum ArrayPathCheck: Equatable {
-    case handle
-    case skip
-    case error(String)
-
-    static func == (lhs: ArrayPathCheck, rhs: ArrayPathCheck) -> Bool {
-        switch (lhs, rhs) {
-        case (.error, .error):
-            return true
-        case (.handle, .handle):
-            return true
-        case (.skip, .skip):
-            return true
-
-        default:
-            return false
-        }
-    }
-}
-
-enum EvaluationStatus: Equatable {
-    case done
-    case aborted
-    case error(_ error: String)
-
-    static func == (lhs: EvaluationStatus, rhs: EvaluationStatus) -> Bool {
-        switch (lhs, rhs) {
-        case (.error, .error):
-            return true
-        case (.done, .done):
-            return true
-        case (.aborted, .aborted):
-            return true
-
-        default:
-            return false
-        }
-    }
-}
-
-public extension JsonArray {
-    @inlinable
-    subscript(dict idx: Int) -> JsonDictionary? {
-        return self[idx] as? JsonDictionary
-    }
-    @inlinable
-    subscript(date idx: Int) -> Date? {
-        if let stringValue = self[idx] as? String {
-            let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.date.rawValue)
-            let matches = detector?.matches(in: stringValue, options: [], range: NSRange(location: 0, length: stringValue.utf16.count))
-            return matches?.first?.date
-        }
-        return self[idx] as? Date
-    }
-    @inlinable
-    subscript(bool idx: Int) -> Bool? {
-        return self[idx] as? Bool
-    }
-    @inlinable
-    subscript(string idx: Int) -> String? {
-        return self[idx] as? String
-    }
-    @inlinable
-    subscript(int idx: Int) -> Int? {
-        if let value = self[idx] as? Int {
-            return value
-        }
-        if let value = self[idx] as? NSString {
-            return Int(value.intValue)
-        }
-        if let value = self[idx] as? String {
-            return Int(value)
-        }
-        return nil
-    }
-    @inlinable
-    subscript(array idx: Int) -> [JsonDictionary]? {
-        return self[idx] as? [JsonDictionary]
-    }
-}
-
-public extension JsonDictionary {
-    @inlinable
-    subscript(dict key: String) -> JsonDictionary? {
-        return self[key] as? JsonDictionary
-    }
-    @inlinable
-    subscript(date key: String) -> Date? {
-        if let stringValue = self[key] as? String {
-            let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.date.rawValue)
-            let matches = detector?.matches(in: stringValue, options: [], range: NSRange(location: 0, length: stringValue.utf16.count))
-            return matches?.first?.date
-        }
-        return self[key] as? Date
-    }
-    @inlinable
-    subscript(bool key: String) -> Bool? {
-        return self[key] as? Bool
-    }
-    @inlinable
-    subscript(string key: String) -> String? {
-        return self[key] as? String
-    }
-    @inlinable
-    subscript(int key: String) -> Int? {
-        if let value = self[key] as? Int {
-            return value
-        }
-        if let value = self[key] as? NSString {
-            return Int(value.intValue)
-        }
-        if let value = self[key] as? String {
-            return Int(value)
-        }
-        return nil
-    }
-    @inlinable
-    subscript(array key: String) -> [JsonDictionary]? {
-        return self[key] as? [JsonDictionary]
-    }
-}
-
-public extension JsonArray {
-    func spread() {
-        return ()
-    }
-    func spread<A>() -> (A?) {
-        return (self[0] as? A)
-    }
-    func spread<A, B>() -> (A?, B?) {
-        return (self[0] as? A, self[1] as? B)
-    }
-    func spread<A, B, C>() -> (A?, B?, C?) {
-        return (self[0] as? A, self[1] as? B, self[2] as? C)
-    }
-    func spread<A, B, C, D>() -> (A?, B?, C?, D?) {
-        return (self[0] as? A, self[1] as? B, self[2] as? C, self[3] as? D)
-    }
-    func spread<A, B, C, D, E>() -> (A?, B?, C?, D?, E?) {
-        return (self[0] as? A, self[1] as? B, self[2] as? C, self[3] as? D, self[4] as? E)
-    }
-    func spread<A, B, C, D, E, F>() -> (A?, B?, C?, D?, E?, F?) {
-        return (self[0] as? A, self[1] as? B, self[2] as? C, self[3] as? D, self[4] as? E, self[5] as? F)
-    }
-    func spread<A, B, C, D, E, F, G>() -> (A?, B?, C?, D?, E?, F?, G?) {
-        return (self[0] as? A, self[1] as? B, self[2] as? C, self[3] as? D, self[4] as? E, self[5] as? F, self[6] as? G)
-    }
-}
-
-public extension Data {
     func parsed() -> JsonAny {
-        return try? JSONSerialization.jsonObject(with: self, options: [])
-    }
-
-    func query(values path: Hitch) -> JsonArray? {
-        guard let jsonObject = try? JSONSerialization.jsonObject(with: self, options: []) else { return [] }
-        return Sextant.shared.query(jsonObject, values: path)
-    }
-    func query(paths path: Hitch) -> JsonArray? {
-        guard let jsonObject = try? JSONSerialization.jsonObject(with: self, options: []) else { return [] }
-        return Sextant.shared.query(jsonObject, paths: path)
-    }
-
-    func query(values path: String) -> JsonArray? {
-        self.query(values: Hitch(stringLiteral: path))
-    }
-    func query(paths path: String) -> JsonArray? {
-        self.query(paths: Hitch(stringLiteral: path))
+        return self.dataNoCopy().parsed()
     }
 }
 
 public extension String {
+    @inlinable
     func parsed() -> JsonAny {
         return self.data(using: .utf8)?.parsed()
     }
+}
 
-    func query(values path: Hitch) -> JsonArray? {
-        guard let jsonData = self.data(using: .utf8) else { return [] }
-        return jsonData.query(values: path)
+public extension Data {
+    @inlinable
+    func parsed() -> JsonAny {
+        return try? JSONSerialization.jsonObject(with: self, options: [.allowFragments])
     }
-    func query(paths path: Hitch) -> JsonArray? {
-        guard let jsonData = self.data(using: .utf8) else { return [] }
-        return jsonData.query(paths: path)
-    }
+}
 
-    func query(values path: String) -> JsonArray? {
-        self.query(values: Hitch(stringLiteral: path))
-    }
-    func query(paths path: String) -> JsonArray? {
-        self.query(paths: Hitch(stringLiteral: path))
-    }
+// MARK: - Incoming Extensions - Query
+
+public extension String {
+    @inlinable func query(paths: Hitch) -> JsonArray? { return Sextant.shared.query(self, paths: paths) }
+    @inlinable func query(values path: Hitch) -> JsonArray? { return Sextant.shared.query(self, values: path) }
+    @inlinable func query(_ path: Hitch) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
+    @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> String? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Hitch? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Int? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Double? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+}
+
+public extension Hitch {
+    @inlinable func query(paths: Hitch) -> JsonArray? { return Sextant.shared.query(self, paths: paths) }
+    @inlinable func query(values path: Hitch) -> JsonArray? { return Sextant.shared.query(self, values: path) }
+    @inlinable func query(_ path: Hitch) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
+    @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> String? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Hitch? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Int? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Double? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+}
+
+public extension Data {
+    @inlinable func query(paths: Hitch) -> JsonArray? { return Sextant.shared.query(self, paths: paths) }
+    @inlinable func query(values path: Hitch) -> JsonArray? { return Sextant.shared.query(self, values: path) }
+    @inlinable func query(_ path: Hitch) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
+    @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> String? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Hitch? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Int? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Double? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
 }
 
 public extension JsonAny {
-    func query(values path: Hitch) -> JsonArray? {
-        return Sextant.shared.query(self, values: path)
-    }
-    func query(paths path: Hitch) -> JsonArray? {
-        return Sextant.shared.query(self, paths: path)
-    }
+    @inlinable func query(paths: Hitch) -> JsonArray? { return Sextant.shared.query(self, paths: paths) }
+    @inlinable func query(values path: Hitch) -> JsonArray? { return Sextant.shared.query(self, values: path) }
+    @inlinable func query(_ path: Hitch) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
+    @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> String? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Hitch? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Int? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Double? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
 }
 
-public extension JsonArray {
-    func query(values path: Hitch) -> JsonArray? {
-        return Sextant.shared.query(self, values: path)
-    }
-    func query(paths path: Hitch) -> JsonArray? {
-        return Sextant.shared.query(self, paths: path)
-    }
+public extension Array {
+    @inlinable func query(paths: Hitch) -> JsonArray? { return Sextant.shared.query(self, paths: paths) }
+    @inlinable func query(values path: Hitch) -> JsonArray? { return Sextant.shared.query(self, values: path) }
+    @inlinable func query(_ path: Hitch) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
+    @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> String? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Hitch? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Int? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Double? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
 }
 
-public extension JsonDictionary {
-    func query(values path: Hitch) -> JsonArray? {
-        return Sextant.shared.query(self, values: path)
-    }
-    func query(paths path: Hitch) -> JsonArray? {
-        return Sextant.shared.query(self, paths: path)
-    }
+public extension Dictionary {
+    @inlinable func query(paths: Hitch) -> JsonArray? { return Sextant.shared.query(self, paths: paths) }
+    @inlinable func query(values path: Hitch) -> JsonArray? { return Sextant.shared.query(self, values: path) }
+    @inlinable func query(_ path: Hitch) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
+    @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> String? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Hitch? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Int? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
+    @inlinable func query(_ path: String) -> Double? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
 }
 
 public final class Sextant {
     public static let shared = Sextant()
     private init() { }
 
+    public var shouldCachePaths = true
+
     private var cachedPaths = [Hitch: Path]()
     private var lock = NSLock()
 
     private func cachedPath(query: Hitch) -> Path? {
+        guard shouldCachePaths else { return nil }
+
         lock.lock(); defer { lock.unlock() }
 
         if let path = cachedPaths[query] {
@@ -392,5 +188,197 @@ public final class Sextant {
         }
         return nil
     }
+}
 
+// MARK: - All Results -> JsonArray
+
+public extension Sextant {
+    @inlinable func query(_ root: String,
+                          values path: Hitch) -> JsonArray? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)
+    }
+
+    @inlinable func query(_ root: Hitch,
+                          values path: Hitch) -> JsonArray? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)
+    }
+
+    @inlinable func query(_ root: Data,
+                          values path: Hitch) -> JsonArray? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)
+    }
+
+    @inlinable func query(_ root: String,
+                          paths path: Hitch) -> JsonArray? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, paths: path)
+    }
+
+    @inlinable func query(_ root: Hitch,
+                          paths path: Hitch) -> JsonArray? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, paths: path)
+    }
+
+    @inlinable func query(_ root: Data,
+                          paths path: Hitch) -> JsonArray? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, paths: path)
+    }
+}
+
+// MARK: - Tuple Results -> String
+
+extension JsonArray {
+    @usableFromInline
+    func get(_ index: Int) -> JsonAny {
+        if 0 <= index && index < count {
+            return self[index]
+        } else {
+            return nil
+        }
+    }
+}
+
+public extension Sextant {
+    @inlinable func query<A>(_ root: JsonAny, value path: Hitch) -> (A?)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        return (values.get(0) as? A)
+    }
+
+    @inlinable func query<A, B>(_ root: JsonAny, value path: Hitch) -> (A?, B?)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        return (values.get(0) as? A, values.get(1) as? B)
+    }
+
+    @inlinable func query<A, B, C>(_ root: JsonAny, value path: Hitch) -> (A?, B?, C?)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C)
+    }
+
+    @inlinable func query<A, B, C, D>(_ root: JsonAny, value path: Hitch) -> (A?, B?, C?, D?)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D)
+    }
+
+    @inlinable func query<A, B, C, D, E>(_ root: JsonAny, value path: Hitch) -> (A?, B?, C?, D?, E?)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D, values.get(4) as? E)
+    }
+
+    @inlinable func query<A, B, C, D, E, F>(_ root: JsonAny, value path: Hitch) -> (A?, B?, C?, D?, E?, F?)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D, values.get(4) as? E, values.get(5) as? F)
+    }
+}
+
+// MARK: - First Result -> String
+
+public extension Sextant {
+    @inlinable func query(_ root: JsonAny,
+                          value path: Hitch) -> String? {
+        return query(root, values: path)?.first as? String
+    }
+
+    @inlinable func query(_ root: String,
+                          value path: Hitch) -> String? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? String
+    }
+
+    @inlinable func query(_ root: Hitch,
+                          value path: Hitch) -> String? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? String
+    }
+
+    @inlinable func query(_ root: Data,
+                          value path: Hitch) -> String? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? String
+    }
+}
+
+// MARK: - First Result -> Hitch
+
+public extension Sextant {
+    @inlinable func query(_ root: JsonAny,
+                          value path: Hitch) -> Hitch? {
+        return query(root, values: path)?.first as? Hitch
+    }
+
+    @inlinable func query(_ root: String,
+                          value path: Hitch) -> Hitch? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? Hitch
+    }
+
+    @inlinable func query(_ root: Hitch,
+                          value path: Hitch) -> Hitch? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? Hitch
+    }
+
+    @inlinable func query(_ root: Data,
+                          value path: Hitch) -> Hitch? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? Hitch
+    }
+}
+
+// MARK: - First Result -> Int
+
+public extension Sextant {
+    @inlinable func query(_ root: JsonAny,
+                          value path: Hitch) -> Int? {
+        return query(root, values: path)?.first as? Int
+    }
+
+    @inlinable func query(_ root: String,
+                          value path: Hitch) -> Int? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? Int
+    }
+
+    @inlinable func query(_ root: Hitch,
+                          value path: Hitch) -> Int? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? Int
+    }
+
+    @inlinable func query(_ root: Data,
+                          value path: Hitch) -> Int? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? Int
+    }
+}
+
+// MARK: - First Result -> Double
+
+public extension Sextant {
+    @inlinable func query(_ root: JsonAny,
+                          value path: Hitch) -> Double? {
+        return query(root, values: path)?.first as? Double
+    }
+
+    @inlinable func query(_ root: String,
+                          value path: Hitch) -> Double? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? Double
+    }
+
+    @inlinable func query(_ root: Hitch,
+                          value path: Hitch) -> Double? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? Double
+    }
+
+    @inlinable func query(_ root: Data,
+                          value path: Hitch) -> Double? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, values: path)?.first as? Double
+    }
 }
