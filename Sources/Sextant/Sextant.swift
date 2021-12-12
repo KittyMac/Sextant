@@ -17,9 +17,9 @@ func anyEquals(_ a: JsonAny, _ b: JsonAny?) -> Bool {
 }
 
 func error(_ error: String) {
-    //#if DEBUG
-    //print("Error: " + error)
-    //#endif
+    // #if DEBUG
+    // print("Error: " + error)
+    // #endif
 }
 
 extension Hitch {
@@ -255,33 +255,37 @@ public extension JsonDictionary {
 }
 
 public extension JsonArray {
-    func spread() -> () {
+    func spread() {
         return ()
     }
     func spread<A>() -> (A?) {
         return (self[0] as? A)
     }
-    func spread<A,B>() -> (A?,B?) {
+    func spread<A, B>() -> (A?, B?) {
         return (self[0] as? A, self[1] as? B)
     }
-    func spread<A,B,C>() -> (A?,B?,C?) {
+    func spread<A, B, C>() -> (A?, B?, C?) {
         return (self[0] as? A, self[1] as? B, self[2] as? C)
     }
-    func spread<A,B,C,D>() -> (A?,B?,C?,D?) {
+    func spread<A, B, C, D>() -> (A?, B?, C?, D?) {
         return (self[0] as? A, self[1] as? B, self[2] as? C, self[3] as? D)
     }
-    func spread<A,B,C,D,E>() -> (A?,B?,C?,D?,E?) {
+    func spread<A, B, C, D, E>() -> (A?, B?, C?, D?, E?) {
         return (self[0] as? A, self[1] as? B, self[2] as? C, self[3] as? D, self[4] as? E)
     }
-    func spread<A,B,C,D,E,F>() -> (A?,B?,C?,D?,E?,F?) {
+    func spread<A, B, C, D, E, F>() -> (A?, B?, C?, D?, E?, F?) {
         return (self[0] as? A, self[1] as? B, self[2] as? C, self[3] as? D, self[4] as? E, self[5] as? F)
     }
-    func spread<A,B,C,D,E,F,G>() -> (A?,B?,C?,D?,E?,F?,G?) {
+    func spread<A, B, C, D, E, F, G>() -> (A?, B?, C?, D?, E?, F?, G?) {
         return (self[0] as? A, self[1] as? B, self[2] as? C, self[3] as? D, self[4] as? E, self[5] as? F, self[6] as? G)
     }
 }
 
 public extension Data {
+    func parse() -> JsonAny {
+        return try? JSONSerialization.jsonObject(with: self, options: [])
+    }
+
     func query(values path: Hitch) -> JsonArray? {
         guard let jsonObject = try? JSONSerialization.jsonObject(with: self, options: []) else { return [] }
         return Sextant.shared.query(jsonObject, values: path)
@@ -300,6 +304,10 @@ public extension Data {
 }
 
 public extension String {
+    func parse() -> JsonAny {
+        return self.data(using: .utf8)?.parse()
+    }
+
     func query(values path: Hitch) -> JsonArray? {
         guard let jsonData = self.data(using: .utf8) else { return [] }
         return jsonData.query(values: path)
