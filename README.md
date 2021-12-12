@@ -57,6 +57,24 @@ func testSimple3() {
 }
 ```
 
+```swift
+/// Supports Decodable structs
+func testSimple4() {
+    let json = #"{"data":{"people":[{"name":"Rocco","age":42},{"name":"John","age":12},{"name":"Elizabeth","age":35},{"name":"Victoria","age":85}]}}"#
+    
+    class Person: Decodable {
+        let name: String
+        let age: Int
+    }
+    
+    guard let persons: [Person] = json.query("$..[?(@.name)]") else { return XCTFail() }
+    XCTAssertEqual(persons[0].name, "Rocco")
+    XCTAssertEqual(persons[0].age, 42)
+    XCTAssertEqual(persons[2].name, "Elizabeth")
+    XCTAssertEqual(persons[2].age, 35)
+}
+```
+
 
 ## Installation
 

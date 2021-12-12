@@ -63,6 +63,8 @@ public extension String {
     @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
 
+    @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
+
     @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
     @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
     @inlinable func query(_ path: String) -> String? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
@@ -85,6 +87,8 @@ public extension Hitch {
     @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A?, B?, C?, D?)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
 
     @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
     @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
@@ -109,6 +113,8 @@ public extension Data {
     @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
 
+    @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
+
     @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
     @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
     @inlinable func query(_ path: String) -> String? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
@@ -131,6 +137,8 @@ public extension JsonAny {
     @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A?, B?, C?, D?)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
 
     @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
     @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
@@ -155,6 +163,8 @@ public extension Array {
     @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
 
+    @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
+
     @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
     @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
     @inlinable func query(_ path: String) -> String? { return Sextant.shared.query(self, value: Hitch(stringLiteral: path)) }
@@ -177,6 +187,8 @@ public extension Dictionary {
     @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A?, B?, C?, D?)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
 
     @inlinable func query(paths: String) -> JsonArray? { return Sextant.shared.query(self, paths: Hitch(stringLiteral: paths)) }
     @inlinable func query(values path: String) -> JsonArray? { return Sextant.shared.query(self, values: Hitch(stringLiteral: path)) }
@@ -229,6 +241,45 @@ public final class Sextant {
             return result.resultsPaths()
         }
         return nil
+    }
+}
+
+// MARK: - All Results -> Decodable
+
+public extension Sextant {
+    @inlinable func query<T: Decodable>(_ root: String,
+                                        values path: Hitch) -> T? {
+        // Not exactly performant, but this will work in all cases...
+        guard let jsonData = root.parsed() else { return nil }
+        guard let results = query(jsonData, values: path) else { return nil }
+        guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+        return try? JSONDecoder().decode(T.self, from: resultsJson)
+    }
+
+    @inlinable func query<T: Decodable>(_ root: Hitch,
+                                        values path: Hitch) -> T? {
+        // Not exactly performant, but this will work in all cases...
+        guard let jsonData = root.parsed() else { return nil }
+        guard let results = query(jsonData, values: path) else { return nil }
+        guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+        return try? JSONDecoder().decode(T.self, from: resultsJson)
+    }
+
+    @inlinable func query<T: Decodable>(_ root: Data,
+                                        values path: Hitch) -> T? {
+        // Not exactly performant, but this will work in all cases...
+        guard let jsonData = root.parsed() else { return nil }
+        guard let results = query(jsonData, values: path) else { return nil }
+        guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+        return try? JSONDecoder().decode(T.self, from: resultsJson)
+    }
+
+    @inlinable func query<T: Decodable>(_ root: JsonAny,
+                                        values path: Hitch) -> T? {
+        // Not exactly performant, but this will work in all cases...
+        guard let results = query(root, values: path) else { return nil }
+        guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+        return try? JSONDecoder().decode(T.self, from: resultsJson)
     }
 }
 

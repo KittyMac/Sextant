@@ -14,7 +14,7 @@ func anyEquals(_ a: JsonAny, _ b: JsonAny?) -> Bool {
 
 func error(_ error: String) {
     #if DEBUG
-    print("Error: " + error)
+    // print("Error: " + error)
     #endif
 }
 
