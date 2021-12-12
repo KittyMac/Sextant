@@ -5,6 +5,7 @@ final class ArraySliceOperation: CustomStringConvertible {
 
     public var from: Int?
     public var to: Int?
+    public var skip: Int?
 
     public init?(_ operation: Hitch) {
         // check valid chars
@@ -25,10 +26,8 @@ final class ArraySliceOperation: CustomStringConvertible {
         if tokens.count >= 2 {
             to = tokens[1].toInt()
         }
-
-        if from == nil && to == nil {
-            error("Failed to parse SliceOperation (from and to are nil): \(operation)")
-            return nil
+        if tokens.count >= 3 {
+            skip = tokens[2].toInt()
         }
     }
 

@@ -26,5 +26,6 @@ XCTMain([
     testCase(PropertyPathTokenTests.allTests),
     testCase(RegexEvaluatorTest.allTests),
     testCase(ReturnTypeTests.allTests),
-    testCase(ScanPathTokenTests.allTests)
+    testCase(ScanPathTokenTests.allTests),
+    testCase(JsonPathComparisonFixesTest.allTests)
 ])

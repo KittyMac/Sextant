@@ -448,7 +448,7 @@ final class PathCompiler {
                     inProperty = true
                     lastSignificantWasComma = false
                 }
-            } else if c == .comma {
+            } else if c == .comma && inProperty == false {
                 if lastSignificantWasComma {
                     error("Found empty property at index \(readPosition)")
                     return false

@@ -16,13 +16,14 @@ class PathToken: CustomStringConvertible {
             return .error("The path \(currentPath) is null")
         }
 
-        if jsonObject as? JsonArray != nil {
+        if jsonObject is JsonArray {
             return .handle
         }
 
         if isUpstreamDefinite() == false {
             return .skip
         }
+
         return .error("Filter: \(self) can only be applied to arrays. Current context is: \(jsonObject)")
     }
 
