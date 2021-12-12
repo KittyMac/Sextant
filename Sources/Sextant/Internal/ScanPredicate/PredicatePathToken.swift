@@ -37,7 +37,7 @@ class PredicatePathToken: PathToken {
             if accept(jsonObject: jsonObject,
                       rootJsonObject: evaluationContext.rootJsonObject,
                       evaluationContext: evaluationContext) {
-                let op = evaluationContext.forUpdate ? parentPath : nullPath()
+                let op = nullPath()
 
                 if let next = next {
                     let result = next.evaluate(currentPath: currentPath,

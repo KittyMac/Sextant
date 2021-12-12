@@ -20,15 +20,6 @@ class PropertyPathToken: PathToken {
         return properties.count == 1
     }
 
-    func multiPropertyMergeCase() -> Bool {
-        return isLeaf() && properties.count > 1
-    }
-
-    func multiPropertyIterationCase() -> Bool {
-        // Semantics of this case is the same as semantics of ArrayPathToken with INDEX_SEQUENCE operation.
-        return isLeaf() == false && properties.count > 1
-    }
-
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -41,15 +32,11 @@ class PropertyPathToken: PathToken {
             return .error("Expected to find an object with property \(pathFragment()) in path \(currentPath) but found something that is not a json object.")
         }
 
-        if singlePropertyCase() || multiPropertyMergeCase() {
+        if singlePropertyCase() {
             return handle(properties: properties,
                           currentPath: currentPath,
                           jsonObject: jsonObject,
                           evaluationContext: evaluationContext)
-        }
-
-        if multiPropertyIterationCase() == false {
-            return .error("internal error (need to be multi property iteration case)")
         }
 
         for property in properties {
@@ -67,7 +54,7 @@ class PropertyPathToken: PathToken {
 
     override func isTokenDefinite() -> Bool {
         // in case of leaf multiprops will be merged, so it's kinda definite
-        return singlePropertyCase() || multiPropertyMergeCase()
+        return singlePropertyCase()
     }
 
     override func pathFragment() -> String {

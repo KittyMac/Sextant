@@ -53,9 +53,7 @@ class DeepScanTest: TestsBase {
     }
     
     func test_when_deep_scanning_leaf_multi_props_work() {
-        XCTAssertEqualAny("[{\"a\": \"a-val\", \"b\": \"b-val\", \"c\": \"c-val\"}, [1, 5], {\"a\": \"a-val\"}]".query(values: "$..['a', 'c']"), [
-            [ "a":"a-val", "c":"c-val" ]
-        ])
+        XCTAssertEqualAny(#"[{"a": "a-val", "b": "b-val", "c": "c-val"}, [1, 5], {"a": "a-val"}]"#.query(values: "$..['a', 'c']"), [ "a-val", "c-val", "a-val" ])
     }
     
     func test_require_single_property_ok() {
@@ -68,12 +66,12 @@ class DeepScanTest: TestsBase {
     
     func test_require_multi_property_all_match() {
         let json = #"[{"a":"aa","b":"bb"},{"a":"aa","b":"bb"}]"#
-        XCTAssertEqualAny(json.query(values: "$..['a', 'b']"), [["a":"aa","b":"bb"],["a":"aa","b":"bb"]])
+        XCTAssertEqualAny(json.query(values: "$..['a', 'b']"), ["aa","bb","aa","bb"])
     }
     
     func test_require_multi_property_some_match() {
         let json = #"[{"a":"aa","b":"bb"},{"a":"aa","d":"dd"}]"#
-        XCTAssertEqualAny(json.query(values: "$..['a', 'b']"), [["a":"aa","b":"bb"]])
+        XCTAssertEqualAny(json.query(values: "$..['a', 'b']"), ["aa","bb","aa"])
     }
     
     func test_scan_for_single_property() {

@@ -16,23 +16,23 @@ protocol Path: CustomStringConvertible {
 
 extension Path {
     var description: String {
-        fatalError("TO BE IMPLEMENTED")
+        fatalError("should be overwritten")
     }
 
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext? {
-        fatalError("TO BE IMPLEMENTED")
+        fatalError("should be overwritten")
     }
 
     func isDefinite() -> Bool {
-        fatalError("TO BE IMPLEMENTED")
+        fatalError("should be overwritten")
     }
 
     func isFunctionPath() -> Bool {
-        fatalError("TO BE IMPLEMENTED")
+        fatalError("should be overwritten")
     }
 
     func isRootPath() -> Bool {
-        fatalError("TO BE IMPLEMENTED")
+        fatalError("should be overwritten")
     }
 }
 

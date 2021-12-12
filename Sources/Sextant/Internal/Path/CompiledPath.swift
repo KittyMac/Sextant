@@ -53,7 +53,7 @@ struct CompiledPath: Path {
         let context = EvaluationContext(path: self,
                                         rootJsonObject: rootJsonObject)
 
-        let op = context.forUpdate ? newPath(rootObject: rootJsonObject) : nullPath()
+        let op = nullPath()
 
         let result = root.evaluate(currentPath: Hitch(),
                                    parentPath: op,

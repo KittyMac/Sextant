@@ -14,12 +14,8 @@ class MultiPropTest: TestsBase {
             }
         """
         
-        XCTAssertEqualAny(model.query(values: "$['a', 'b']"), [
-            ["a": "a-val", "b": "b-val"]
-        ])
-        XCTAssertEqualAny(model.query(values: "$['a', 'd']"), [
-            ["a": "a-val"]
-        ])
+        XCTAssertEqualAny(model.query(values: "$['a', 'b']"), ["a-val", "b-val"])
+        XCTAssertEqualAny(model.query(values: "$['a', 'd']"), ["a-val"])
     }
     
     func test_multi_props_can_be_non_leafs() {

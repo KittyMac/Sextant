@@ -75,10 +75,6 @@ class Evaluator {
     }
 }
 
-private func evaluateToBeImplemented(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    fatalError("TO BE IMPLEMENTED")
-}
-
 private func evaluateGTE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
     return (evaluateEQ(left: left, right: right, context: context) == .true || evaluateGT(left: left, right: right, context: context) == .true) ? .true : .false
 }
