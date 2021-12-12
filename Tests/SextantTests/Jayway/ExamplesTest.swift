@@ -33,7 +33,7 @@ class ExamplesTest: TestsBase {
     func testSimple3() {
         let json = #"{"name":"Rocco","age":42}"#
         
-        guard let person: (name: String?, age: Int?) = Sextant.shared.query(json.parsed(), value: "$.['name','age']") else { return XCTFail() }
+        guard let person: (name: String?, age: Int?) = json.query("$.['name','age']") else { return XCTFail() }
         XCTAssertEqual(person.name, "Rocco")
         XCTAssertEqual(person.age, 42)
     }
