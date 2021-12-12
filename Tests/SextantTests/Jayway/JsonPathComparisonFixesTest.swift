@@ -38,7 +38,11 @@ class JsonPathComparisonFixesTest: TestsBase {
 extension JsonPathComparisonFixesTest {
     static var allTests : [(String, (JsonPathComparisonFixesTest) -> () throws -> Void)] {
         return [
-            ("test_case1", test_case1)
+            ("test_case1", test_case1),
+            ("test_case2", test_case2),
+            ("test_case3", test_case3),
+            ("test_case4", test_case4),
+            ("test_case5", test_case5)
         ]
     }
 }
