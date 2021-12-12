@@ -33,6 +33,14 @@ class ExamplesTest: TestsBase {
             XCTAssertEqualAny(arrayOfResults[0], "Hello")
         }
     }
+    
+    func testSimple3() {
+        let json = #"{"name":"Rocco","age":42}"#
+        if let values: (String?, Int?) = Sextant.shared.query(json, values: "$[0]")?.spread() {
+            XCTAssertEqual(values.0, "Rocco")
+            XCTAssertEqual(values.1, 42)
+        }
+    }
 }
 
 extension ExamplesTest {
