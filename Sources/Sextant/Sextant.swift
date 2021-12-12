@@ -282,7 +282,7 @@ public extension JsonArray {
 }
 
 public extension Data {
-    func parse() -> JsonAny {
+    func parsed() -> JsonAny {
         return try? JSONSerialization.jsonObject(with: self, options: [])
     }
 
@@ -304,8 +304,8 @@ public extension Data {
 }
 
 public extension String {
-    func parse() -> JsonAny {
-        return self.data(using: .utf8)?.parse()
+    func parsed() -> JsonAny {
+        return self.data(using: .utf8)?.parsed()
     }
 
     func query(values path: Hitch) -> JsonArray? {
