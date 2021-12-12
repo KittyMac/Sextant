@@ -173,6 +173,88 @@ enum EvaluationStatus: Equatable {
 }
 
 public extension JsonArray {
+    @inlinable
+    subscript(dict idx: Int) -> JsonDictionary? {
+        return self[idx] as? JsonDictionary
+    }
+    @inlinable
+    subscript(date idx: Int) -> Date? {
+        if let stringValue = self[idx] as? String {
+            let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.date.rawValue)
+            let matches = detector?.matches(in: stringValue, options: [], range: NSRange(location: 0, length: stringValue.utf16.count))
+            return matches?.first?.date
+        }
+        return self[idx] as? Date
+    }
+    @inlinable
+    subscript(bool idx: Int) -> Bool? {
+        return self[idx] as? Bool
+    }
+    @inlinable
+    subscript(string idx: Int) -> String? {
+        return self[idx] as? String
+    }
+    @inlinable
+    subscript(int idx: Int) -> Int? {
+        if let value = self[idx] as? Int {
+            return value
+        }
+        if let value = self[idx] as? NSString {
+            return Int(value.intValue)
+        }
+        if let value = self[idx] as? String {
+            return Int(value)
+        }
+        return nil
+    }
+    @inlinable
+    subscript(array idx: Int) -> [JsonDictionary]? {
+        return self[idx] as? [JsonDictionary]
+    }
+}
+
+public extension JsonDictionary {
+    @inlinable
+    subscript(dict key: String) -> JsonDictionary? {
+        return self[key] as? JsonDictionary
+    }
+    @inlinable
+    subscript(date key: String) -> Date? {
+        if let stringValue = self[key] as? String {
+            let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.date.rawValue)
+            let matches = detector?.matches(in: stringValue, options: [], range: NSRange(location: 0, length: stringValue.utf16.count))
+            return matches?.first?.date
+        }
+        return self[key] as? Date
+    }
+    @inlinable
+    subscript(bool key: String) -> Bool? {
+        return self[key] as? Bool
+    }
+    @inlinable
+    subscript(string key: String) -> String? {
+        return self[key] as? String
+    }
+    @inlinable
+    subscript(int key: String) -> Int? {
+        if let value = self[key] as? Int {
+            return value
+        }
+        if let value = self[key] as? NSString {
+            return Int(value.intValue)
+        }
+        if let value = self[key] as? String {
+            return Int(value)
+        }
+        return nil
+    }
+    @inlinable
+    subscript(array key: String) -> [JsonDictionary]? {
+        return self[key] as? [JsonDictionary]
+    }
+}
+
+public extension JsonArray {
     func spread() -> () {
         return ()
     }
