@@ -53,6 +53,20 @@ class ExamplesTest: TestsBase {
         XCTAssertEqual(persons[2].name, "Elizabeth")
         XCTAssertEqual(persons[2].age, 35)
     }
+    
+    /// Easily combine results from multiple queries
+    func testSimple5() {
+        let json1 = #"{"error":"Error format 1"}"#
+        let json2 = #"{"errors":[{"title:":"Error!","detail":"Error format 2"}]}"#
+                
+        let queries: [String] = [
+            "$.error",
+            "$.errors[0].detail",
+        ]
+        
+        XCTAssertEqualAny(json1.query(string: queries), "Error format 1")
+        XCTAssertEqualAny(json2.query(string: queries), "Error format 2")
+    }
 }
 
 extension ExamplesTest {
