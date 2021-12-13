@@ -33,9 +33,17 @@ class ExamplesTest: TestsBase {
     func testSimple3() {
         let json = #"{"name":"Rocco","age":42}"#
         
-        guard let person: (name: String?, age: Int?) = json.query("$.['name','age']") else { return XCTFail() }
+        guard let person: (name: String, age: Int) = json.query("$.['name','age']") else { return XCTFail() }
         XCTAssertEqual(person.name, "Rocco")
         XCTAssertEqual(person.age, 42)
+        
+        guard let person2: (name: String, age: Int?) = json.query("$.['name','age2']") else { return XCTFail() }
+        XCTAssertEqual(person2.name, "Rocco")
+        XCTAssertEqual(person2.age, nil)
+        
+        if let _: (name: String, age: Int) = json.query("$.['name','age2']") {
+            return XCTFail()
+        }
     }
     
     /// Supports Decodable structs
@@ -56,16 +64,27 @@ class ExamplesTest: TestsBase {
     
     /// Easily combine results from multiple queries
     func testSimple5() {
-        let json1 = #"{"error":"Error format 1"}"#
-        let json2 = #"{"errors":[{"title:":"Error!","detail":"Error format 2"}]}"#
+        let json1 = #"{"error": "invalid_request", "error_description": "Mismatching redirect URI."}"#
+        let json2 = #"{"errors":[{"title":"Error!","detail":"Error format 2"}]}"#
                 
         let queries: [String] = [
-            "$.error",
-            "$.errors[0].detail",
+            "$.['error','error_description']",
+            "$.errors[0].['title','detail']"
         ]
         
-        XCTAssertEqualAny(json1.query(string: queries), "Error format 1")
-        XCTAssertEqualAny(json2.query(string: queries), "Error format 2")
+        XCTAssertEqualAny(json1.query(values: queries), ["Mismatching redirect URI.", "invalid_request"])
+        XCTAssertEqualAny(json2.query(values: queries), ["Error format 2", "Error!"])
+    }
+    
+    func testSimple6() {
+        let json1 = #"{"access_token":"aex-0u-7Yq09sBls123456789","expires_in":2678400,"token_type":"Bearer","scope":"identity","refresh_token":"CayptzsmZ_MejrKgNtAF8ka36123456789","version":"0.0.1"}"#
+        
+        if let _: (title: String, detail: String) = json1.query([
+            "$.['error','error_description']",
+            "$.errors[0].['title','detail']"
+        ]) {
+            XCTFail()
+        }
     }
 }
 

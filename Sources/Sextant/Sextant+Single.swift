@@ -15,12 +15,11 @@ public extension String {
     @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(double path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
 
-    @inlinable func query<A>(_ path: Hitch) -> (A?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B>(_ path: Hitch) -> (A?, B?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C>(_ path: Hitch) -> (A?, B?, C?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A?, B?, C?, D?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B>(_ path: Hitch) -> (A, B)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C>(_ path: Hitch) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A, B, C, D)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A, B, C, D, E)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A, B, C, D, E, F)? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
 
@@ -48,12 +47,11 @@ public extension Hitch {
     @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(double path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
 
-    @inlinable func query<A>(_ path: Hitch) -> (A?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B>(_ path: Hitch) -> (A?, B?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C>(_ path: Hitch) -> (A?, B?, C?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A?, B?, C?, D?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B>(_ path: Hitch) -> (A, B)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C>(_ path: Hitch) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A, B, C, D)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A, B, C, D, E)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A, B, C, D, E, F)? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
 
@@ -81,12 +79,11 @@ public extension Data {
     @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(double path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
 
-    @inlinable func query<A>(_ path: Hitch) -> (A?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B>(_ path: Hitch) -> (A?, B?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C>(_ path: Hitch) -> (A?, B?, C?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A?, B?, C?, D?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B>(_ path: Hitch) -> (A, B)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C>(_ path: Hitch) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A, B, C, D)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A, B, C, D, E)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A, B, C, D, E, F)? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
 
@@ -114,12 +111,11 @@ public extension JsonAny {
     @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(double path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
 
-    @inlinable func query<A>(_ path: Hitch) -> (A?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B>(_ path: Hitch) -> (A?, B?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C>(_ path: Hitch) -> (A?, B?, C?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A?, B?, C?, D?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B>(_ path: Hitch) -> (A, B)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C>(_ path: Hitch) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A, B, C, D)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A, B, C, D, E)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A, B, C, D, E, F)? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
 
@@ -147,12 +143,11 @@ public extension Array {
     @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(double path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
 
-    @inlinable func query<A>(_ path: Hitch) -> (A?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B>(_ path: Hitch) -> (A?, B?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C>(_ path: Hitch) -> (A?, B?, C?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A?, B?, C?, D?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B>(_ path: Hitch) -> (A, B)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C>(_ path: Hitch) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A, B, C, D)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A, B, C, D, E)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A, B, C, D, E, F)? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
 
@@ -180,12 +175,11 @@ public extension Dictionary {
     @inlinable func query(_ path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(double path: Hitch) -> Double? { return Sextant.shared.query(self, value: path) }
 
-    @inlinable func query<A>(_ path: Hitch) -> (A?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B>(_ path: Hitch) -> (A?, B?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C>(_ path: Hitch) -> (A?, B?, C?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A?, B?, C?, D?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A?, B?, C?, D?, E?)? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A?, B?, C?, D?, E?, F?)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B>(_ path: Hitch) -> (A, B)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C>(_ path: Hitch) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D>(_ path: Hitch) -> (A, B, C, D)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E>(_ path: Hitch) -> (A, B, C, D, E)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E, F>(_ path: Hitch) -> (A, B, C, D, E, F)? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<T: Decodable>(_ path: Hitch) -> T? { return Sextant.shared.query(self, values: path) }
 
@@ -317,104 +311,208 @@ extension JsonArray {
 }
 
 public extension Sextant {
-    @inlinable func query<A>(_ root: JsonAny, value path: Hitch) -> (A?)? {
+    @inlinable func query<A, B>(_ root: JsonAny, value path: Hitch) -> (A, B)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B else {
+            return nil
+        }
+        return (a, b)
     }
-    @inlinable func query<A, B>(_ root: JsonAny, value path: Hitch) -> (A?, B?)? {
+    @inlinable func query<A, B, C>(_ root: JsonAny, value path: Hitch) -> (A, B, C)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C else {
+            return nil
+        }
+        return (a, b, c)
     }
-    @inlinable func query<A, B, C>(_ root: JsonAny, value path: Hitch) -> (A?, B?, C?)? {
+    @inlinable func query<A, B, C, D>(_ root: JsonAny, value path: Hitch) -> (A, B, C, D)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D else {
+            return nil
+        }
+        return (a, b, c, d)
     }
-    @inlinable func query<A, B, C, D>(_ root: JsonAny, value path: Hitch) -> (A?, B?, C?, D?)? {
+    @inlinable func query<A, B, C, D, E>(_ root: JsonAny, value path: Hitch) -> (A, B, C, D, E)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D,
+              let e = values.get(4) as? E else {
+            return nil
+        }
+        return (a, b, c, d, e)
     }
-    @inlinable func query<A, B, C, D, E>(_ root: JsonAny, value path: Hitch) -> (A?, B?, C?, D?, E?)? {
+    @inlinable func query<A, B, C, D, E, F>(_ root: JsonAny, value path: Hitch) -> (A, B, C, D, E, F)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D, values.get(4) as? E)
-    }
-    @inlinable func query<A, B, C, D, E, F>(_ root: JsonAny, value path: Hitch) -> (A?, B?, C?, D?, E?, F?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D, values.get(4) as? E, values.get(5) as? F)
-    }
-
-    @inlinable func query<A>(_ root: String, value path: Hitch) -> (A?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A)
-    }
-    @inlinable func query<A, B>(_ root: String, value path: Hitch) -> (A?, B?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B)
-    }
-    @inlinable func query<A, B, C>(_ root: String, value path: Hitch) -> (A?, B?, C?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C)
-    }
-    @inlinable func query<A, B, C, D>(_ root: String, value path: Hitch) -> (A?, B?, C?, D?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D)
-    }
-    @inlinable func query<A, B, C, D, E>(_ root: String, value path: Hitch) -> (A?, B?, C?, D?, E?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D, values.get(4) as? E)
-    }
-    @inlinable func query<A, B, C, D, E, F>(_ root: String, value path: Hitch) -> (A?, B?, C?, D?, E?, F?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D, values.get(4) as? E, values.get(5) as? F)
-    }
-
-    @inlinable func query<A>(_ root: Hitch, value path: Hitch) -> (A?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A)
-    }
-    @inlinable func query<A, B>(_ root: Hitch, value path: Hitch) -> (A?, B?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B)
-    }
-    @inlinable func query<A, B, C>(_ root: Hitch, value path: Hitch) -> (A?, B?, C?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C)
-    }
-    @inlinable func query<A, B, C, D>(_ root: Hitch, value path: Hitch) -> (A?, B?, C?, D?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D)
-    }
-    @inlinable func query<A, B, C, D, E>(_ root: Hitch, value path: Hitch) -> (A?, B?, C?, D?, E?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D, values.get(4) as? E)
-    }
-    @inlinable func query<A, B, C, D, E, F>(_ root: Hitch, value path: Hitch) -> (A?, B?, C?, D?, E?, F?)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D, values.get(4) as? E, values.get(5) as? F)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D,
+              let e = values.get(4) as? E,
+              let f = values.get(5) as? F else {
+            return nil
+        }
+        return (a, b, c, d, e, f)
     }
 
-    @inlinable func query<A>(_ root: Data, value path: Hitch) -> (A?)? {
+    @inlinable func query<A, B>(_ root: String, value path: Hitch) -> (A, B)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B else {
+            return nil
+        }
+        return (a, b)
     }
-    @inlinable func query<A, B>(_ root: Data, value path: Hitch) -> (A?, B?)? {
+    @inlinable func query<A, B, C>(_ root: String, value path: Hitch) -> (A, B, C)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C else {
+            return nil
+        }
+        return (a, b, c)
     }
-    @inlinable func query<A, B, C>(_ root: Data, value path: Hitch) -> (A?, B?, C?)? {
+    @inlinable func query<A, B, C, D>(_ root: String, value path: Hitch) -> (A, B, C, D)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D else {
+            return nil
+        }
+        return (a, b, c, d)
     }
-    @inlinable func query<A, B, C, D>(_ root: Data, value path: Hitch) -> (A?, B?, C?, D?)? {
+    @inlinable func query<A, B, C, D, E>(_ root: String, value path: Hitch) -> (A, B, C, D, E)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D,
+              let e = values.get(4) as? E else {
+            return nil
+        }
+        return (a, b, c, d, e)
     }
-    @inlinable func query<A, B, C, D, E>(_ root: Data, value path: Hitch) -> (A?, B?, C?, D?, E?)? {
+    @inlinable func query<A, B, C, D, E, F>(_ root: String, value path: Hitch) -> (A, B, C, D, E, F)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D, values.get(4) as? E)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D,
+              let e = values.get(4) as? E,
+              let f = values.get(5) as? F else {
+            return nil
+        }
+        return (a, b, c, d, e, f)
     }
-    @inlinable func query<A, B, C, D, E, F>(_ root: Data, value path: Hitch) -> (A?, B?, C?, D?, E?, F?)? {
+
+    @inlinable func query<A, B>(_ root: Hitch, value path: Hitch) -> (A, B)? {
         guard let values: JsonArray = query(root, values: path) else { return nil }
-        return (values.get(0) as? A, values.get(1) as? B, values.get(2) as? C, values.get(3) as? D, values.get(4) as? E, values.get(5) as? F)
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B else {
+            return nil
+        }
+        return (a, b)
+    }
+    @inlinable func query<A, B, C>(_ root: Hitch, value path: Hitch) -> (A, B, C)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C else {
+            return nil
+        }
+        return (a, b, c)
+    }
+    @inlinable func query<A, B, C, D>(_ root: Hitch, value path: Hitch) -> (A, B, C, D)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D else {
+            return nil
+        }
+        return (a, b, c, d)
+    }
+    @inlinable func query<A, B, C, D, E>(_ root: Hitch, value path: Hitch) -> (A, B, C, D, E)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D,
+              let e = values.get(4) as? E else {
+            return nil
+        }
+        return (a, b, c, d, e)
+    }
+    @inlinable func query<A, B, C, D, E, F>(_ root: Hitch, value path: Hitch) -> (A, B, C, D, E, F)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D,
+              let e = values.get(4) as? E,
+              let f = values.get(5) as? F else {
+            return nil
+        }
+        return (a, b, c, d, e, f)
+    }
+
+    @inlinable func query<A, B>(_ root: Data, value path: Hitch) -> (A, B)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B else {
+            return nil
+        }
+        return (a, b)
+    }
+    @inlinable func query<A, B, C>(_ root: Data, value path: Hitch) -> (A, B, C)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C else {
+            return nil
+        }
+        return (a, b, c)
+    }
+    @inlinable func query<A, B, C, D>(_ root: Data, value path: Hitch) -> (A, B, C, D)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D else {
+            return nil
+        }
+        return (a, b, c, d)
+    }
+    @inlinable func query<A, B, C, D, E>(_ root: Data, value path: Hitch) -> (A, B, C, D, E)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D,
+              let e = values.get(4) as? E else {
+            return nil
+        }
+        return (a, b, c, d, e)
+    }
+    @inlinable func query<A, B, C, D, E, F>(_ root: Data, value path: Hitch) -> (A, B, C, D, E, F)? {
+        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D,
+              let e = values.get(4) as? E,
+              let f = values.get(5) as? F else {
+            return nil
+        }
+        return (a, b, c, d, e, f)
     }
 }
 
