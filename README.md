@@ -1,3 +1,5 @@
+![](meta/icon.png)
+
 ## Sextant
 
 Sextant is a complete, high performance JSONPath implementation written in Swift. It was originally from the [SMJJSONPath](https://github.com/javerous/SMJJSONPath), which in turn is a tight adaptation of the [Jayway JsonPath](https://github.com/json-path/JsonPath) implementation. Sextant has since been updated to bring it into compliance with other JSON path implementations ([see issue](https://github.com/javerous/SMJJSONPath/issues/6)), so this specific implementation now varies from the SMJJSONPath/Jayway implementation.
