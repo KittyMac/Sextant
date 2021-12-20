@@ -4,6 +4,7 @@ import Hitch
 final class EvaluationContext {
     var updateOperations = [Path]()
 
+    var allValueResults = JsonArray()
     var valueResults = JsonArray()
     var pathResults = [String]()
     var resultIndex = 0
@@ -23,7 +24,11 @@ final class EvaluationContext {
     func add(path: Hitch,
              operation: Path,
              jsonObject: JsonAny) -> EvaluationStatus {
-        valueResults.append(jsonObject)
+
+        allValueResults.append(jsonObject)
+        if jsonObject != nil {
+            valueResults.append(jsonObject)
+        }
         pathResults.append(path.description)
 
         resultIndex += 1
@@ -54,6 +59,19 @@ final class EvaluationContext {
         }
 
         return valueResults
+    }
+
+    func allResultsValues() -> JsonArray? {
+        if path.isDefinite() {
+            if resultIndex == 0 || allValueResults.count == 0 {
+                error("No results for path: \(path)")
+                return nil
+            }
+
+            return [allValueResults[allValueResults.count - 1]]
+        }
+
+        return allValueResults
     }
 
     func resultsPaths() -> JsonArray? {

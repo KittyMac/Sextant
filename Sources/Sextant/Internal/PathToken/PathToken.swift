@@ -90,6 +90,12 @@ class PathToken: CustomStringConvertible {
                                                  jsonObject: NSNull()) == .aborted {
                             return .aborted
                         }
+                    } else {
+                        if evaluationContext.add(path: evalPath,
+                                                 operation: path,
+                                                 jsonObject: nil) == .aborted {
+                            return .aborted
+                        }
                     }
                     return .done
                 } else {

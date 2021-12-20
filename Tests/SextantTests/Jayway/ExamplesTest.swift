@@ -86,6 +86,29 @@ class ExamplesTest: TestsBase {
             XCTFail()
         }
     }
+    
+    func testSimple7() {
+        // note: email is missing from this one
+        let json = #"{"data":{"attributes":{"about":null,"created":"2021-12-19T18:06:51.000+00:00","first_name":"John","full_name":"John Doe","image_url":"https://www.example.com/image.png","last_name":"Doe","thumb_url":"https://www.example.com/image.png","url":"https://www.example.com/user?u=234576235","vanity":null},"id":"234576235","type":"user"},"links":{"self":"https://www.example.com/api/oauth2/v2/user/234576235"}}"#
+        
+        if let _: (name: String?,
+                   firstName: String?,
+                   lastName: String?,
+                   email: String,
+                   imageUrl: String?) = json.query("$.data.attributes['full_name','first_name','last_name','email','thumb_url']") {
+            XCTFail()
+        }
+        
+        if let _: (name: String,
+                   firstName: String,
+                   lastName: String,
+                   email: String?,
+                   imageUrl: String) = json.query("$.data.attributes['full_name','first_name','last_name','email','thumb_url']") {
+            
+        } else {
+            XCTFail()
+        }
+    }
 }
 
 extension ExamplesTest {
@@ -94,6 +117,11 @@ extension ExamplesTest {
             ("testSimple0", testSimple0),
             ("testSimple1", testSimple1),
             ("testSimple2", testSimple2),
+            ("testSimple3", testSimple3),
+            ("testSimple4", testSimple4),
+            ("testSimple5", testSimple5),
+            ("testSimple6", testSimple6),
+            ("testSimple7", testSimple7),
         ]
     }
 }

@@ -198,6 +198,16 @@ public extension Dictionary {
 public extension Sextant {
 
     func query(_ root: JsonAny,
+               allValues path: Hitch) -> JsonArray? {
+        guard let path = cachedPath(query: path) else { return nil }
+        if let result = path.evaluate(jsonObject: root,
+                                      rootJsonObject: root) {
+            return result.allResultsValues()
+        }
+        return nil
+    }
+
+    func query(_ root: JsonAny,
                values path: Hitch) -> JsonArray? {
         guard let path = cachedPath(query: path) else { return nil }
         if let result = path.evaluate(jsonObject: root,
@@ -261,6 +271,24 @@ public extension Sextant {
 
 public extension Sextant {
     @inlinable func query(_ root: String,
+                          allValues path: Hitch) -> JsonArray? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, allValues: path)
+    }
+
+    @inlinable func query(_ root: Hitch,
+                          allValues path: Hitch) -> JsonArray? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, allValues: path)
+    }
+
+    @inlinable func query(_ root: Data,
+                          allValues path: Hitch) -> JsonArray? {
+        guard let jsonData = root.parsed() else { return nil }
+        return query(jsonData, allValues: path)
+    }
+
+    @inlinable func query(_ root: String,
                           values path: Hitch) -> JsonArray? {
         guard let jsonData = root.parsed() else { return nil }
         return query(jsonData, values: path)
@@ -312,7 +340,7 @@ extension JsonArray {
 
 public extension Sextant {
     @inlinable func query<A, B>(_ root: JsonAny, value path: Hitch) -> (A, B)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let values: JsonArray = query(root, allValues: path) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B else {
             return nil
@@ -320,7 +348,7 @@ public extension Sextant {
         return (a, b)
     }
     @inlinable func query<A, B, C>(_ root: JsonAny, value path: Hitch) -> (A, B, C)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let values: JsonArray = query(root, allValues: path) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B,
               let c = values.get(2) as? C else {
@@ -329,7 +357,7 @@ public extension Sextant {
         return (a, b, c)
     }
     @inlinable func query<A, B, C, D>(_ root: JsonAny, value path: Hitch) -> (A, B, C, D)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let values: JsonArray = query(root, allValues: path) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B,
               let c = values.get(2) as? C,
@@ -339,7 +367,7 @@ public extension Sextant {
         return (a, b, c, d)
     }
     @inlinable func query<A, B, C, D, E>(_ root: JsonAny, value path: Hitch) -> (A, B, C, D, E)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let values: JsonArray = query(root, allValues: path) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B,
               let c = values.get(2) as? C,
@@ -350,7 +378,7 @@ public extension Sextant {
         return (a, b, c, d, e)
     }
     @inlinable func query<A, B, C, D, E, F>(_ root: JsonAny, value path: Hitch) -> (A, B, C, D, E, F)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let values: JsonArray = query(root, allValues: path) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B,
               let c = values.get(2) as? C,
@@ -363,7 +391,7 @@ public extension Sextant {
     }
 
     @inlinable func query<A, B>(_ root: String, value path: Hitch) -> (A, B)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let values: JsonArray = query(root, allValues: path) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B else {
             return nil
@@ -371,7 +399,7 @@ public extension Sextant {
         return (a, b)
     }
     @inlinable func query<A, B, C>(_ root: String, value path: Hitch) -> (A, B, C)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let values: JsonArray = query(root, allValues: path) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B,
               let c = values.get(2) as? C else {
@@ -380,7 +408,7 @@ public extension Sextant {
         return (a, b, c)
     }
     @inlinable func query<A, B, C, D>(_ root: String, value path: Hitch) -> (A, B, C, D)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let values: JsonArray = query(root, allValues: path) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B,
               let c = values.get(2) as? C,
@@ -390,7 +418,7 @@ public extension Sextant {
         return (a, b, c, d)
     }
     @inlinable func query<A, B, C, D, E>(_ root: String, value path: Hitch) -> (A, B, C, D, E)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let values: JsonArray = query(root, allValues: path) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B,
               let c = values.get(2) as? C,
@@ -401,7 +429,7 @@ public extension Sextant {
         return (a, b, c, d, e)
     }
     @inlinable func query<A, B, C, D, E, F>(_ root: String, value path: Hitch) -> (A, B, C, D, E, F)? {
-        guard let values: JsonArray = query(root, values: path) else { return nil }
+        guard let values: JsonArray = query(root, allValues: path) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B,
               let c = values.get(2) as? C,
