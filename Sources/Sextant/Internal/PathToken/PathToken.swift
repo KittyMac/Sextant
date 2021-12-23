@@ -24,7 +24,7 @@ class PathToken: CustomStringConvertible {
             return .skip
         }
 
-        return .error("Filter: \(self) can only be applied to arrays. Current context is: \(jsonObject)")
+        return .skip
     }
 
     @inlinable

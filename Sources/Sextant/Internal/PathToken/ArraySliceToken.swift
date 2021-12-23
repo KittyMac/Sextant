@@ -25,7 +25,11 @@ class ArraySliceToken: PathToken {
             guard let array = jsonObject as? JsonArray else { return .error("Attempted slice operation on a non-Array value") }
             var from = operation.from ?? 0
             var to = operation.to ?? array.count
-            let skip = operation.skip ?? 1
+            var skip = operation.skip ?? 1
+
+            if skip <= 0 {
+                skip = 1
+            }
 
             if from < 0 {
                 from = array.count + from

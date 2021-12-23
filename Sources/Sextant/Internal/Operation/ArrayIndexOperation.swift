@@ -12,7 +12,7 @@ final class ArrayIndexOperation: CustomStringConvertible {
             return nil
         }
 
-        let tokens = operation.split(separator: UInt8.comma)
+        let tokens = operation.split(separator: UInt8.comma, omittingEmptySubsequences: false)
         indices.reserveCapacity(tokens.count)
 
         for token in tokens {

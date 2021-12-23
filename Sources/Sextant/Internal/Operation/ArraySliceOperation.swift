@@ -14,7 +14,7 @@ final class ArraySliceOperation: CustomStringConvertible {
             return nil
         }
 
-        let tokens = operation.split(separator: UInt8.colon)
+        let tokens = operation.split(separator: UInt8.colon, omittingEmptySubsequences: false)
 
         if tokens.count >= 1 {
             if operation[0] == UInt8.colon {

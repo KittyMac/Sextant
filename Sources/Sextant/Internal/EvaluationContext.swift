@@ -38,8 +38,7 @@ final class EvaluationContext {
     func jsonObject() -> JsonAny {
         if path.isDefinite() {
             if resultIndex == 0 || valueResults.count == 0 {
-                error("No results for path: \(path)")
-                return nil
+                return []
             }
 
             return valueResults[valueResults.count - 1]
@@ -51,8 +50,7 @@ final class EvaluationContext {
     func resultsValues() -> JsonArray? {
         if path.isDefinite() {
             if resultIndex == 0 || valueResults.count == 0 {
-                error("No results for path: \(path)")
-                return nil
+                return []
             }
 
             return [valueResults[valueResults.count - 1]]
@@ -64,8 +62,7 @@ final class EvaluationContext {
     func allResultsValues() -> JsonArray? {
         if path.isDefinite() {
             if resultIndex == 0 || allValueResults.count == 0 {
-                error("No results for path: \(path)")
-                return nil
+                return []
             }
 
             return [allValueResults[allValueResults.count - 1]]
@@ -77,8 +74,7 @@ final class EvaluationContext {
     func resultsPaths() -> JsonArray? {
         if path.isDefinite() {
             if resultIndex == 0 || valueResults.count == 0 {
-                error("No results for path: \(path)")
-                return nil
+                return []
             }
 
             return [pathResults[pathResults.count - 1]]

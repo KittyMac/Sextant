@@ -44,6 +44,58 @@ class ComplianceTest: TestsBase {
         XCTAssertEqualAny(json.query(values: "$.menu.items[?(@ && @.id == 'ViewSVG')].id"), ["ViewSVG"])
         XCTAssertEqualAny(json.query(values: "$.menu.items[?(@ && @.id && !@.label)].id"), ["Open","Quality","Pause","Mute","Copy","Help"])
     }
+    
+    // Further tests to ensure compliance with https://cburgmer.github.io/json-path-comparison/
+    
+    func test_JsonPathComparison1() {
+        let json = #"{ ":": 42, "more": "string", "a": 1, "b": 2, "c": 3, "1:3": "nice" }"#
+        XCTAssertEqualAny(json.query(values: "$[1:3]"), [])
+    }
+    
+    func test_JsonPathComparison2() {
+        let json = #"{ ":": 42, "more": "string" }"#
+        XCTAssertEqualAny(json.query(values: "$[:]"), [])
+    }
+    
+    func test_JsonPathComparison3() {
+        let json = #"[ "first", "second", "third", "forth", "fifth" ]"#
+        XCTAssertEqualAny(json.query(values: "$[0:3:0]"), [])
+    }
+    
+    func test_JsonPathComparison4() {
+        let json = #"[ "first", "second", "third", "forth", "fifth" ]"#
+        XCTAssertEqualAny(json.query(values: "$[::2]"), ["first", "third", "fifth"])
+    }
+    
+    func test_JsonPathComparison5() {
+        let json = #"{ "key": "value" }"#
+        XCTAssertEqualAny(json.query(values: "$['missing']"), [])
+    }
+    
+    func test_JsonPathComparison6() {
+        let json = #"{ "u\u0308": 42 }"#
+        XCTAssertEqualAny(json.query(values: "$['ü']"), [])
+    }
+    
+    func test_JsonPathComparison7() {
+        let json = #"{ "": 42, "''": 123, "\"\"": 222 }"#
+        XCTAssertEqualAny(json.query(values: "$[]"), [])
+    }
+    
+    func test_JsonPathComparison8() {
+        let json = #"[ "one element" ]"#
+        XCTAssertEqualAny(json.query(values: "$[-2]"), [])
+    }
+    
+    func test_JsonPathComparison9() {
+        let json = #"[]"#
+        XCTAssertEqualAny(json.query(values: "$[-1]"), [])
+    }
+    
+    func test_JsonPathComparison10() {
+        let json = #"{ "0": "value" }"#
+        XCTAssertEqualAny(json.query(values: "$[0]"), [])
+    }
 }
 
 extension ComplianceTest {
