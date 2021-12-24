@@ -47,31 +47,12 @@ class ScanPathToken: PathToken {
 
         // Evaluate.
         if predicate.matchesJsonObject(jsonObject: jsonObject) {
-            if let next = path.next {
-                var idx = 0
-
-                for evalObject in jsonObject {
-                    Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
-
-                    let result = next.evaluate(currentPath: evalPath,
-                                               parentPath: parentPath,
-                                               jsonObject: evalObject,
-                                               evaluationContext: evaluationContext)
-                    if result != .done {
-                        return result
-                    }
-
-                    idx += 1
-                }
-
-            } else {
-                let result = path.evaluate(currentPath: currentPath,
-                                           parentPath: parentPath,
-                                           jsonObject: jsonObject,
-                                           evaluationContext: evaluationContext)
-                if result != .done {
-                    return result
-                }
+            let result = path.evaluate(currentPath: currentPath,
+                                       parentPath: parentPath,
+                                       jsonObject: jsonObject,
+                                       evaluationContext: evaluationContext)
+            if result != .done {
+                return result
             }
         }
 

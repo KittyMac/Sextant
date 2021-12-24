@@ -59,7 +59,7 @@ class ComplianceTest: TestsBase {
     
     func test_JsonPathComparison3() {
         let json = #"[ "first", "second", "third", "forth", "fifth" ]"#
-        XCTAssertEqualAny(json.query(values: "$[0:3:0]"), [])
+        XCTAssertEqualAny(json.query(values: "$[0:3:0]"), ["first", "second", "third"])
     }
     
     func test_JsonPathComparison4() {
@@ -134,12 +134,15 @@ class ComplianceTest: TestsBase {
     
     func test_JsonPathComparison19() {
         let json = #"{ "k": [ { "key": "some value" }, { "key": 42 } ], "kk": [ [ { "key": 100 }, { "key": 200 }, { "key": 300 } ], [ { "key": 400 }, { "key": 500 }, { "key": 600 } ] ], "key": [ 0, 1 ] }"#
-        XCTAssertEqualAny(json.query(values: "$..[1].key"), [200, 42, 500])
+        guard let result = (json.query(values: "$..[1].key") as? [Int]) else {
+            return XCTFail()
+        }
+        XCTAssertEqualAny(result.sorted(), [42, 200, 500])
     }
     
     func test_JsonPathComparison20() {
         let json = #"{ "object": { "key": "value", "array": [ { "key": "something" }, { "key": { "key": "russian dolls" } } ] }, "key": "top" }"#
-        XCTAssertEqualAny(json.query(values: "$...key"), [200, 42, 500])
+        XCTAssertEqualAny(json.query(values: "$...key"), nil)
     }
     
     func test_JsonPathComparison21() {
@@ -150,6 +153,21 @@ class ComplianceTest: TestsBase {
     func test_JsonPathComparison22() {
         let json = #"[ { "id": 2 } ]"#
         XCTAssertEqualAny(json.query(values: "$.id"), [])
+    }
+    
+    func test_JsonPathComparison23() {
+        let json = #"[ { "d": 1 }, { "d": 2 }, { "d": 1 }, { "d": 3 }, { "d": 4 } ]"#
+        XCTAssertEqualAny(json.query(values: "$[?(@.d in [2, 3])]"), [ [ "d": 2 ], [ "d": 3 ] ])
+    }
+    
+    func test_JsonPathComparison24() {
+        let json = #"[ { "d": [ 1, 2, 3 ] }, { "d": [ 2 ] }, { "d": [ 1 ] }, { "d": [ 3, 4 ] }, { "d": [ 4, 2 ] } ]"#
+        XCTAssertEqualAny(json.query(values: "$[?(2 in @.d)]"), [ [ "d": [ 1, 2, 3 ] ], [ "d": [ 2 ] ], [ "d": [ 4, 2 ] ] ])
+    }
+    
+    func test_JsonPathComparison25() {
+        let json = #"[ { "title": "Sayings of the Century", "bookmarks": [ { "page": 40 } ] }, { "title": "Sword of Honour", "bookmarks": [ { "page": 35 }, { "page": 45 } ] }, { "title": "Moby Dick", "bookmarks": [ { "page": 3035 }, { "page": 45 } ] } ]"#
+        XCTAssertEqualAny(json.query(values: "$[*].bookmarks[?(@.page == 45)]^^^"), [])
     }
 }
 
