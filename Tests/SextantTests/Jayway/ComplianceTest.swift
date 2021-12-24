@@ -74,7 +74,10 @@ class ComplianceTest: TestsBase {
     
     func test_JsonPathComparison6() {
         let json = #"{ "u\u0308": 42 }"#
-        XCTAssertEqualAny(json.query(values: "$['ü']"), [])
+        XCTAssertEqualAny(json.query(values: "$['ü']"), [42])
+        
+        let json2 = #"{ "u": 42 }"#
+        XCTAssertEqualAny(json2.query(values: "$['u']"), [42])
     }
         
     func test_JsonPathComparison8() {
