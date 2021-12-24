@@ -8,9 +8,8 @@ class JsonPathComparisonFixesTest: TestsBase {
     // fixes: https://github.com/javerous/SMJJSONPath/issues/6
     
     func test_case1() {
-        // Disagree with this conclusion, we should fail with array slice on a dictionary...
         let json = #"{":": 42, "more": "string", "a": 1, "b": 2, "c": 3}"#
-        XCTAssertEqualAny(json.query(values: "$[1:3]"), nil)
+        XCTAssertEqualAny(json.query(values: "$[1:3]"), [])
     }
     
     func test_case2() {

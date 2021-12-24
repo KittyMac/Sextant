@@ -23,11 +23,11 @@ class DeepScanTest: TestsBase {
     }
     
     func test_definite_upstream_illegal_array_access_throws() {
-        XCTAssertEqualAny("{\"foo\": {\"bar\": null}}".query(values: "$.foo.bar.[5]"), nil)
-        XCTAssertEqualAny("{\"foo\": {\"bar\": null}}".query(values: "$.foo.bar.[5, 10]"), nil)
-        XCTAssertEqualAny("{\"foo\": {\"bar\": 4}}".query(values: "$.foo.bar.[5]"), nil)
-        XCTAssertEqualAny("{\"foo\": {\"bar\": 4}}".query(values: "$.foo.bar.[5, 10]"), nil)
-        XCTAssertEqualAny("{\"foo\": {\"bar\": []}}".query(values: "$.foo.bar.[5]"), nil)
+        XCTAssertEqualAny("{\"foo\": {\"bar\": null}}".query(values: "$.foo.bar.[5]"), [])
+        XCTAssertEqualAny("{\"foo\": {\"bar\": null}}".query(values: "$.foo.bar.[5, 10]"), [])
+        XCTAssertEqualAny("{\"foo\": {\"bar\": 4}}".query(values: "$.foo.bar.[5]"), [])
+        XCTAssertEqualAny("{\"foo\": {\"bar\": 4}}".query(values: "$.foo.bar.[5, 10]"), [])
+        XCTAssertEqualAny("{\"foo\": {\"bar\": []}}".query(values: "$.foo.bar.[5]"), [])
     }
     
     func test_when_deep_scanning_illegal_property_access_is_ignored() {

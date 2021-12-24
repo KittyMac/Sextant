@@ -28,17 +28,17 @@ class NullHandlingTest: TestsBase {
     """
     
     func test_not_defined_property_throws_PathNotFoundException() {
-        XCTAssertEqualAny(jsonDocumentNull.query(values: "$.children[0].child.age"), nil)
+        XCTAssertEqualAny(jsonDocumentNull.query(values: "$.children[0].child.age"), [])
     }
     
     func test_last_token_defaults_to_null() {
-        XCTAssertEqualAny(jsonDocumentNull.query(values: "$.children[2].age"), nil)
+        XCTAssertEqualAny(jsonDocumentNull.query(values: "$.children[2].age"), [])
     }
     
     func test_null_property_returns_null() {
         XCTAssertEqualAny(jsonDocumentNull.query(values: "$.children[0].age"), [0])
         XCTAssertEqualAny(jsonDocumentNull.query(values: "$.children[1].age"), [nil])
-        XCTAssertEqualAny(jsonDocumentNull.query(values: "$.children[2].age"), nil)
+        XCTAssertEqualAny(jsonDocumentNull.query(values: "$.children[2].age"), [])
     }
     
     func test_the_age_of_all_with_age_defined() {

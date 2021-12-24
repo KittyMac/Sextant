@@ -145,7 +145,7 @@ class JsonPathTest: TestsBase {
             }
         """
         
-        XCTAssertEqualAny(json.query(values: "$.data.passes[0].id"), nil)
+        XCTAssertEqualAny(json.query(values: "$.data.passes[0].id"), [])
         XCTAssertEqualAny(json.query(values: "$.data2.passes[0].id"), ["1"])
     }
     
@@ -264,7 +264,7 @@ class JsonPathTest: TestsBase {
     }
     
     func test_access_index_out_of_bounds_does_not_throw_exception() {
-        XCTAssertEqualAny(jsonDocument1.query(values: "$.store.book[100].author"), nil)
+        XCTAssertEqualAny(jsonDocument1.query(values: "$.store.book[100].author"), [])
     }
     
     func test_exists_filter_with_nested_path() {

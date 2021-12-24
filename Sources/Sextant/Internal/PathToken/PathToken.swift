@@ -38,7 +38,14 @@ class PathToken: CustomStringConvertible {
 
         let effectiveIndex = arrayIndex < 0 ? jsonObject.count + arrayIndex : arrayIndex
 
-        guard effectiveIndex >= 0 && effectiveIndex < jsonObject.count else { return .done }
+        guard effectiveIndex >= 0 && effectiveIndex < jsonObject.count else {
+            if evaluationContext.add(path: evalPath,
+                                     operation: path,
+                                     jsonObject: nil) == .aborted {
+                return .aborted
+            }
+            return .done
+        }
 
         let evalHit = jsonObject[effectiveIndex]
 
@@ -102,7 +109,7 @@ class PathToken: CustomStringConvertible {
                     if (isUpstreamDefinite() && isTokenDefinite()) == false {
                         return .done
                     }
-                    return .error("Missing property in path \(evalPath)")
+                    return .aborted
                 }
             }
 

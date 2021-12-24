@@ -4,8 +4,8 @@ import class Foundation.Bundle
 import Sextant
 
 func XCTAssertEqualAny(_ inFirst: Any?, _ inSecond: Any?) {
-    guard let first = inFirst else { return XCTAssertTrue(inFirst == nil && inSecond == nil) }
-    guard let second = inSecond else { return XCTAssertTrue(false) }
+    guard let first = inFirst else { return XCTAssertTrue(inFirst == nil && inSecond == nil, "one of the arguments is nil") }
+    guard let second = inSecond else { return XCTAssertTrue(false, "second argument is nil") }
     
     if let first = first as? [String],
        let second = second as? [String] {

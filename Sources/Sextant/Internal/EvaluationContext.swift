@@ -7,7 +7,6 @@ final class EvaluationContext {
     var allValueResults = JsonArray()
     var valueResults = JsonArray()
     var pathResults = [String]()
-    var resultIndex = 0
 
     var evaluationCache = [Hitch: JsonAny]()
 
@@ -31,14 +30,13 @@ final class EvaluationContext {
         }
         pathResults.append(path.description)
 
-        resultIndex += 1
         return .done
     }
 
-    func jsonObject() -> JsonAny {
+    internal func jsonObject() -> JsonAny {
         if path.isDefinite() {
-            if resultIndex == 0 || valueResults.count == 0 {
-                return []
+            if valueResults.count == 0 {
+                return nil
             }
 
             return valueResults[valueResults.count - 1]
@@ -49,7 +47,7 @@ final class EvaluationContext {
 
     func resultsValues() -> JsonArray? {
         if path.isDefinite() {
-            if resultIndex == 0 || valueResults.count == 0 {
+            if valueResults.count == 0 {
                 return []
             }
 
@@ -61,7 +59,7 @@ final class EvaluationContext {
 
     func allResultsValues() -> JsonArray? {
         if path.isDefinite() {
-            if resultIndex == 0 || allValueResults.count == 0 {
+            if allValueResults.count == 0 {
                 return []
             }
 
@@ -73,7 +71,7 @@ final class EvaluationContext {
 
     func resultsPaths() -> JsonArray? {
         if path.isDefinite() {
-            if resultIndex == 0 || valueResults.count == 0 {
+            if pathResults.count == 0 {
                 return []
             }
 

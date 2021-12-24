@@ -29,7 +29,7 @@ class PropertyPathToken: PathToken {
             if isUpstreamDefinite() == false {
                 return .done
             }
-            return .error("Expected to find an object with property \(pathFragment()) in path \(currentPath) but found something that is not a json object.")
+            return .aborted
         }
 
         if singlePropertyCase() {

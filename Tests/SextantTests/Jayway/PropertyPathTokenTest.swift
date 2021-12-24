@@ -34,15 +34,15 @@ class PropertyPathTokenTests: TestsBase {
     """
     
     func test_property_not_found() {
-        XCTAssertEqual(jsonSimpleMap.query(values: "$.not-found")?.count, nil)
+        XCTAssertEqual(jsonSimpleMap.query(values: "$.not-found")?.count, 0)
     }
 
     func test_property_not_found_deep() {
-        XCTAssertEqual(jsonSimpleMap.query(values: "$.foo.not-found")?.count, nil)
+        XCTAssertEqual(jsonSimpleMap.query(values: "$.foo.not-found")?.count, 0)
     }
 
     func test_property_not_found_option_throw() {
-        XCTAssertEqual(jsonSimpleMap.query(values: "$.not-found")?.count, nil)
+        XCTAssertEqual(jsonSimpleMap.query(values: "$.not-found")?.count, 0)
     }
 
     func test_map_value_can_be_read_from_map() {

@@ -76,12 +76,7 @@ class ComplianceTest: TestsBase {
         let json = #"{ "u\u0308": 42 }"#
         XCTAssertEqualAny(json.query(values: "$['ü']"), [])
     }
-    
-    func test_JsonPathComparison7() {
-        let json = #"{ "": 42, "''": 123, "\"\"": 222 }"#
-        XCTAssertEqualAny(json.query(values: "$[]"), [])
-    }
-    
+        
     func test_JsonPathComparison8() {
         let json = #"[ "one element" ]"#
         XCTAssertEqualAny(json.query(values: "$[-2]"), [])
@@ -95,6 +90,66 @@ class ComplianceTest: TestsBase {
     func test_JsonPathComparison10() {
         let json = #"{ "0": "value" }"#
         XCTAssertEqualAny(json.query(values: "$[0]"), [])
+    }
+    
+    func test_JsonPathComparison11() {
+        let json = #"[ "one element" ]"#
+        XCTAssertEqualAny(json.query(values: "$[1]"), [])
+    }
+    
+    func test_JsonPathComparison12() {
+        let json = #""Hello World""#
+        XCTAssertEqualAny(json.query(values: "$[0]"), [])
+    }
+    
+    func test_JsonPathComparison13() {
+        let json = #"{ "single'quote": "value" }"#
+        XCTAssertNil(json.query(values: "$['single'quote']"))
+    }
+    
+    func test_JsonPathComparison14() {
+        let json = #"{ "another": "entry" }"#
+        XCTAssertEqualAny(json.query(values: "$['*']"), [])
+    }
+    
+    func test_JsonPathComparison15() {
+        let json = #"{ "one": { "key": "value" }, "two": { "some": "more", "key": "other value" }, "two.some": "42", "two'.'some": "43" }"#
+        XCTAssertNil(json.query(values: "$['two'.'some']"))
+    }
+    
+    func test_JsonPathComparison16() {
+        let json = #"{ "one": { "key": "value" }, "two": { "some": "more", "key": "other value" }, "two.some": "42" }"#
+        XCTAssertNil(json.query(values: "$[two.some]"))
+    }
+    
+    func test_JsonPathComparison17() {
+        let json = #"{ "key": "value" }"#
+        XCTAssertNil(json.query(values: "$[key]"))
+    }
+    
+    func test_JsonPathComparison18() {
+        let json = #"{ "key": "value", "other": { "key": [ { "key": 42 } ] } }"#
+        XCTAssertNil(json.query(values: "$.[key]"))
+    }
+    
+    func test_JsonPathComparison19() {
+        let json = #"{ "k": [ { "key": "some value" }, { "key": 42 } ], "kk": [ [ { "key": 100 }, { "key": 200 }, { "key": 300 } ], [ { "key": 400 }, { "key": 500 }, { "key": 600 } ] ], "key": [ 0, 1 ] }"#
+        XCTAssertEqualAny(json.query(values: "$..[1].key"), [200, 42, 500])
+    }
+    
+    func test_JsonPathComparison20() {
+        let json = #"{ "object": { "key": "value", "array": [ { "key": "something" }, { "key": { "key": "russian dolls" } } ] }, "key": "top" }"#
+        XCTAssertEqualAny(json.query(values: "$...key"), [200, 42, 500])
+    }
+    
+    func test_JsonPathComparison21() {
+        let json = #"[ 0, 1 ]"#
+        XCTAssertEqualAny(json.query(values: "$.key"), [])
+    }
+    
+    func test_JsonPathComparison22() {
+        let json = #"[ { "id": 2 } ]"#
+        XCTAssertEqualAny(json.query(values: "$.id"), [])
     }
 }
 

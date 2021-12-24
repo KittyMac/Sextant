@@ -17,6 +17,11 @@ class ArrayIndexToken: ArrayPathToken {
                                      evaluationContext: evaluationContext)
         switch checkResult {
         case .skip:
+            if evaluationContext.add(path: currentPath,
+                                     operation: nullPath(),
+                                     jsonObject: nil) == .aborted {
+                return .aborted
+            }
             return .done
         case .error(let message):
             return .error(message)
