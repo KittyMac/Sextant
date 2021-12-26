@@ -12,12 +12,14 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/KittyMac/Hitch.git", .branch("main")),
+        .package(url: "https://github.com/KittyMac/Spanker.git", .branch("main")),
     ],
     targets: [
         .target(
             name: "Sextant",
             dependencies: [
-                "Hitch"
+                "Hitch",
+                "Spanker"
             ]),
         .testTarget(
             name: "SextantTests",
