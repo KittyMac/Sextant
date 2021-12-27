@@ -1,11 +1,14 @@
 import Foundation
 import Hitch
+import Spanker
 
 protocol Path: CustomStringConvertible {
 
     var parent: JsonAny { get }
 
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext?
+
+    func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement) -> EvaluationContext?
 
     func isDefinite() -> Bool
 
@@ -20,6 +23,10 @@ extension Path {
     }
 
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext? {
+        fatalError("should be overwritten")
+    }
+
+    func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement) -> EvaluationContext? {
         fatalError("should be overwritten")
     }
 

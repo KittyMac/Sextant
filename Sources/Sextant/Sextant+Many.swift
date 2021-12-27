@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 // MARK: - Incoming Extensions - Query
 
@@ -196,6 +197,44 @@ public extension Dictionary {
 }
 
 public extension Sextant {
+
+    func query(_ root: JsonElement?,
+               values pathArray: [Hitch]) -> JsonArray? {
+        var results = JsonArray()
+        var numFails = 0
+        for path in pathArray {
+            if let values = query(root, values: path) {
+                results.append(contentsOf: values)
+            } else {
+                numFails += 1
+            }
+        }
+        if numFails == pathArray.count {
+            return nil
+        }
+        if results.isEmpty {
+            return nil
+        }
+        return results
+    }
+
+    func query(_ root: JsonElement?,
+               paths pathArray: [Hitch]) -> JsonArray? {
+        var results = JsonArray()
+        var numFails = 0
+        for path in pathArray {
+            if let values = query(root, paths: path) {
+                results.append(contentsOf: values)
+            } else {
+                numFails += 1
+            }
+        }
+        if numFails == pathArray.count {
+            return nil
+        }
+        return results
+    }
+
     func query(_ root: JsonAny,
                values pathArray: [Hitch]) -> JsonArray? {
         var results = JsonArray()
@@ -240,28 +279,31 @@ public extension Sextant {
     @inlinable func query<T: Decodable>(_ root: String,
                                         values paths: [Hitch]) -> T? {
         // Not exactly performant, but this will work in all cases...
-        guard let jsonData = root.parsed() else { return nil }
-        guard let results = query(jsonData, values: paths) else { return nil }
-        guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
-        return try? JSONDecoder().decode(T.self, from: resultsJson)
+        return root.parsed { jsonData in
+            guard let results = query(jsonData, values: paths) else { return nil }
+            guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+            return try? JSONDecoder().decode(T.self, from: resultsJson)
+        }
     }
 
     @inlinable func query<T: Decodable>(_ root: Hitch,
                                         values paths: [Hitch]) -> T? {
         // Not exactly performant, but this will work in all cases...
-        guard let jsonData = root.parsed() else { return nil }
-        guard let results = query(jsonData, values: paths) else { return nil }
-        guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
-        return try? JSONDecoder().decode(T.self, from: resultsJson)
+        return root.parsed { jsonData in
+            guard let results = query(jsonData, values: paths) else { return nil }
+            guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+            return try? JSONDecoder().decode(T.self, from: resultsJson)
+        }
     }
 
     @inlinable func query<T: Decodable>(_ root: Data,
                                         values paths: [Hitch]) -> T? {
         // Not exactly performant, but this will work in all cases...
-        guard let jsonData = root.parsed() else { return nil }
-        guard let results = query(jsonData, values: paths) else { return nil }
-        guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
-        return try? JSONDecoder().decode(T.self, from: resultsJson)
+        return root.parsed { jsonData in
+            guard let results = query(jsonData, values: paths) else { return nil }
+            guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+            return try? JSONDecoder().decode(T.self, from: resultsJson)
+        }
     }
 
     @inlinable func query<T: Decodable>(_ root: JsonAny,
@@ -278,38 +320,44 @@ public extension Sextant {
 public extension Sextant {
     @inlinable func query(_ root: String,
                           values pathArray: [Hitch]) -> JsonArray? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)
+        }
     }
 
     @inlinable func query(_ root: Hitch,
                           values pathArray: [Hitch]) -> JsonArray? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)
+        }
     }
 
     @inlinable func query(_ root: Data,
                           values pathArray: [Hitch]) -> JsonArray? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)
+        }
     }
 
     @inlinable func query(_ root: String,
                           paths pathArray: [Hitch]) -> JsonArray? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, paths: pathArray)
+        return root.parsed { jsonData in
+            return query(jsonData, paths: pathArray)
+        }
     }
 
     @inlinable func query(_ root: Hitch,
                           paths pathArray: [Hitch]) -> JsonArray? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, paths: pathArray)
+        return root.parsed { jsonData in
+            return query(jsonData, paths: pathArray)
+        }
     }
 
     @inlinable func query(_ root: Data,
                           paths pathArray: [Hitch]) -> JsonArray? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, paths: pathArray)
+        return root.parsed { jsonData in
+            return query(jsonData, paths: pathArray)
+        }
     }
 }
 
@@ -531,20 +579,23 @@ public extension Sextant {
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> String? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? String
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? String
+        }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> String? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? String
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? String
+        }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> String? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? String
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? String
+        }
     }
 }
 
@@ -558,20 +609,23 @@ public extension Sextant {
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> Hitch? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? Hitch
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? Hitch
+        }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> Hitch? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? Hitch
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? Hitch
+        }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> Hitch? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? Hitch
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? Hitch
+        }
     }
 }
 
@@ -585,20 +639,23 @@ public extension Sextant {
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> Int? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? Int
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? Int
+        }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> Int? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? Int
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? Int
+        }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> Int? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? Int
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? Int
+        }
     }
 }
 
@@ -612,19 +669,22 @@ public extension Sextant {
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> Double? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? Double
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? Double
+        }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> Double? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? Double
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? Double
+        }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> Double? {
-        guard let jsonData = root.parsed() else { return nil }
-        return query(jsonData, values: pathArray)?.first as? Double
+        return root.parsed { jsonData in
+            return query(jsonData, values: pathArray)?.first as? Double
+        }
     }
 }

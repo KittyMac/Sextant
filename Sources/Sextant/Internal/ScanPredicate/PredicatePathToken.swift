@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 class PredicatePathToken: PathToken {
 
@@ -77,6 +78,71 @@ class PredicatePathToken: PathToken {
         return .done
     }
 
+    func accept(jsonElement: JsonElement,
+                rootJsonElement: JsonElement,
+                evaluationContext: EvaluationContext) -> Bool {
+        let predicateContext = PredicateContext(jsonElement: jsonElement,
+                                                rootJsonElement: rootJsonElement,
+                                                pathCache: evaluationContext.evaluationCache)
+
+        for predicate in predicates {
+            let result = predicate.apply(predicateContext: predicateContext)
+            if result != .true {
+                return false
+            }
+        }
+        return true
+    }
+
+    override func evaluate(currentPath: Hitch,
+                           parentPath: Path,
+                           jsonElement: JsonElement,
+                           evaluationContext: EvaluationContext) -> EvaluationStatus {
+        if jsonElement.type == .dictionary {
+            if accept(jsonElement: jsonElement,
+                      rootJsonElement: evaluationContext.rootJsonElement,
+                      evaluationContext: evaluationContext) {
+                let op = nullPath()
+
+                if let next = next {
+                    let result = next.evaluate(currentPath: currentPath,
+                                               parentPath: op,
+                                               jsonElement: jsonElement,
+                                               evaluationContext: evaluationContext)
+                    if result != .done {
+                        return result
+                    }
+                } else {
+                    return evaluationContext.add(path: currentPath,
+                                                 operation: op,
+                                                 jsonObject: jsonElement.reify())
+                }
+            }
+        } else if jsonElement.type == .array {
+            var idx = 0
+            for idxElement in jsonElement.valueArray {
+                if accept(jsonElement: idxElement,
+                          rootJsonElement: evaluationContext.rootJsonElement,
+                          evaluationContext: evaluationContext) {
+                    let result = handle(arrayIndex: idx,
+                                        currentPath: currentPath,
+                                        jsonElement: jsonElement,
+                                        evaluationContext: evaluationContext)
+                    if result != .done {
+                        return result
+                    }
+                }
+                idx += 1
+            }
+        } else {
+            if isUpstreamDefinite() {
+                return .error("Filter: \(description) can not be applied to primitives. Current context is: \(jsonElement)")
+            }
+        }
+
+        return .done
+    }
+
     override func isTokenDefinite() -> Bool {
         return false
     }
@@ -94,28 +160,3 @@ class PredicatePathToken: PathToken {
         return writer.description
     }
 }
-
-/*
-- (SMJEvaluationStatus)evaluateWithCurrentPath:(NSString *)currentPath parentPathRef:(SMJPathRef *)parent jsonObject:(id)jsonObject evaluationContext:(SMJEvaluationContextImpl *)context error:(NSError **)error
-{
-    if ([jsonObject isKindOfClass:[NSDictionary class]])
-    {
-        
-    }
-    else if ([jsonObject isKindOfClass:[NSArray class]])
-    {
-        
-    }
-    else
-    {
-        if ([self isUpstreamDefinite])
-        {
-            SMSetError(error, 1, @"Filter: %@ can not be applied to primitives. Current context is: %@", [self stringValue], jsonObject);
-            return SMJEvaluationStatusError;
-        }
-    }
-             
-     return SMJEvaluationStatusDone;
-}
-
-*/

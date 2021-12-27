@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 final class EvaluationContext {
     var updateOperations = [Path]()
@@ -11,13 +12,21 @@ final class EvaluationContext {
     var evaluationCache = [Hitch: JsonAny]()
 
     var path: Path
-    var rootJsonObject: JsonAny
+    var rootJsonObject: JsonAny = nil
+    var rootJsonElement: JsonElement = JsonElement.null
 
     init(path: Path,
          rootJsonObject: JsonAny) {
 
         self.path = path
         self.rootJsonObject = rootJsonObject
+    }
+
+    init(path: Path,
+         rootJsonElement: JsonElement) {
+
+        self.path = path
+        self.rootJsonElement = rootJsonElement
     }
 
     func add(path: Hitch,
@@ -31,6 +40,14 @@ final class EvaluationContext {
         pathResults.append(path.description)
 
         return .done
+    }
+
+    func add(path: Hitch,
+             operation: Path,
+             jsonElement: JsonElement) -> EvaluationStatus {
+        return add(path: path,
+                   operation: operation,
+                   jsonObject: jsonElement.reify())
     }
 
     internal func jsonObject() -> JsonAny {

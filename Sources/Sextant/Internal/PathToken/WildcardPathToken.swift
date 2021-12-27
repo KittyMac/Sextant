@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 class WildcardPathToken: PathToken {
 
@@ -23,6 +24,36 @@ class WildcardPathToken: PathToken {
                 let result = handle(arrayIndex: idx,
                                     currentPath: currentPath,
                                     jsonObject: array,
+                                    evaluationContext: evaluationContext)
+                if result != .done {
+                    return result
+                }
+            }
+        }
+
+        return .done
+    }
+
+    override func evaluate(currentPath: Hitch,
+                           parentPath: Path,
+                           jsonElement: JsonElement,
+                           evaluationContext: EvaluationContext) -> EvaluationStatus {
+
+        if jsonElement.type == .dictionary {
+            for property in jsonElement.keyArray {
+                let result = handle(properties: [property.hitch()],
+                                    currentPath: currentPath,
+                                    jsonElement: jsonElement,
+                                    evaluationContext: evaluationContext)
+                if result != .done {
+                    return result
+                }
+            }
+        } else if jsonElement.type == .array {
+            for idx in 0..<jsonElement.count {
+                let result = handle(arrayIndex: idx,
+                                    currentPath: currentPath,
+                                    jsonElement: jsonElement,
                                     evaluationContext: evaluationContext)
                 if result != .done {
                     return result

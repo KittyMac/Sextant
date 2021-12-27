@@ -2,22 +2,20 @@ import Foundation
 import Hitch
 import Spanker
 
-class PathToken: CustomStringConvertible {
-    weak var prev: PathToken?
-    var next: PathToken?
+extension PathToken {
 
     @inlinable
     func checkArray(currentPath: Hitch,
-                    jsonObject: JsonAny,
+                    jsonElement: JsonElement,
                     evaluationContext: EvaluationContext) -> ArrayPathCheck {
-        guard let jsonObject = jsonObject else {
+        guard jsonElement.type != .null else {
             if isUpstreamDefinite() == false {
                 return .skip
             }
             return .error("The path \(currentPath) is null")
         }
 
-        if jsonObject is JsonArray {
+        if jsonElement.type == .array {
             return .handle
         }
 
@@ -31,15 +29,15 @@ class PathToken: CustomStringConvertible {
     @inlinable
     func handle(arrayIndex: Int,
                 currentPath: Hitch,
-                jsonObject: JsonArray,
+                jsonElement: JsonElement,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
         let evalPath = Hitch.make(path: currentPath, index: arrayIndex)
         let path = nullPath()
 
-        let effectiveIndex = arrayIndex < 0 ? jsonObject.count + arrayIndex : arrayIndex
+        let effectiveIndex = arrayIndex < 0 ? jsonElement.count + arrayIndex : arrayIndex
 
-        guard effectiveIndex >= 0 && effectiveIndex < jsonObject.count else {
+        guard effectiveIndex >= 0 && effectiveIndex < jsonElement.count else {
             if evaluationContext.add(path: evalPath,
                                      operation: path,
                                      jsonObject: nil) == .aborted {
@@ -48,19 +46,19 @@ class PathToken: CustomStringConvertible {
             return .done
         }
 
-        let evalHit = jsonObject[effectiveIndex]
+        let evalHit = jsonElement[effectiveIndex] ?? JsonElement.null
 
         if isLeaf() {
             if evaluationContext.add(path: evalPath,
                                      operation: path,
-                                     jsonObject: evalHit) == .aborted {
+                                     jsonElement: evalHit) == .aborted {
                 return .aborted
             }
             return .done
         } else if let next = next {
             return next.evaluate(currentPath: evalPath,
                                  parentPath: path,
-                                 jsonObject: evalHit,
+                                 jsonElement: evalHit,
                                  evaluationContext: evaluationContext)
         }
 
@@ -70,7 +68,7 @@ class PathToken: CustomStringConvertible {
     @inlinable
     func handle(properties: [Hitch],
                 currentPath: Hitch,
-                jsonObject: JsonAny,
+                jsonElement: JsonElement,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
         if properties.count == 1 {
@@ -82,7 +80,7 @@ class PathToken: CustomStringConvertible {
             let path = nullPath()
 
             let propertyVal = read(property: property,
-                                   jsonObject: jsonObject,
+                                   jsonElement: jsonElement,
                                    evaluationContext: evaluationContext)
             if propertyVal == nil {
                 // [From original source] Conditions below heavily depend on current token type (and its logic) and are not "universal",
@@ -91,8 +89,8 @@ class PathToken: CustomStringConvertible {
                 // Better safe than sorry.
 
                 if isLeaf() {
-                    if let jsonObject = jsonObject as? JsonDictionary,
-                       jsonObject.keys.contains(property.description) {
+                    if jsonElement.type == .dictionary,
+                       jsonElement.contains(key: property) {
                         if evaluationContext.add(path: evalPath,
                                                  operation: path,
                                                  jsonObject: NSNull()) == .aborted {
@@ -117,13 +115,13 @@ class PathToken: CustomStringConvertible {
             if let next = next {
                 let result = next.evaluate(currentPath: evalPath,
                                            parentPath: path,
-                                           jsonObject: propertyVal,
+                                           jsonElement: propertyVal ?? JsonElement.null,
                                            evaluationContext: evaluationContext)
                 if result != .done {
                     return result
                 }
             } else {
-                if evaluationContext.add(path: evalPath, operation: path, jsonObject: propertyVal) == .aborted {
+                if evaluationContext.add(path: evalPath, operation: path, jsonElement: propertyVal ?? JsonElement.null) == .aborted {
                     return .aborted
                 }
             }
@@ -136,101 +134,25 @@ class PathToken: CustomStringConvertible {
 
     @inlinable
     func has(property: Hitch,
-             jsonObject: JsonAny,
+             jsonElement: JsonElement,
              evaluationContext: EvaluationContext) -> Bool {
         return read(property: property,
-                    jsonObject: jsonObject,
+                    jsonElement: jsonElement,
                     evaluationContext: evaluationContext) != nil
     }
 
     @inlinable
     func read(property: Hitch,
-              jsonObject: JsonAny,
-              evaluationContext: EvaluationContext) -> JsonAny {
-        if let jsonObject = jsonObject as? JsonDictionary {
-            return jsonObject[property.description] ?? nil
+              jsonElement: JsonElement,
+              evaluationContext: EvaluationContext) -> JsonElement? {
+        if jsonElement.type == .dictionary {
+            return jsonElement[property] ?? nil
         }
-        // if let jsonObject = jsonObject as? [Hitch: JsonAny] {
-        //    return jsonObject[property] ?? nil
-        // }
-        if let jsonObject = jsonObject as? JsonArray {
+        if jsonElement.type == .array {
             guard let index = property.toInt() else { return nil }
-            guard index >= 0 && index < jsonObject.count else { return nil }
-            return jsonObject[index]
+            guard index >= 0 && index < jsonElement.count else { return nil }
+            return jsonElement[index]
         }
         return nil
-    }
-
-    @inlinable
-    func evaluate(currentPath: Hitch,
-                  parentPath: Path,
-                  jsonObject: JsonAny,
-                  evaluationContext: EvaluationContext) -> EvaluationStatus {
-        fatalError("should be overwritten")
-    }
-
-    @inlinable
-    func evaluate(currentPath: Hitch,
-                  parentPath: Path,
-                  jsonElement: JsonElement,
-                  evaluationContext: EvaluationContext) -> EvaluationStatus {
-        fatalError("should be overwritten")
-    }
-
-    @inlinable
-    func isRoot() -> Bool {
-        return prev == nil
-    }
-
-    @inlinable
-    func isLeaf() -> Bool {
-        return next == nil
-    }
-
-    @inlinable
-    func isUpstreamDefinite() -> Bool {
-        guard let prev = prev else { return true }
-        return prev.isTokenDefinite() && prev.isUpstreamDefinite()
-    }
-
-    @inlinable
-    func isTokenDefinite() -> Bool {
-        fatalError("should be overwritten")
-    }
-
-    @inlinable
-    func isPathDefinite() -> Bool {
-        if let next = next,
-           isTokenDefinite() {
-            return next.isPathDefinite()
-        }
-        return isTokenDefinite()
-    }
-
-    @inlinable
-    func pathFragment() -> String {
-        fatalError("should be overwritten")
-    }
-
-    @inlinable
-    @discardableResult
-    func append(tail token: PathToken) -> PathToken {
-        next = token
-        next?.prev = self
-        return token
-    }
-
-    @inlinable
-    @discardableResult
-    func append(token: PathToken) -> PathToken {
-        return append(tail: token)
-    }
-
-    @inlinable
-    var description: String {
-        if let next = next {
-            return pathFragment() + next.description
-        }
-        return pathFragment()
     }
 }

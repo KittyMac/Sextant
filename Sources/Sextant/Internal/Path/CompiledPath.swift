@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 struct CompiledPath: Path {
     let parent: JsonAny
@@ -58,6 +59,25 @@ struct CompiledPath: Path {
         let result = root.evaluate(currentPath: Hitch(),
                                    parentPath: op,
                                    jsonObject: jsonObject,
+                                   evaluationContext: context)
+        switch result {
+        case .error(let message):
+            error("\(message)")
+            return nil
+        default:
+            return context
+        }
+    }
+
+    func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement) -> EvaluationContext? {
+        let context = EvaluationContext(path: self,
+                                        rootJsonElement: rootJsonElement)
+
+        let op = nullPath()
+
+        let result = root.evaluate(currentPath: Hitch(),
+                                   parentPath: op,
+                                   jsonElement: jsonElement,
                                    evaluationContext: context)
         switch result {
         case .error(let message):

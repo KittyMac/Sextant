@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 class ScanPathToken: PathToken {
 
@@ -22,6 +23,31 @@ class ScanPathToken: PathToken {
                         currentPath: currentPath,
                         parentPath: parentPath,
                         jsonObject: dictionary,
+                        evaluationContext: evaluationContext,
+                        predicate: ScanPredicate.create(target: next, evaluationContext: evaluationContext))
+        }
+        return .done
+    }
+
+    override func evaluate(currentPath: Hitch,
+                           parentPath: Path,
+                           jsonElement: JsonElement,
+                           evaluationContext: EvaluationContext) -> EvaluationStatus {
+        guard let next = next else { return .done }
+
+        if jsonElement.type == .array {
+            return walk(array: next,
+                        currentPath: currentPath,
+                        parentPath: parentPath,
+                        jsonArray: jsonElement,
+                        evaluationContext: evaluationContext,
+                        predicate: ScanPredicate.create(target: next, evaluationContext: evaluationContext))
+        }
+        if jsonElement.type == .dictionary {
+            return walk(object: next,
+                        currentPath: currentPath,
+                        parentPath: parentPath,
+                        jsonDictionary: jsonElement,
                         evaluationContext: evaluationContext,
                         predicate: ScanPredicate.create(target: next, evaluationContext: evaluationContext))
         }

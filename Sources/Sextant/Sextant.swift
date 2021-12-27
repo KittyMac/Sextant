@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 public typealias JsonAny = Any?
 public typealias JsonArray = [JsonAny]
@@ -24,27 +25,6 @@ public typealias JsonDictionary = [String: JsonAny]
 /// 3. Should support sending single path or a union of many path results
 
 // MARK: - Incoming Extensions - Parsing
-
-public extension Hitch {
-    @inlinable
-    func parsed() -> JsonAny {
-        return self.dataNoCopy().parsed()
-    }
-}
-
-public extension String {
-    @inlinable
-    func parsed() -> JsonAny {
-        return self.data(using: .utf8)?.parsed()
-    }
-}
-
-public extension Data {
-    @inlinable
-    func parsed() -> JsonAny {
-        return try? JSONSerialization.jsonObject(with: self, options: [.allowFragments])
-    }
-}
 
 public final class Sextant {
     public static let shared = Sextant()

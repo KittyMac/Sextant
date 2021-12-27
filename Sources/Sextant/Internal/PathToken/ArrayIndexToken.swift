@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 class ArrayIndexToken: ArrayPathToken {
     let indexOperation: ArrayIndexOperation
@@ -34,6 +35,46 @@ class ArrayIndexToken: ArrayPathToken {
                 let result = handle(arrayIndex: index,
                                     currentPath: currentPath,
                                     jsonObject: jsonArray,
+                                    evaluationContext: evaluationContext)
+
+                switch result {
+                case .error, .aborted:
+                    return result
+                default:
+                    break
+                }
+            }
+        }
+
+        return .done
+    }
+
+    override func evaluate(currentPath: Hitch,
+                           parentPath: Path,
+                           jsonElement: JsonElement,
+                           evaluationContext: EvaluationContext) -> EvaluationStatus {
+        let checkResult = checkArray(currentPath: currentPath,
+                                     jsonElement: jsonElement,
+                                     evaluationContext: evaluationContext)
+        switch checkResult {
+        case .skip:
+            if evaluationContext.add(path: currentPath,
+                                     operation: nullPath(),
+                                     jsonObject: nil) == .aborted {
+                return .aborted
+            }
+            return .done
+        case .error(let message):
+            return .error(message)
+        case .handle:
+            guard jsonElement.type == .array else {
+                return .done
+            }
+
+            for index in indexOperation.indices {
+                let result = handle(arrayIndex: index,
+                                    currentPath: currentPath,
+                                    jsonElement: jsonElement,
                                     evaluationContext: evaluationContext)
 
                 switch result {

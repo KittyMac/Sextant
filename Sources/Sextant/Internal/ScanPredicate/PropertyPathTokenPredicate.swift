@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 class PropertyPathTokenPredicate: ScanPredicate {
     let token: PropertyPathToken
@@ -20,6 +21,22 @@ class PropertyPathTokenPredicate: ScanPredicate {
 
         for property in token.properties {
             if dictionary[property.description] == nil {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    override func matchesJsonElement(jsonElement: JsonElement) -> Bool {
+        guard jsonElement.type == .dictionary else { return false }
+
+        if token.isTokenDefinite() == false {
+            return true
+        }
+
+        for property in token.properties {
+            if jsonElement.contains(key: property) == false {
                 return false
             }
         }

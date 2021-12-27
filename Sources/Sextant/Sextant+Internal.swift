@@ -129,6 +129,19 @@ extension Hitch {
         return clone
     }
 
+    @discardableResult
+    @inlinable
+    class func make(path: Hitch, property: HalfHitch, wrap: UInt8) -> Hitch {
+        let clone = Hitch(hitch: path)
+        clone.reserveCapacity(clone.count + property.count + 4)
+        clone.append(UInt8.openBrace)
+        clone.append(wrap)
+        clone.append(property)
+        clone.append(wrap)
+        clone.append(UInt8.closeBrace)
+        return clone
+    }
+
     @inlinable
     class func replace(hitch: Hitch, path: Hitch, index: Int) {
         hitch.replace(with: path)
@@ -157,6 +170,24 @@ extension Hitch {
 
     @inlinable
     class func replace(hitch: Hitch, path: Hitch, property: String, wrap: UInt8) {
+        hitch.replace(with: path)
+        hitch.append(UInt8.openBrace)
+        hitch.append(wrap)
+        hitch.append(property)
+        hitch.append(wrap)
+        hitch.append(UInt8.closeBrace)
+    }
+
+    @inlinable
+    class func replace(hitch: Hitch, path: Hitch, property: HalfHitch) {
+        hitch.replace(with: path)
+        hitch.append(UInt8.openBrace)
+        hitch.append(property)
+        hitch.append(UInt8.closeBrace)
+    }
+
+    @inlinable
+    class func replace(hitch: Hitch, path: Hitch, property: HalfHitch, wrap: UInt8) {
         hitch.replace(with: path)
         hitch.append(UInt8.openBrace)
         hitch.append(wrap)

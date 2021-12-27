@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 private let hitchDot = Hitch(".")
 
@@ -68,6 +69,75 @@ final class FunctionPathToken: PathToken {
     func evaluateParameters(currentPath: Hitch,
                             parentPath: Path,
                             jsonObject: JsonAny,
+                            evaluationContext: EvaluationContext) {
+
+        for param in functionParams {
+            guard param.evaluated == false else { continue }
+
+            if let path = param.path {
+                param.lateBinding = { _ in
+                    guard let evaluationContext = path.evaluate(jsonObject: evaluationContext.rootJsonObject,
+                                                                rootJsonObject: evaluationContext.rootJsonObject) else {
+                        return nil
+                    }
+                    return evaluationContext.jsonObject()
+                }
+                param.evaluated = true
+            }
+
+            if let json = param.json {
+                param.lateBinding = { _ in
+                    let value = try? JSONSerialization.jsonObject(with: json.dataNoCopy(),
+                                                                  options: [.allowFragments])
+                    if let value = value as? String {
+                        return Hitch(stringLiteral: value)
+                    }
+                    return value
+                }
+                param.evaluated = true
+            }
+        }
+    }
+
+    override func evaluate(currentPath: Hitch,
+                           parentPath: Path,
+                           jsonElement: JsonElement,
+                           evaluationContext: EvaluationContext) -> EvaluationStatus {
+        guard let pathFunction = pathFunction else {
+            return .error("Unknown path function \(pathFragment())")
+        }
+
+        evaluateParameters(currentPath: currentPath,
+                           parentPath: parentPath,
+                           jsonElement: jsonElement,
+                           evaluationContext: evaluationContext)
+
+        guard let result = pathFunction.invoke(currentPath: currentPath,
+                                               parentPath: parentPath,
+                                               jsonElement: jsonElement,
+                                               evaluationContext: evaluationContext,
+                                               parameters: functionParams) else {
+            return .error("Path function invocation failed for \(pathFragment())")
+        }
+
+        let evalResult = evaluationContext.add(path: Hitch.combine(currentPath, hitchDot, functionName),
+                                               operation: parentPath,
+                                               jsonObject: result)
+        guard evalResult == .done else { return evalResult }
+
+        if let next = next {
+            return next.evaluate(currentPath: currentPath,
+                                 parentPath: parentPath,
+                                 jsonObject: result,
+                                 evaluationContext: evaluationContext)
+        }
+
+        return .done
+    }
+
+    func evaluateParameters(currentPath: Hitch,
+                            parentPath: Path,
+                            jsonElement: JsonElement,
                             evaluationContext: EvaluationContext) {
 
         for param in functionParams {

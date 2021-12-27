@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 class PropertyPathToken: PathToken {
     var properties: [Hitch]
@@ -43,6 +44,38 @@ class PropertyPathToken: PathToken {
             let result = handle(properties: [property],
                                 currentPath: currentPath,
                                 jsonObject: jsonObject,
+                                evaluationContext: evaluationContext)
+            if result != .done {
+                return result
+            }
+        }
+
+        return .done
+    }
+
+    override func evaluate(currentPath: Hitch,
+                           parentPath: Path,
+                           jsonElement: JsonElement,
+                           evaluationContext: EvaluationContext) -> EvaluationStatus {
+
+        guard jsonElement.type == .dictionary else {
+            if isUpstreamDefinite() == false {
+                return .done
+            }
+            return .aborted
+        }
+
+        if singlePropertyCase() {
+            return handle(properties: properties,
+                          currentPath: currentPath,
+                          jsonElement: jsonElement,
+                          evaluationContext: evaluationContext)
+        }
+
+        for property in properties {
+            let result = handle(properties: [property],
+                                currentPath: currentPath,
+                                jsonElement: jsonElement,
                                 evaluationContext: evaluationContext)
             if result != .done {
                 return result

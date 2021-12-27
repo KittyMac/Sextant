@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 class ScanPredicate {
     class func create(target: PathToken, evaluationContext: EvaluationContext) -> ScanPredicate {
@@ -21,6 +22,10 @@ class ScanPredicate {
     }
 
     func matchesJsonObject(jsonObject: JsonAny) -> Bool {
+        return false
+    }
+
+    func matchesJsonElement(jsonElement: JsonElement) -> Bool {
         return false
     }
 }

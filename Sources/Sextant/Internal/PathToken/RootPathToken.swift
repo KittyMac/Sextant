@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 final class RootPathToken: PathToken {
     weak var tail: PathToken?
@@ -45,6 +46,25 @@ final class RootPathToken: PathToken {
             return evaluationContext.add(path: rootToken,
                                          operation: op,
                                          jsonObject: jsonObject)
+        }
+    }
+
+    override func evaluate(currentPath: Hitch,
+                           parentPath: Path,
+                           jsonElement: JsonElement,
+                           evaluationContext: EvaluationContext) -> EvaluationStatus {
+
+        if let next = next {
+            return next.evaluate(currentPath: rootToken,
+                                 parentPath: parentPath,
+                                 jsonElement: jsonElement,
+                                 evaluationContext: evaluationContext)
+        } else {
+            let op = nullPath()
+
+            return evaluationContext.add(path: rootToken,
+                                         operation: op,
+                                         jsonObject: jsonElement.reify())
         }
     }
 

@@ -1,5 +1,6 @@
 import Foundation
 import Hitch
+import Spanker
 
 class ArrayPathTokenPredicate: ScanPredicate {
     let token: ArrayPathToken
@@ -10,5 +11,9 @@ class ArrayPathTokenPredicate: ScanPredicate {
 
     override func matchesJsonObject(jsonObject: JsonAny) -> Bool {
         return (jsonObject as? JsonArray) != nil
+    }
+
+    override func matchesJsonElement(jsonElement: JsonElement) -> Bool {
+        return jsonElement.type == .array
     }
 }
