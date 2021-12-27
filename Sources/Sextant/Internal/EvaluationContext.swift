@@ -7,7 +7,7 @@ final class EvaluationContext {
 
     var allValueResults = JsonArray()
     var valueResults = JsonArray()
-    var pathResults = [String]()
+    var pathResults = [Hitch]()
 
     var evaluationCache = [Hitch: JsonAny]()
 
@@ -37,7 +37,7 @@ final class EvaluationContext {
         if jsonObject != nil {
             valueResults.append(jsonObject)
         }
-        pathResults.append(path.description)
+        pathResults.append(path)
 
         return .done
     }
@@ -45,9 +45,16 @@ final class EvaluationContext {
     func add(path: Hitch,
              operation: Path,
              jsonElement: JsonElement) -> EvaluationStatus {
-        return add(path: path,
-                   operation: operation,
-                   jsonObject: jsonElement.reify())
+
+        let jsonObject = jsonElement.reify()
+
+        allValueResults.append(jsonObject)
+        if jsonObject != nil {
+            valueResults.append(jsonObject)
+        }
+        pathResults.append(path)
+
+        return .done
     }
 
     internal func jsonObject() -> JsonAny {
@@ -86,15 +93,15 @@ final class EvaluationContext {
         return allValueResults
     }
 
-    func resultsPaths() -> JsonArray? {
+    func resultsPaths() -> [String] {
         if path.isDefinite() {
             if pathResults.count == 0 {
                 return []
             }
 
-            return [pathResults[pathResults.count - 1]]
+            return [pathResults[pathResults.count - 1]].map { $0.toString() }
         }
 
-        return pathResults
+        return pathResults.map { $0.toString() }
     }
 }

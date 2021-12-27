@@ -4,6 +4,7 @@ import Spanker
 
 class ScanPathToken: PathToken {
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -12,6 +13,7 @@ class ScanPathToken: PathToken {
 
         if let array = jsonObject as? JsonArray {
             return walk(array: next,
+                        scratchPath: Hitch(capacity: 512),
                         currentPath: currentPath,
                         parentPath: parentPath,
                         jsonObject: array,
@@ -20,6 +22,7 @@ class ScanPathToken: PathToken {
         }
         if let dictionary = jsonObject as? JsonDictionary {
             return walk(object: next,
+                        scratchPath: Hitch(capacity: 512),
                         currentPath: currentPath,
                         parentPath: parentPath,
                         jsonObject: dictionary,
@@ -29,6 +32,7 @@ class ScanPathToken: PathToken {
         return .done
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,
@@ -37,6 +41,7 @@ class ScanPathToken: PathToken {
 
         if jsonElement.type == .array {
             return walk(array: next,
+                        scratchPath: Hitch(capacity: 512),
                         currentPath: currentPath,
                         parentPath: parentPath,
                         jsonArray: jsonElement,
@@ -45,6 +50,7 @@ class ScanPathToken: PathToken {
         }
         if jsonElement.type == .dictionary {
             return walk(object: next,
+                        scratchPath: Hitch(capacity: 512),
                         currentPath: currentPath,
                         parentPath: parentPath,
                         jsonDictionary: jsonElement,
@@ -62,15 +68,14 @@ class ScanPathToken: PathToken {
         return ".."
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func walk(array path: PathToken,
+              scratchPath: Hitch,
               currentPath: Hitch,
               parentPath: Path,
               jsonObject: JsonArray,
               evaluationContext: EvaluationContext,
               predicate: ScanPredicate) -> EvaluationStatus {
-        let evalPath = Hitch(capacity: currentPath.count + 32)
-
         // Evaluate.
         if predicate.matchesJsonObject(jsonObject: jsonObject) {
             let result = path.evaluate(currentPath: currentPath,
@@ -87,9 +92,10 @@ class ScanPathToken: PathToken {
         for evalObject in jsonObject {
 
             if let dictionary = evalObject as? JsonDictionary {
-                Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
+                Hitch.replace(hitch: scratchPath, path: currentPath, index: idx)
                 let result = walk(object: path,
-                                  currentPath: evalPath,
+                                  scratchPath: scratchPath,
+                                  currentPath: scratchPath,
                                   parentPath: newPath(object: jsonObject, item: evalObject),
                                   jsonObject: dictionary,
                                   evaluationContext: evaluationContext,
@@ -98,9 +104,10 @@ class ScanPathToken: PathToken {
                     return result
                 }
             } else if let array = evalObject as? JsonArray {
-                Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
+                Hitch.replace(hitch: scratchPath, path: currentPath, index: idx)
                 let result = walk(array: path,
-                                  currentPath: evalPath,
+                                  scratchPath: scratchPath,
+                                  currentPath: scratchPath,
                                   parentPath: newPath(object: jsonObject, item: evalObject),
                                   jsonObject: array,
                                   evaluationContext: evaluationContext,
@@ -116,8 +123,9 @@ class ScanPathToken: PathToken {
         return .done
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func walk(object: PathToken,
+              scratchPath: Hitch,
               currentPath: Hitch,
               parentPath: Path,
               jsonObject: JsonDictionary,
@@ -135,15 +143,15 @@ class ScanPathToken: PathToken {
         }
 
         // Recurse.
-        let evalPath = Hitch(capacity: currentPath.count + 32)
         for (property, propertyObject) in jsonObject {
             if let dictionary = propertyObject as? JsonDictionary {
-                Hitch.replace(hitch: evalPath,
+                Hitch.replace(hitch: scratchPath,
                               path: currentPath,
                               property: property,
                               wrap: .singleQuote)
                 let result = walk(object: object,
-                                  currentPath: evalPath,
+                                  scratchPath: scratchPath,
+                                  currentPath: scratchPath,
                                   parentPath: newPath(object: jsonObject, item: property),
                                   jsonObject: dictionary,
                                   evaluationContext: evaluationContext,
@@ -152,12 +160,13 @@ class ScanPathToken: PathToken {
                     return result
                 }
             } else if let array = propertyObject as? JsonArray {
-                Hitch.replace(hitch: evalPath,
+                Hitch.replace(hitch: scratchPath,
                               path: currentPath,
                               property: property,
                               wrap: .singleQuote)
                 let result = walk(array: object,
-                                  currentPath: evalPath,
+                                  scratchPath: scratchPath,
+                                  currentPath: scratchPath,
                                   parentPath: newPath(object: jsonObject, item: property),
                                   jsonObject: array,
                                   evaluationContext: evaluationContext,

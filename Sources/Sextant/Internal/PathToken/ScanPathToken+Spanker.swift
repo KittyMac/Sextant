@@ -4,15 +4,14 @@ import Spanker
 
 extension ScanPathToken {
 
-    @inlinable
+    @inlinable @inline(__always)
     func walk(array path: PathToken,
+              scratchPath: Hitch,
               currentPath: Hitch,
               parentPath: Path,
               jsonArray: JsonElement,
               evaluationContext: EvaluationContext,
               predicate: ScanPredicate) -> EvaluationStatus {
-        let evalPath = Hitch(capacity: currentPath.count + 32)
-
         // Evaluate.
         if predicate.matchesJsonElement(jsonElement: jsonArray) {
             let result = path.evaluate(currentPath: currentPath,
@@ -29,9 +28,10 @@ extension ScanPathToken {
         for evalObject in jsonArray.valueArray {
 
             if evalObject.type == .dictionary {
-                Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
+                Hitch.replace(hitch: scratchPath, path: currentPath, index: idx)
                 let result = walk(object: path,
-                                  currentPath: evalPath,
+                                  scratchPath: scratchPath,
+                                  currentPath: scratchPath,
                                   parentPath: newPath(object: jsonArray, item: evalObject),
                                   jsonDictionary: evalObject,
                                   evaluationContext: evaluationContext,
@@ -40,9 +40,10 @@ extension ScanPathToken {
                     return result
                 }
             } else if evalObject.type == .array {
-                Hitch.replace(hitch: evalPath, path: currentPath, index: idx)
+                Hitch.replace(hitch: scratchPath, path: currentPath, index: idx)
                 let result = walk(array: path,
-                                  currentPath: evalPath,
+                                  scratchPath: scratchPath,
+                                  currentPath: scratchPath,
                                   parentPath: newPath(object: jsonArray, item: evalObject),
                                   jsonArray: evalObject,
                                   evaluationContext: evaluationContext,
@@ -58,8 +59,9 @@ extension ScanPathToken {
         return .done
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func walk(object: PathToken,
+              scratchPath: Hitch,
               currentPath: Hitch,
               parentPath: Path,
               jsonDictionary: JsonElement,
@@ -77,19 +79,18 @@ extension ScanPathToken {
         }
 
         // Recurse.
-        let evalPath = Hitch(capacity: currentPath.count + 32)
         var idx = 0
-        for property in jsonDictionary.keyArray {
-            let propertyObject = jsonDictionary.valueArray[idx]
-            idx += 1
+        for propertyObject in jsonDictionary.valueArray {
 
             if propertyObject.type == .dictionary {
-                Hitch.replace(hitch: evalPath,
+                let property = jsonDictionary.keyArray[idx]
+                Hitch.replace(hitch: scratchPath,
                               path: currentPath,
                               property: property,
                               wrap: .singleQuote)
                 let result = walk(object: object,
-                                  currentPath: evalPath,
+                                  scratchPath: scratchPath,
+                                  currentPath: scratchPath,
                                   parentPath: newPath(object: jsonDictionary, item: property),
                                   jsonDictionary: propertyObject,
                                   evaluationContext: evaluationContext,
@@ -98,12 +99,14 @@ extension ScanPathToken {
                     return result
                 }
             } else if propertyObject.type == .array {
-                Hitch.replace(hitch: evalPath,
+                let property = jsonDictionary.keyArray[idx]
+                Hitch.replace(hitch: scratchPath,
                               path: currentPath,
                               property: property,
                               wrap: .singleQuote)
                 let result = walk(array: object,
-                                  currentPath: evalPath,
+                                  scratchPath: scratchPath,
+                                  currentPath: scratchPath,
                                   parentPath: newPath(object: jsonDictionary, item: property),
                                   jsonArray: propertyObject,
                                   evaluationContext: evaluationContext,
@@ -112,6 +115,8 @@ extension ScanPathToken {
                     return result
                 }
             }
+
+            idx += 1
         }
 
         return .done
