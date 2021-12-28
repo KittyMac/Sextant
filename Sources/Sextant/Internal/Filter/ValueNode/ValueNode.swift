@@ -36,6 +36,10 @@ extension ValueNode {
                literalValue.description == other {
                 return .same
             }
+            if let other = other as? HalfHitch,
+               literalValue.description == other {
+                return .same
+            }
             if let other = other as? CustomStringConvertible,
                literalValue.description == other.description {
                 return .same

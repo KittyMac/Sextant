@@ -145,8 +145,8 @@ final class FunctionPathToken: PathToken {
 
             if let path = param.path {
                 param.lateBinding = { _ in
-                    guard let evaluationContext = path.evaluate(jsonObject: evaluationContext.rootJsonObject,
-                                                                rootJsonObject: evaluationContext.rootJsonObject) else {
+                    guard let evaluationContext = path.evaluate(jsonElement: evaluationContext.rootJsonElement,
+                                                                rootJsonElement: evaluationContext.rootJsonElement) else {
                         return nil
                     }
                     return evaluationContext.jsonObject()
@@ -156,12 +156,10 @@ final class FunctionPathToken: PathToken {
 
             if let json = param.json {
                 param.lateBinding = { _ in
-                    let value = try? JSONSerialization.jsonObject(with: json.dataNoCopy(),
-                                                                  options: [.allowFragments])
-                    if let value = value as? String {
-                        return Hitch(stringLiteral: value)
+                    return json.parsed { element in
+                        guard let element = element else { return NSNull() }
+                        return element.reify()
                     }
-                    return value
                 }
                 param.evaluated = true
             }

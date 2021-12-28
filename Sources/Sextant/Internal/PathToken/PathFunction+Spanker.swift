@@ -75,7 +75,7 @@ extension PathFunction {
             }
         }
 
-        values.append(contentsOf: Parameter.list(parameters: parameters) ?? [])
+        values.append(contentsOf: Parameter.doubles(parameters: parameters) ?? [])
 
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")
@@ -97,7 +97,7 @@ extension PathFunction {
             }
         }
 
-        values.append(contentsOf: Parameter.list(parameters: parameters) ?? [])
+        values.append(contentsOf: Parameter.halfHitches(parameters: parameters) ?? [])
 
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")

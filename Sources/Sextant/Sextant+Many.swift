@@ -574,27 +574,27 @@ public extension Sextant {
 public extension Sextant {
     @inlinable func query(_ root: JsonAny,
                           value pathArray: [Hitch]) -> String? {
-        return query(root, values: pathArray)?.first as? String
+        return query(root, values: pathArray)?.first?.toString()
     }
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> String? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? String
+            return query(jsonData, values: pathArray)?.first?.toString()
         }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> String? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? String
+            return query(jsonData, values: pathArray)?.first?.toString()
         }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> String? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? String
+            return query(jsonData, values: pathArray)?.first?.toString()
         }
     }
 }
@@ -604,27 +604,27 @@ public extension Sextant {
 public extension Sextant {
     @inlinable func query(_ root: JsonAny,
                           value pathArray: [Hitch]) -> Hitch? {
-        return query(root, values: pathArray)?.first as? Hitch
+        return query(root, values: pathArray)?.first?.toHitch()
     }
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> Hitch? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? Hitch
+            return query(jsonData, values: pathArray)?.first?.toHitch()
         }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> Hitch? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? Hitch
+            return query(jsonData, values: pathArray)?.first?.toHitch()
         }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> Hitch? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? Hitch
+            return query(jsonData, values: pathArray)?.first?.toHitch()
         }
     }
 }
@@ -634,27 +634,27 @@ public extension Sextant {
 public extension Sextant {
     @inlinable func query(_ root: JsonAny,
                           value pathArray: [Hitch]) -> Int? {
-        return query(root, values: pathArray)?.first as? Int
+        return query(root, values: pathArray)?.first?.toInt()
     }
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> Int? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? Int
+            return query(jsonData, values: pathArray)?.first?.toInt()
         }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> Int? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? Int
+            return query(jsonData, values: pathArray)?.first?.toInt()
         }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> Int? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? Int
+            return query(jsonData, values: pathArray)?.first?.toInt()
         }
     }
 }
@@ -664,27 +664,27 @@ public extension Sextant {
 public extension Sextant {
     @inlinable func query(_ root: JsonAny,
                           value pathArray: [Hitch]) -> Double? {
-        return query(root, values: pathArray)?.first as? Double
+        return query(root, values: pathArray)?.first?.toDouble()
     }
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> Double? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? Double
+            return query(jsonData, values: pathArray)?.first?.toDouble()
         }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> Double? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? Double
+            return query(jsonData, values: pathArray)?.first?.toDouble()
         }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> Double? {
         return root.parsed { jsonData in
-            return query(jsonData, values: pathArray)?.first as? Double
+            return query(jsonData, values: pathArray)?.first?.toDouble()
         }
     }
 }

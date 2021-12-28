@@ -28,11 +28,11 @@ final class Parameter {
         return cachedValue
     }
 
-    class func list<T>(parameters: [Parameter]) -> [T]? {
-        var values = [T]()
+    class func doubles(parameters: [Parameter]) -> [Double]? {
+        var values = [Double]()
 
         let handle: (JsonAny) -> Void = { obj in
-            if let typedValue = obj as? T {
+            if let typedValue = obj.toDouble() {
                 values.append(typedValue)
             }
         }
@@ -49,4 +49,49 @@ final class Parameter {
 
         return values
     }
+
+    class func halfHitches(parameters: [Parameter]) -> [HalfHitch]? {
+        var values = [HalfHitch]()
+
+        let handle: (JsonAny) -> Void = { obj in
+            if let typedValue = obj.toHalfHitch() {
+                values.append(typedValue)
+            }
+        }
+
+        for param in parameters {
+            guard let value = param.value() else { return nil }
+
+            if let array = value as? JsonArray {
+                array.forEach(handle)
+            } else {
+                handle(value)
+            }
+        }
+
+        return values
+    }
+
+    class func hitches(parameters: [Parameter]) -> [Hitch]? {
+        var values = [Hitch]()
+
+        let handle: (JsonAny) -> Void = { obj in
+            if let typedValue = obj.toHitch() {
+                values.append(typedValue)
+            }
+        }
+
+        for param in parameters {
+            guard let value = param.value() else { return nil }
+
+            if let array = value as? JsonArray {
+                array.forEach(handle)
+            } else {
+                handle(value)
+            }
+        }
+
+        return values
+    }
+
 }

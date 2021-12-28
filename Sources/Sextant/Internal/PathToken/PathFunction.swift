@@ -117,6 +117,9 @@ enum PathFunction {
             if let hitch = jsonObject as? Hitch {
                 return hitch.count
             }
+            if let hitch = jsonObject as? HalfHitch {
+                return hitch.count
+            }
             if let string = jsonObject as? String {
                 return string.count
             }
@@ -139,10 +142,10 @@ enum PathFunction {
         var values = [Double]()
 
         if let array = jsonObject as? JsonArray {
-            values.append(contentsOf: array.compactMap { $0 as? Double })
+            values.append(contentsOf: array.compactMap { $0.toDouble() })
         }
 
-        values.append(contentsOf: Parameter.list(parameters: parameters) ?? [])
+        values.append(contentsOf: Parameter.doubles(parameters: parameters) ?? [])
 
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")
@@ -157,10 +160,10 @@ enum PathFunction {
         var values = [Hitch]()
 
         if let array = jsonObject as? JsonArray {
-            values.append(contentsOf: array.compactMap { $0 as? String }.map { Hitch(stringLiteral: $0) })
+            values.append(contentsOf: array.compactMap { $0.toHitch() })
         }
 
-        values.append(contentsOf: Parameter.list(parameters: parameters) ?? [])
+        values.append(contentsOf: Parameter.hitches(parameters: parameters) ?? [])
 
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")

@@ -6,6 +6,74 @@ public typealias JsonAny = Any?
 public typealias JsonArray = [JsonAny]
 public typealias JsonDictionary = [String: JsonAny]
 
+extension JsonAny {
+    @inlinable @inline(__always)
+    func toDouble() -> Double? {
+        switch self {
+        case let double as Double:
+            return double
+        case let int as Int:
+            return Double(int)
+        default:
+            return nil
+        }
+    }
+
+    @inlinable @inline(__always)
+    func toInt() -> Int? {
+        switch self {
+        case let double as Double:
+            return Int(double)
+        case let int as Int:
+            return int
+        default:
+            return nil
+        }
+    }
+
+    @inlinable @inline(__always)
+    func toString() -> String? {
+        switch self {
+        case let string as String:
+            return string
+        case let hitch as Hitch:
+            return hitch.description
+        case let halfHitch as HalfHitch:
+            return halfHitch.description
+        default:
+            return nil
+        }
+    }
+
+    @inlinable @inline(__always)
+    func toHitch() -> Hitch? {
+        switch self {
+        case let string as String:
+            return string.hitch()
+        case let hitch as Hitch:
+            return hitch
+        case let halfHitch as HalfHitch:
+            return halfHitch.hitch()
+        default:
+            return nil
+        }
+    }
+
+    @inlinable @inline(__always)
+    func toHalfHitch() -> HalfHitch? {
+        switch self {
+        case let string as String:
+            return string.hitch().halfhitch()
+        case let hitch as Hitch:
+            return hitch.halfhitch()
+        case let halfHitch as HalfHitch:
+            return halfHitch
+        default:
+            return nil
+        }
+    }
+}
+
 /// The exposed API for performing JSON path queries works like this:
 /// 1. All practical incoming data types should be handled (ie, you can perform against a String, or Data, or Any?)
 /// 2. All practical outgoing data type should be handled (ie, you can receive JsonArray of all results, or a String of the first result)
