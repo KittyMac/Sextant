@@ -118,8 +118,14 @@ struct PathNode: ValueNode {
             if let object = object as? Bool {
                 return BooleanNode(value: object)
             }
-            if let object = object.toHitch() {
+            if let object = object as? Hitch {
                 return StringNode(hitch: object, escape: false)
+            }
+            if let object = object as? HalfHitch {
+                return StringNode(hitch: object.hitch(), escape: false)
+            }
+            if let object = object as? String {
+                return StringNode(hitch: object.hitch())
             }
             if let object = object as? JsonArray {
                 return JsonNode(jsonObject: object)

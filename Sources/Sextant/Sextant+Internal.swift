@@ -81,16 +81,6 @@ enum EvaluationStatus: Equatable {
 }
 
 extension Hitch {
-    class func combine(_ parts: Hitch...) -> Hitch {
-        guard parts.count > 0 else { return Hitch.empty }
-
-        var total = 0
-        parts.forEach { total += $0.count }
-
-        let buffer = Hitch(capacity: total)
-        parts.forEach { buffer.append($0) }
-        return buffer
-    }
 
     @inlinable @inline(__always)
     class func appending<T>(hitch: Hitch,
@@ -100,6 +90,19 @@ extension Hitch {
         defer { hitch.count = savedCount }
         execute()
         return block()
+    }
+
+    @inlinable @inline(__always)
+    class func appending<T>(hitch: Hitch,
+                            parts: [Hitch],
+                            _ block: () -> (T)) -> T {
+        return appending(hitch: hitch, block: block) {
+            var total = hitch.count
+            parts.forEach { total += $0.count }
+
+            hitch.reserveCapacity(total)
+            parts.forEach { hitch.append($0) }
+        }
     }
 
     @inlinable @inline(__always)

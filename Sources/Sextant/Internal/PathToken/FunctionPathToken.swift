@@ -51,9 +51,11 @@ final class FunctionPathToken: PathToken {
             return .error("Path function invocation failed for \(pathFragment())")
         }
 
-        let evalResult = evaluationContext.add(path: Hitch.combine(currentPath, hitchDot, functionName),
-                                               operation: parentPath,
-                                               jsonObject: result)
+        let evalResult = Hitch.appending(hitch: currentPath, parts: [hitchDot, functionName]) {
+            evaluationContext.add(path: currentPath,
+                                  operation: parentPath,
+                                  jsonObject: result)
+        }
         guard evalResult == .done else { return evalResult }
 
         if let next = next {
@@ -120,9 +122,11 @@ final class FunctionPathToken: PathToken {
             return .error("Path function invocation failed for \(pathFragment())")
         }
 
-        let evalResult = evaluationContext.add(path: Hitch.combine(currentPath, hitchDot, functionName),
-                                               operation: parentPath,
-                                               jsonObject: result)
+        let evalResult = Hitch.appending(hitch: currentPath, parts: [hitchDot, functionName]) {
+            evaluationContext.add(path: currentPath,
+                                  operation: parentPath,
+                                  jsonObject: result)
+        }
         guard evalResult == .done else { return evalResult }
 
         if let next = next {
