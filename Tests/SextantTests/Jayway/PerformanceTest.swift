@@ -61,6 +61,7 @@ class PerformanceTest: TestsBase {
         // 0.104
         // -- Evaluation options allows paths to be skipped --
         // 0.095
+        // 0.088
         let path: Hitch = "$..type"
         
         largeData0.parsed { json in

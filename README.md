@@ -18,7 +18,6 @@ The original [Stefan Goessner JsonPath implemenentation](https://goessner.net/ar
 ## Usage
 
 
-
 ```swift
 /// Each call to Sextant's query(values: ) will return an array on success and nil on failure
 func testSimple0() {
@@ -93,6 +92,9 @@ func testSimple5() {
 }
 ```
 
+## Performance
+
+Sextant utilizes [Hitch](https://github.com/KittyMac/Hitch) (high performance strnigs) and [Spanker](https://github.com/KittyMac/Spanker) (high performance, low overhead JSON deserialization) to provide a best-in-class JSONPath implementation for Swift. Hitch allows for easy strings which are UTF8 compliant, faster than native Swift strings, and can be easily used with shared memory spaces. Spanker generates a low cost data hierarchy of the JSON blob which Sextant then queries the JSONPath against. Nothing is deserialized and no memory is copied from the source JSON blob until they are returned as results from the query. As such, Sextant really shines in scenarios where you have a large amount of JSON and/or a large number of queries to run against it.
 
 ## Installation
 

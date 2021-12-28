@@ -250,7 +250,7 @@ final class FilterCompiler {
 
     func readNullLiteral() -> NullNode? {
         if filter.current() == kNullChar && filter.compareAndAdvance(hitch: nullHitch) {
-            return NullNode()
+            return NullNode.null
         }
         error("Expected <null> value")
         return nil

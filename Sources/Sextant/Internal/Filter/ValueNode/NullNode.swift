@@ -4,6 +4,7 @@ import Hitch
 private let typeHitch = Hitch("null")
 
 struct NullNode: ValueNode {
+    static let null = NullNode()
 
     static func == (lhs: NullNode, rhs: NullNode) -> Bool {
         return true

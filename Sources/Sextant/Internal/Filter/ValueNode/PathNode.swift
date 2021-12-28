@@ -103,7 +103,7 @@ struct PathNode: ValueNode {
             case nil:
                 return BooleanNode.false
             case _ as NSNull:
-                return BooleanNode.false
+                return NullNode.null
             case let value as Int:
                 return NumberNode(value: value)
             case let value as Double:
