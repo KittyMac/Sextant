@@ -38,6 +38,8 @@ class PerformanceTest: TestsBase {
     }
     
     func testPerformance1() {
+        // 0.881
+        // 0.891
         let path: Hitch = "$..type"
         
         XCTAssertEqualAny(large0.query(values: path)?.count, 17906)
@@ -47,6 +49,9 @@ class PerformanceTest: TestsBase {
     }
     
     func testSpankerPerformance1() {
+        // 0.135
+        // 0.122
+        // 0.104
         let path: Hitch = "$..type"
         
         largeData0.parsed { json in

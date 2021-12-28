@@ -115,7 +115,7 @@ class PredicatePathToken: PathToken {
                 } else {
                     return evaluationContext.add(path: currentPath,
                                                  operation: op,
-                                                 jsonObject: jsonElement.reify())
+                                                 jsonElement: jsonElement)
                 }
             }
         } else if jsonElement.type == .array {

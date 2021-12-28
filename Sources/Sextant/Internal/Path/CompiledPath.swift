@@ -56,7 +56,7 @@ struct CompiledPath: Path {
 
         let op = nullPath()
 
-        let result = root.evaluate(currentPath: Hitch(),
+        let result = root.evaluate(currentPath: Hitch.empty,
                                    parentPath: op,
                                    jsonObject: jsonObject,
                                    evaluationContext: context)
@@ -75,7 +75,7 @@ struct CompiledPath: Path {
 
         let op = nullPath()
 
-        let result = root.evaluate(currentPath: Hitch(),
+        let result = root.evaluate(currentPath: Hitch.empty,
                                    parentPath: op,
                                    jsonElement: jsonElement,
                                    evaluationContext: context)

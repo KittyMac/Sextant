@@ -9,10 +9,12 @@ class WildcardPathTokenPredicate: ScanPredicate {
         self.token = token
     }
 
+    @inlinable @inline(__always)
     override func matchesJsonObject(jsonObject: JsonAny) -> Bool {
         return true
     }
 
+    @inlinable @inline(__always)
     override func matchesJsonElement(jsonElement: JsonElement) -> Bool {
         return true
     }

@@ -12,6 +12,7 @@ class PropertyPathTokenPredicate: ScanPredicate {
         self.evaluationContext = evaluationContext
     }
 
+    @inlinable @inline(__always)
     override func matchesJsonObject(jsonObject: JsonAny) -> Bool {
         guard let dictionary = jsonObject as? JsonDictionary else { return false }
 
@@ -28,6 +29,7 @@ class PropertyPathTokenPredicate: ScanPredicate {
         return true
     }
 
+    @inlinable @inline(__always)
     override func matchesJsonElement(jsonElement: JsonElement) -> Bool {
         guard jsonElement.type == .dictionary else { return false }
 
@@ -35,12 +37,6 @@ class PropertyPathTokenPredicate: ScanPredicate {
             return true
         }
 
-        for property in token.properties {
-            if jsonElement.contains(key: property) == false {
-                return false
-            }
-        }
-
-        return true
+        return jsonElement.containsAll(keys: token.properties)
     }
 }

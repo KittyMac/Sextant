@@ -282,7 +282,7 @@ private func evaluateNONEOF(left: ValueNode?, right: ValueNode?, context: Predic
 
 private func evaluateEMPTY(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
     guard let right = right as? BooleanNode else { return .false }
-    if left == nil || left is NullNode {
+    if left?.literalValue == nil {
         return .false
     }
 

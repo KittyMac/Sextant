@@ -41,7 +41,8 @@ struct StringNode: ValueNode {
     }
 
     var description: String {
-        value.escape()
+        value.escape(unicode: false,
+                     singleQuotes: useSingleQuote)
         if useSingleQuote {
             return "'\(value)'"
         }

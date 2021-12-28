@@ -8,13 +8,6 @@ extension PathToken {
     func checkArray(currentPath: Hitch,
                     jsonElement: JsonElement,
                     evaluationContext: EvaluationContext) -> ArrayPathCheck {
-        guard jsonElement.type != .null else {
-            if isUpstreamDefinite() == false {
-                return .skip
-            }
-            return .error("The path \(currentPath) is null")
-        }
-
         if jsonElement.type == .array {
             return .handle
         }
@@ -32,15 +25,17 @@ extension PathToken {
                 jsonElement: JsonElement,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
-        let evalPath = Hitch.make(path: currentPath, index: arrayIndex)
         let path = nullPath()
 
         let effectiveIndex = arrayIndex < 0 ? jsonElement.count + arrayIndex : arrayIndex
 
         guard effectiveIndex >= 0 && effectiveIndex < jsonElement.count else {
-            if evaluationContext.add(path: evalPath,
-                                     operation: path,
-                                     jsonObject: nil) == .aborted {
+            let result = Hitch.appending(hitch: currentPath, index: arrayIndex) {
+                evaluationContext.add(path: currentPath,
+                                      operation: path,
+                                      jsonObject: nil)
+            }
+            if result == .aborted {
                 return .aborted
             }
             return .done
@@ -49,17 +44,22 @@ extension PathToken {
         let evalHit = jsonElement[effectiveIndex] ?? JsonElement.null
 
         if isLeaf() {
-            if evaluationContext.add(path: evalPath,
-                                     operation: path,
-                                     jsonElement: evalHit) == .aborted {
+            let result = Hitch.appending(hitch: currentPath, index: arrayIndex) {
+                evaluationContext.add(path: currentPath,
+                                      operation: path,
+                                      jsonElement: evalHit)
+            }
+            if result == .aborted {
                 return .aborted
             }
             return .done
         } else if let next = next {
-            return next.evaluate(currentPath: evalPath,
-                                 parentPath: path,
-                                 jsonElement: evalHit,
-                                 evaluationContext: evaluationContext)
+            return Hitch.appending(hitch: currentPath, index: arrayIndex) {
+                next.evaluate(currentPath: currentPath,
+                              parentPath: path,
+                              jsonElement: evalHit,
+                              evaluationContext: evaluationContext)
+            }
         }
 
         return .done
@@ -73,10 +73,6 @@ extension PathToken {
 
         if properties.count == 1 {
             let property = properties[0]
-            let evalPath = Hitch.make(path: currentPath,
-                                      property: property,
-                                      wrap: .singleQuote)
-
             let path = nullPath()
 
             let propertyVal = read(property: property,
@@ -91,15 +87,25 @@ extension PathToken {
                 if isLeaf() {
                     if jsonElement.type == .dictionary,
                        jsonElement.contains(key: property) {
-                        if evaluationContext.add(path: evalPath,
-                                                 operation: path,
-                                                 jsonObject: NSNull()) == .aborted {
+                        let result = Hitch.appending(hitch: currentPath,
+                                                     property: property,
+                                                     wrap: .singleQuote) {
+                            evaluationContext.add(path: currentPath,
+                                                     operation: path,
+                                                     jsonObject: NSNull())
+                        }
+                        if result == .aborted {
                             return .aborted
                         }
                     } else {
-                        if evaluationContext.add(path: evalPath,
-                                                 operation: path,
-                                                 jsonObject: nil) == .aborted {
+                        let result = Hitch.appending(hitch: currentPath,
+                                                     property: property,
+                                                     wrap: .singleQuote) {
+                            evaluationContext.add(path: currentPath,
+                                                     operation: path,
+                                                     jsonObject: nil)
+                        }
+                        if result == .aborted {
                             return .aborted
                         }
                     }
@@ -113,15 +119,26 @@ extension PathToken {
             }
 
             if let next = next {
-                let result = next.evaluate(currentPath: evalPath,
-                                           parentPath: path,
-                                           jsonElement: propertyVal ?? JsonElement.null,
-                                           evaluationContext: evaluationContext)
+                let result = Hitch.appending(hitch: currentPath,
+                                             property: property,
+                                             wrap: .singleQuote) {
+                    next.evaluate(currentPath: currentPath,
+                                               parentPath: path,
+                                               jsonElement: propertyVal ?? JsonElement.null,
+                                               evaluationContext: evaluationContext)
+                }
                 if result != .done {
                     return result
                 }
             } else {
-                if evaluationContext.add(path: evalPath, operation: path, jsonElement: propertyVal ?? JsonElement.null) == .aborted {
+                let result = Hitch.appending(hitch: currentPath,
+                                             property: property,
+                                             wrap: .singleQuote) {
+                    evaluationContext.add(path: currentPath,
+                                          operation: path,
+                                          jsonElement: propertyVal ?? JsonElement.null)
+                }
+                if result == .aborted {
                     return .aborted
                 }
             }

@@ -234,7 +234,7 @@ final class PathCompiler {
         var priorChar: UInt8 = 0
 
         var parameters = [Parameter]()
-        let parameter = Hitch()
+        let parameter = Hitch.empty
 
         while ci.inBounds() && endOfStream == false {
             let c = ci.current()

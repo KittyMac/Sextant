@@ -2,6 +2,7 @@ import Foundation
 import Hitch
 import Spanker
 
+@usableFromInline
 final class EvaluationContext {
     var updateOperations = [Path]()
 
@@ -37,7 +38,7 @@ final class EvaluationContext {
         if jsonObject != nil {
             valueResults.append(jsonObject)
         }
-        pathResults.append(path)
+        pathResults.append(Hitch(hitch: path))
 
         return .done
     }
@@ -46,13 +47,13 @@ final class EvaluationContext {
              operation: Path,
              jsonElement: JsonElement) -> EvaluationStatus {
 
-        let jsonObject = jsonElement.reify()
+        let jsonObject = jsonElement.reify(true)
 
         allValueResults.append(jsonObject)
         if jsonObject != nil {
             valueResults.append(jsonObject)
         }
-        pathResults.append(path)
+        pathResults.append(Hitch(hitch: path))
 
         return .done
     }

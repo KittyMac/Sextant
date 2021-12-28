@@ -64,7 +64,7 @@ final class RootPathToken: PathToken {
 
             return evaluationContext.add(path: rootToken,
                                          operation: op,
-                                         jsonObject: jsonElement.reify())
+                                         jsonElement: jsonElement)
         }
     }
 

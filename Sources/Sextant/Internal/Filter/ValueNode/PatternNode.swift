@@ -15,8 +15,8 @@ struct PatternNode: ValueNode {
         let end = regex.lastIndex(of: UInt8.forwardSlash) ?? 0
 
         self.hitch = regex
-        self.pattern = regex.substring(begin + 1, end - begin) ?? Hitch()
-        self.flags = regex.substring(end + 1, regex.count) ?? Hitch()
+        self.pattern = regex.substring(begin + 1, end - begin) ?? Hitch.empty
+        self.flags = regex.substring(end + 1, regex.count) ?? Hitch.empty
 
         let localError = error
         do {

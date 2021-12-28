@@ -71,15 +71,28 @@ struct PathNode: ValueNode {
 
         if existsCheck {
 
-            guard let evaluationContext = path.evaluate(jsonObject: context.jsonObject,
-                                                        rootJsonObject: context.rootJsonObject) else {
+            if context.jsonObject != nil {
+                guard let evaluationContext = path.evaluate(jsonObject: context.jsonObject,
+                                                            rootJsonObject: context.rootJsonObject) else {
+                    return BooleanNode.false
+                }
+
+                if evaluationContext.jsonObject() != nil {
+                    return BooleanNode.true
+                }
+                return BooleanNode.false
+            } else {
+                guard let evaluationContext = path.evaluate(jsonElement: context.jsonElement,
+                                                            rootJsonElement: context.rootJsonElement) else {
+                    return BooleanNode.false
+                }
+
+                if evaluationContext.jsonObject() != nil {
+                    return BooleanNode.true
+                }
                 return BooleanNode.false
             }
 
-            if evaluationContext.jsonObject() != nil {
-                return BooleanNode.true
-            }
-            return BooleanNode.false
         } else {
 
             let object = context.evaluate(path: path)

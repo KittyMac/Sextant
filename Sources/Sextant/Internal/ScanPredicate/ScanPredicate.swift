@@ -21,10 +21,12 @@ class ScanPredicate {
         return FakePredicate()
     }
 
+    @inlinable @inline(__always)
     func matchesJsonObject(jsonObject: JsonAny) -> Bool {
         return false
     }
 
+    @inlinable @inline(__always)
     func matchesJsonElement(jsonElement: JsonElement) -> Bool {
         return false
     }

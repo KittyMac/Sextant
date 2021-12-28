@@ -13,7 +13,6 @@ class ScanPathToken: PathToken {
 
         if let array = jsonObject as? JsonArray {
             return walk(array: next,
-                        scratchPath: Hitch(capacity: 512),
                         currentPath: currentPath,
                         parentPath: parentPath,
                         jsonObject: array,
@@ -22,7 +21,6 @@ class ScanPathToken: PathToken {
         }
         if let dictionary = jsonObject as? JsonDictionary {
             return walk(object: next,
-                        scratchPath: Hitch(capacity: 512),
                         currentPath: currentPath,
                         parentPath: parentPath,
                         jsonObject: dictionary,
@@ -41,7 +39,6 @@ class ScanPathToken: PathToken {
 
         if jsonElement.type == .array {
             return walk(array: next,
-                        scratchPath: Hitch(capacity: 512),
                         currentPath: currentPath,
                         parentPath: parentPath,
                         jsonArray: jsonElement,
@@ -50,7 +47,6 @@ class ScanPathToken: PathToken {
         }
         if jsonElement.type == .dictionary {
             return walk(object: next,
-                        scratchPath: Hitch(capacity: 512),
                         currentPath: currentPath,
                         parentPath: parentPath,
                         jsonDictionary: jsonElement,
@@ -70,7 +66,6 @@ class ScanPathToken: PathToken {
 
     @inlinable @inline(__always)
     func walk(array path: PathToken,
-              scratchPath: Hitch,
               currentPath: Hitch,
               parentPath: Path,
               jsonObject: JsonArray,
@@ -92,26 +87,26 @@ class ScanPathToken: PathToken {
         for evalObject in jsonObject {
 
             if let dictionary = evalObject as? JsonDictionary {
-                Hitch.replace(hitch: scratchPath, path: currentPath, index: idx)
-                let result = walk(object: path,
-                                  scratchPath: scratchPath,
-                                  currentPath: scratchPath,
-                                  parentPath: newPath(object: jsonObject, item: evalObject),
-                                  jsonObject: dictionary,
-                                  evaluationContext: evaluationContext,
-                                  predicate: predicate)
+                let result = Hitch.appending(hitch: currentPath, index: idx) {
+                    walk(object: path,
+                         currentPath: currentPath,
+                         parentPath: newPath(object: jsonObject, item: evalObject),
+                         jsonObject: dictionary,
+                         evaluationContext: evaluationContext,
+                         predicate: predicate)
+                }
                 if result != .done {
                     return result
                 }
             } else if let array = evalObject as? JsonArray {
-                Hitch.replace(hitch: scratchPath, path: currentPath, index: idx)
-                let result = walk(array: path,
-                                  scratchPath: scratchPath,
-                                  currentPath: scratchPath,
-                                  parentPath: newPath(object: jsonObject, item: evalObject),
-                                  jsonObject: array,
-                                  evaluationContext: evaluationContext,
-                                  predicate: predicate)
+                let result = Hitch.appending(hitch: currentPath, index: idx) {
+                    walk(array: path,
+                         currentPath: currentPath,
+                         parentPath: newPath(object: jsonObject, item: evalObject),
+                         jsonObject: array,
+                         evaluationContext: evaluationContext,
+                         predicate: predicate)
+                }
                 if result != .done {
                     return result
                 }
@@ -125,7 +120,6 @@ class ScanPathToken: PathToken {
 
     @inlinable @inline(__always)
     func walk(object: PathToken,
-              scratchPath: Hitch,
               currentPath: Hitch,
               parentPath: Path,
               jsonObject: JsonDictionary,
@@ -145,32 +139,30 @@ class ScanPathToken: PathToken {
         // Recurse.
         for (property, propertyObject) in jsonObject {
             if let dictionary = propertyObject as? JsonDictionary {
-                Hitch.replace(hitch: scratchPath,
-                              path: currentPath,
-                              property: property,
-                              wrap: .singleQuote)
-                let result = walk(object: object,
-                                  scratchPath: scratchPath,
-                                  currentPath: scratchPath,
-                                  parentPath: newPath(object: jsonObject, item: property),
-                                  jsonObject: dictionary,
-                                  evaluationContext: evaluationContext,
-                                  predicate: predicate)
+                let result = Hitch.appending(hitch: currentPath,
+                                             property: property,
+                                             wrap: .singleQuote) {
+                    walk(object: object,
+                         currentPath: currentPath,
+                         parentPath: newPath(object: jsonObject, item: property),
+                         jsonObject: dictionary,
+                         evaluationContext: evaluationContext,
+                         predicate: predicate)
+                }
                 if result != .done {
                     return result
                 }
             } else if let array = propertyObject as? JsonArray {
-                Hitch.replace(hitch: scratchPath,
-                              path: currentPath,
-                              property: property,
-                              wrap: .singleQuote)
-                let result = walk(array: object,
-                                  scratchPath: scratchPath,
-                                  currentPath: scratchPath,
-                                  parentPath: newPath(object: jsonObject, item: property),
-                                  jsonObject: array,
-                                  evaluationContext: evaluationContext,
-                                  predicate: predicate)
+                let result = Hitch.appending(hitch: currentPath,
+                                             property: property,
+                                             wrap: .singleQuote) {
+                    walk(array: object,
+                         currentPath: currentPath,
+                         parentPath: newPath(object: jsonObject, item: property),
+                         jsonObject: array,
+                         evaluationContext: evaluationContext,
+                         predicate: predicate)
+                }
                 if result != .done {
                     return result
                 }

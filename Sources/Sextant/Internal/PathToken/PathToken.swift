@@ -14,7 +14,7 @@ class PathToken: CustomStringConvertible {
             if isUpstreamDefinite() == false {
                 return .skip
             }
-            return .error("The path \(currentPath) is null")
+            return .skip
         }
 
         if jsonObject is JsonArray {
@@ -34,15 +34,17 @@ class PathToken: CustomStringConvertible {
                 jsonObject: JsonArray,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
-        let evalPath = Hitch.make(path: currentPath, index: arrayIndex)
         let path = nullPath()
 
         let effectiveIndex = arrayIndex < 0 ? jsonObject.count + arrayIndex : arrayIndex
 
         guard effectiveIndex >= 0 && effectiveIndex < jsonObject.count else {
-            if evaluationContext.add(path: evalPath,
-                                     operation: path,
-                                     jsonObject: nil) == .aborted {
+            let result = Hitch.appending(hitch: currentPath, index: arrayIndex) {
+                evaluationContext.add(path: currentPath,
+                                      operation: path,
+                                      jsonObject: nil)
+            }
+            if result == .aborted {
                 return .aborted
             }
             return .done
@@ -51,17 +53,22 @@ class PathToken: CustomStringConvertible {
         let evalHit = jsonObject[effectiveIndex]
 
         if isLeaf() {
-            if evaluationContext.add(path: evalPath,
-                                     operation: path,
-                                     jsonObject: evalHit) == .aborted {
+            let result = Hitch.appending(hitch: currentPath, index: arrayIndex) {
+                evaluationContext.add(path: currentPath,
+                                      operation: path,
+                                      jsonObject: evalHit)
+            }
+            if result == .aborted {
                 return .aborted
             }
             return .done
         } else if let next = next {
-            return next.evaluate(currentPath: evalPath,
-                                 parentPath: path,
-                                 jsonObject: evalHit,
-                                 evaluationContext: evaluationContext)
+            return Hitch.appending(hitch: currentPath, index: arrayIndex) {
+                next.evaluate(currentPath: currentPath,
+                              parentPath: path,
+                              jsonObject: evalHit,
+                              evaluationContext: evaluationContext)
+            }
         }
 
         return .done
@@ -75,10 +82,6 @@ class PathToken: CustomStringConvertible {
 
         if properties.count == 1 {
             let property = properties[0]
-            let evalPath = Hitch.make(path: currentPath,
-                                      property: property,
-                                      wrap: .singleQuote)
-
             let path = nullPath()
 
             let propertyVal = read(property: property,
@@ -93,15 +96,25 @@ class PathToken: CustomStringConvertible {
                 if isLeaf() {
                     if let jsonObject = jsonObject as? JsonDictionary,
                        jsonObject.keys.contains(property.description) {
-                        if evaluationContext.add(path: evalPath,
-                                                 operation: path,
-                                                 jsonObject: NSNull()) == .aborted {
+                        let result = Hitch.appending(hitch: currentPath,
+                                                     property: property,
+                                                     wrap: .singleQuote) {
+                            evaluationContext.add(path: currentPath,
+                                                  operation: path,
+                                                  jsonObject: NSNull())
+                        }
+                        if result == .aborted {
                             return .aborted
                         }
                     } else {
-                        if evaluationContext.add(path: evalPath,
-                                                 operation: path,
-                                                 jsonObject: nil) == .aborted {
+                        let result = Hitch.appending(hitch: currentPath,
+                                                     property: property,
+                                                     wrap: .singleQuote) {
+                            evaluationContext.add(path: currentPath,
+                                                  operation: path,
+                                                  jsonObject: nil)
+                        }
+                        if result == .aborted {
                             return .aborted
                         }
                     }
@@ -115,15 +128,26 @@ class PathToken: CustomStringConvertible {
             }
 
             if let next = next {
-                let result = next.evaluate(currentPath: evalPath,
-                                           parentPath: path,
-                                           jsonObject: propertyVal,
-                                           evaluationContext: evaluationContext)
+                let result = Hitch.appending(hitch: currentPath,
+                                             property: property,
+                                             wrap: .singleQuote) {
+                    next.evaluate(currentPath: currentPath,
+                                  parentPath: path,
+                                  jsonObject: propertyVal,
+                                  evaluationContext: evaluationContext)
+                }
                 if result != .done {
                     return result
                 }
             } else {
-                if evaluationContext.add(path: evalPath, operation: path, jsonObject: propertyVal) == .aborted {
+                let result = Hitch.appending(hitch: currentPath,
+                                             property: property,
+                                             wrap: .singleQuote) {
+                    evaluationContext.add(path: currentPath,
+                                          operation: path,
+                                          jsonObject: propertyVal)
+                }
+                if result == .aborted {
                     return .aborted
                 }
             }
@@ -150,9 +174,6 @@ class PathToken: CustomStringConvertible {
         if let jsonObject = jsonObject as? JsonDictionary {
             return jsonObject[property.description] ?? nil
         }
-        // if let jsonObject = jsonObject as? [Hitch: JsonAny] {
-        //    return jsonObject[property] ?? nil
-        // }
         if let jsonObject = jsonObject as? JsonArray {
             guard let index = property.toInt() else { return nil }
             guard index >= 0 && index < jsonObject.count else { return nil }

@@ -14,13 +14,13 @@ func anyEquals(_ a: JsonAny, _ b: JsonAny?) -> Bool {
 
 func error(_ error: String) {
     #if DEBUG
-    // print("Error: " + error)
+    print("Error: " + error)
     #endif
 }
 
 extension Array where Element == Hitch {
     func joined(delimiter: UInt8, wrap: UInt8) -> Hitch {
-        guard count > 0 else { return Hitch() }
+        guard count > 0 else { return Hitch.empty }
 
         var total = 0
         forEach { total += $0.count + 2 }
@@ -82,7 +82,7 @@ enum EvaluationStatus: Equatable {
 
 extension Hitch {
     class func combine(_ parts: Hitch...) -> Hitch {
-        guard parts.count > 0 else { return Hitch() }
+        guard parts.count > 0 else { return Hitch.empty }
 
         var total = 0
         parts.forEach { total += $0.count }
@@ -92,107 +92,97 @@ extension Hitch {
         return buffer
     }
 
-    @discardableResult
-    @inlinable
-    class func make(path: Hitch, index: Int) -> Hitch {
-        let clone = Hitch(hitch: path)
-        clone.reserveCapacity(clone.count + 32)
-
-        clone.append(UInt8.openBrace)
-        clone.append(number: index)
-        clone.append(UInt8.closeBrace)
-
-        return clone
+    @inlinable @inline(__always)
+    class func appending<T>(hitch: Hitch,
+                         block: () -> (T),
+                         execute: () -> Void) -> T {
+        let savedCount = hitch.count
+        defer { hitch.count = savedCount }
+        execute()
+        return block()
     }
 
-    @discardableResult
-    @inlinable
-    class func make(path: Hitch, property: Hitch) -> Hitch {
-        let clone = Hitch(hitch: path)
-        clone.reserveCapacity(clone.count + property.count + 2)
-        clone.append(UInt8.openBrace)
-        clone.append(property)
-        clone.append(UInt8.closeBrace)
-        return clone
+    @inlinable @inline(__always)
+    class func appending<T>(hitch: Hitch,
+                            index: Int,
+                            _ block: () -> (T)) -> T {
+        return appending(hitch: hitch, block: block) {
+            hitch.append(UInt8.openBrace)
+            hitch.append(number: index)
+            hitch.append(UInt8.closeBrace)
+        }
     }
 
-    @discardableResult
-    @inlinable
-    class func make(path: Hitch, property: Hitch, wrap: UInt8) -> Hitch {
-        let clone = Hitch(hitch: path)
-        clone.reserveCapacity(clone.count + property.count + 4)
-        clone.append(UInt8.openBrace)
-        clone.append(wrap)
-        clone.append(property)
-        clone.append(wrap)
-        clone.append(UInt8.closeBrace)
-        return clone
+    @inlinable @inline(__always)
+    class func appending<T>(hitch: Hitch,
+                            property: Hitch,
+                            _ block: () -> (T)) -> T {
+        return appending(hitch: hitch, block: block) {
+            hitch.append(UInt8.openBrace)
+            hitch.append(property)
+            hitch.append(UInt8.closeBrace)
+        }
     }
 
-    @discardableResult
-    @inlinable
-    class func make(path: Hitch, property: HalfHitch, wrap: UInt8) -> Hitch {
-        let clone = Hitch(hitch: path)
-        clone.reserveCapacity(clone.count + property.count + 4)
-        clone.append(UInt8.openBrace)
-        clone.append(wrap)
-        clone.append(property)
-        clone.append(wrap)
-        clone.append(UInt8.closeBrace)
-        return clone
+    @inlinable @inline(__always)
+    class func appending<T>(hitch: Hitch,
+                            property: Hitch,
+                            wrap: UInt8,
+                            _ block: () -> (T)) -> T {
+        return appending(hitch: hitch, block: block) {
+            hitch.append(UInt8.openBrace)
+            hitch.append(wrap)
+            hitch.append(property)
+            hitch.append(wrap)
+            hitch.append(UInt8.closeBrace)
+        }
     }
 
-    @inlinable
-    class func replace(hitch: Hitch, path: Hitch, index: Int) {
-        hitch.replace(with: path)
-        hitch.append(UInt8.openBrace)
-        hitch.append(number: index)
-        hitch.append(UInt8.closeBrace)
+    @inlinable @inline(__always)
+    class func appending<T>(hitch: Hitch,
+                            property: HalfHitch,
+                            wrap: UInt8,
+                            _ block: () -> (T)) -> T {
+        return appending(hitch: hitch, block: block) {
+            hitch.append(UInt8.openBrace)
+            hitch.append(wrap)
+            hitch.append(property)
+            hitch.append(wrap)
+            hitch.append(UInt8.closeBrace)
+        }
     }
 
-    @inlinable
-    class func replace(hitch: Hitch, path: Hitch, property: Hitch) {
-        hitch.replace(with: path)
-        hitch.append(UInt8.openBrace)
-        hitch.append(property)
-        hitch.append(UInt8.closeBrace)
+    @inlinable @inline(__always)
+    class func appending<T>(hitch: Hitch,
+                            property: String,
+                            wrap: UInt8,
+                            _ block: () -> (T)) -> T {
+        return appending(hitch: hitch, block: block) {
+            hitch.append(UInt8.openBrace)
+            hitch.append(wrap)
+            hitch.append(property)
+            hitch.append(wrap)
+            hitch.append(UInt8.closeBrace)
+        }
     }
 
-    @inlinable
-    class func replace(hitch: Hitch, path: Hitch, property: Hitch, wrap: UInt8) {
-        hitch.replace(with: path)
-        hitch.append(UInt8.openBrace)
-        hitch.append(wrap)
-        hitch.append(property)
-        hitch.append(wrap)
-        hitch.append(UInt8.closeBrace)
-    }
+    // ---------------------------
+    /*
+    @inlinable @inline(__always)
+    class func appended(hitch: Hitch,
+                        property: HalfHitch,
+                        wrap: UInt8,
+                        _ block: () -> Void) {
+        let savedCount = hitch.count
 
-    @inlinable
-    class func replace(hitch: Hitch, path: Hitch, property: String, wrap: UInt8) {
-        hitch.replace(with: path)
-        hitch.append(UInt8.openBrace)
-        hitch.append(wrap)
-        hitch.append(property)
-        hitch.append(wrap)
-        hitch.append(UInt8.closeBrace)
-    }
-
-    @inlinable
-    class func replace(hitch: Hitch, path: Hitch, property: HalfHitch) {
-        hitch.replace(with: path)
-        hitch.append(UInt8.openBrace)
-        hitch.append(property)
-        hitch.append(UInt8.closeBrace)
-    }
-
-    @inlinable
-    class func replace(hitch: Hitch, path: Hitch, property: HalfHitch, wrap: UInt8) {
-        hitch.replace(with: path)
         hitch.append(UInt8.openBrace)
         hitch.append(wrap)
         hitch.append(property)
         hitch.append(wrap)
         hitch.append(UInt8.closeBrace)
+
+        block()
+        hitch.count = savedCount
     }
+*/
 }

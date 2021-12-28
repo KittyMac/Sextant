@@ -12,12 +12,14 @@ class FilterPathTokenPredicate: ScanPredicate {
         self.evaluationContext = evaluationContext
     }
 
+    @inlinable @inline(__always)
     override func matchesJsonObject(jsonObject: JsonAny) -> Bool {
         return token.accept(jsonObject: jsonObject,
                             rootJsonObject: evaluationContext.rootJsonObject,
                             evaluationContext: evaluationContext)
     }
 
+    @inlinable @inline(__always)
     override func matchesJsonElement(jsonElement: JsonElement) -> Bool {
         return token.accept(jsonElement: jsonElement,
                             rootJsonElement: evaluationContext.rootJsonElement,
