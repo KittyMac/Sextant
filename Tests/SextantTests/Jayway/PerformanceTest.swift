@@ -27,7 +27,7 @@ class PerformanceTest: TestsBase {
     }
     
     func testSpankerPerformance0() {
-        // 0.644
+        // 0.006
         
         let path: Hitch = "$[*]"
 
@@ -62,6 +62,7 @@ class PerformanceTest: TestsBase {
         // -- Evaluation options allows paths to be skipped --
         // 0.095
         // 0.088
+        // 0.086
         let path: Hitch = "$..type"
         
         largeData0.parsed { json in
@@ -87,6 +88,7 @@ class PerformanceTest: TestsBase {
     
     func testSpankerPerformance2() {
         // 0.070
+        // 0.064
         
         let path: Hitch = "$[*].payload[?(@.ref == 'master')]"
 
@@ -113,6 +115,7 @@ class PerformanceTest: TestsBase {
     
     func testSpankerPerformance3() {
         // 0.268
+        // 0.205
         let path: Hitch = "$..repo[?(@.name =~ /-/)]"
 
         largeData0.parsed { json in
