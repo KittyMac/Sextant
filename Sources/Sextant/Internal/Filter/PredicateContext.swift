@@ -27,14 +27,14 @@ final class PredicateContext {
         self.pathElementCache = pathCache
     }
 
-    func evaluate(path: Path) -> JsonAny {
+    func evaluate(path: Path, options: EvaluationOptions) -> JsonAny {
         if jsonObject != nil {
-            return evaluate(jsonObject: path)
+            return evaluate(jsonObject: path, options: options)
         }
-        return evaluate(jsonElement: path)
+        return evaluate(jsonElement: path, options: options)
     }
 
-    fileprivate func evaluate(jsonObject path: Path) -> JsonAny {
+    fileprivate func evaluate(jsonObject path: Path, options: EvaluationOptions) -> JsonAny {
         var result: JsonAny = nil
 
         if path.isRootPath() {
@@ -43,7 +43,8 @@ final class PredicateContext {
                 result = obj
             } else {
                 guard let evaluationContext = path.evaluate(jsonObject: rootJsonObject,
-                                                            rootJsonObject: rootJsonObject) else {
+                                                            rootJsonObject: rootJsonObject,
+                                                            options: options) else {
                     return nil
                 }
 
@@ -54,7 +55,8 @@ final class PredicateContext {
             }
         } else {
             guard let evaluationContext = path.evaluate(jsonObject: jsonObject,
-                                                        rootJsonObject: rootJsonObject) else {
+                                                        rootJsonObject: rootJsonObject,
+                                                        options: options) else {
                 return nil
             }
             result = evaluationContext.jsonObject()
@@ -63,7 +65,7 @@ final class PredicateContext {
         return result
     }
 
-    fileprivate func evaluate(jsonElement path: Path) -> JsonAny {
+    fileprivate func evaluate(jsonElement path: Path, options: EvaluationOptions) -> JsonAny {
         var result: JsonAny = nil
 
         if path.isRootPath() {
@@ -72,7 +74,8 @@ final class PredicateContext {
                 result = obj
             } else {
                 guard let evaluationContext = path.evaluate(jsonElement: rootJsonElement,
-                                                            rootJsonElement: rootJsonElement) else {
+                                                            rootJsonElement: rootJsonElement,
+                                                            options: options) else {
                     return nil
                 }
 
@@ -83,7 +86,8 @@ final class PredicateContext {
             }
         } else {
             guard let evaluationContext = path.evaluate(jsonElement: jsonElement,
-                                                        rootJsonElement: rootJsonElement) else {
+                                                        rootJsonElement: rootJsonElement,
+                                                        options: options) else {
                 return nil
             }
             result = evaluationContext.jsonObject()

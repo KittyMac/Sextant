@@ -79,7 +79,8 @@ final class FunctionPathToken: PathToken {
             if let path = param.path {
                 param.lateBinding = { _ in
                     guard let evaluationContext = path.evaluate(jsonObject: evaluationContext.rootJsonObject,
-                                                                rootJsonObject: evaluationContext.rootJsonObject) else {
+                                                                rootJsonObject: evaluationContext.rootJsonObject,
+                                                                options: evaluationContext.options) else {
                         return nil
                     }
                     return evaluationContext.jsonObject()
@@ -150,7 +151,8 @@ final class FunctionPathToken: PathToken {
             if let path = param.path {
                 param.lateBinding = { _ in
                     guard let evaluationContext = path.evaluate(jsonElement: evaluationContext.rootJsonElement,
-                                                                rootJsonElement: evaluationContext.rootJsonElement) else {
+                                                                rootJsonElement: evaluationContext.rootJsonElement,
+                                                                options: evaluationContext.options) else {
                         return nil
                     }
                     return evaluationContext.jsonObject()

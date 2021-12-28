@@ -7,7 +7,12 @@ struct RootPath: Path {
     var parent: JsonAny
 
     @usableFromInline
-    init(rootObject: JsonAny) {
+    var options: EvaluationOptions
+
+    @usableFromInline
+    init(rootObject: JsonAny,
+         options: EvaluationOptions) {
         parent = rootObject
+        self.options = options
     }
 }

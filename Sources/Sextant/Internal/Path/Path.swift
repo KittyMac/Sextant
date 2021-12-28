@@ -5,8 +5,8 @@ import Spanker
 @usableFromInline
 protocol Path: CustomStringConvertible {
     var parent: JsonAny { get }
-    func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext?
-    func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement) -> EvaluationContext?
+    func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext?
+    func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext?
     func isDefinite() -> Bool
     func isFunctionPath() -> Bool
     func isRootPath() -> Bool
@@ -19,12 +19,12 @@ extension Path {
     }
 
     @usableFromInline
-    func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext? {
+    func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext? {
         fatalError("should be overwritten")
     }
 
     @usableFromInline
-    func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement) -> EvaluationContext? {
+    func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext? {
         fatalError("should be overwritten")
     }
 
@@ -45,8 +45,9 @@ extension Path {
 }
 
 @inlinable @inline(__always)
-internal func newPath(rootObject: JsonAny) -> Path {
-    return RootPath(rootObject: rootObject)
+internal func newPath(rootObject: JsonAny,
+                      options: EvaluationOptions) -> Path {
+    return RootPath(rootObject: rootObject, options: options)
 }
 
 @inlinable @inline(__always)

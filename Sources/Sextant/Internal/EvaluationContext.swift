@@ -4,7 +4,7 @@ import Spanker
 
 @usableFromInline
 final class EvaluationContext {
-    var updateOperations = [Path]()
+    let options: EvaluationOptions
 
     var allValueResults = JsonArray()
     var valueResults = JsonArray()
@@ -17,28 +17,36 @@ final class EvaluationContext {
     var rootJsonElement: JsonElement = JsonElement.null
 
     init(path: Path,
-         rootJsonObject: JsonAny) {
+         rootJsonObject: JsonAny,
+         options: EvaluationOptions) {
 
         self.path = path
         self.rootJsonObject = rootJsonObject
+        self.options = options
     }
 
     init(path: Path,
-         rootJsonElement: JsonElement) {
+         rootJsonElement: JsonElement,
+         options: EvaluationOptions) {
 
         self.path = path
         self.rootJsonElement = rootJsonElement
+        self.options = options
     }
 
     func add(path: Hitch,
              operation: Path,
              jsonObject: JsonAny) -> EvaluationStatus {
 
-        allValueResults.append(jsonObject)
-        if jsonObject != nil {
-            valueResults.append(jsonObject)
+        if options.contains(.exportValues) {
+            allValueResults.append(jsonObject)
+            if jsonObject != nil {
+                valueResults.append(jsonObject)
+            }
         }
-        pathResults.append(Hitch(hitch: path))
+        if options.contains(.exportPaths) {
+            pathResults.append(Hitch(hitch: path))
+        }
 
         return .done
     }
@@ -47,13 +55,16 @@ final class EvaluationContext {
              operation: Path,
              jsonElement: JsonElement) -> EvaluationStatus {
 
-        let jsonObject = jsonElement.reify(true)
-
-        allValueResults.append(jsonObject)
-        if jsonObject != nil {
-            valueResults.append(jsonObject)
+        if options.contains(.exportValues) {
+            let jsonObject = jsonElement.reify(true)
+            allValueResults.append(jsonObject)
+            if jsonObject != nil {
+                valueResults.append(jsonObject)
+            }
         }
-        pathResults.append(Hitch(hitch: path))
+        if options.contains(.exportPaths) {
+            pathResults.append(Hitch(hitch: path))
+        }
 
         return .done
     }

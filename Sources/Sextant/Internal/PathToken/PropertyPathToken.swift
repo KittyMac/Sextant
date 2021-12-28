@@ -17,10 +17,6 @@ class PropertyPathToken: PathToken {
         self.wrap = wrap
     }
 
-    func singlePropertyCase() -> Bool {
-        return properties.count == 1
-    }
-
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -31,13 +27,6 @@ class PropertyPathToken: PathToken {
                 return .done
             }
             return .aborted
-        }
-
-        if singlePropertyCase() {
-            return handle(properties: properties,
-                          currentPath: currentPath,
-                          jsonObject: jsonObject,
-                          evaluationContext: evaluationContext)
         }
 
         for property in properties {
@@ -65,13 +54,6 @@ class PropertyPathToken: PathToken {
             return .aborted
         }
 
-        if singlePropertyCase() {
-            return handle(properties: properties,
-                          currentPath: currentPath,
-                          jsonElement: jsonElement,
-                          evaluationContext: evaluationContext)
-        }
-
         for property in properties {
             let result = handle(properties: [property],
                                 currentPath: currentPath,
@@ -87,7 +69,7 @@ class PropertyPathToken: PathToken {
 
     override func isTokenDefinite() -> Bool {
         // in case of leaf multiprops will be merged, so it's kinda definite
-        return singlePropertyCase()
+        return properties.count == 1
     }
 
     override func pathFragment() -> String {

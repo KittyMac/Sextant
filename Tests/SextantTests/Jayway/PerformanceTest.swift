@@ -52,6 +52,11 @@ class PerformanceTest: TestsBase {
         // 0.135
         // 0.122
         // 0.104
+        // 0.097
+        // -- Spanker now unescapes all strings --
+        // 0.104
+        // -- Evaluation options allows paths to be skipped --
+        // 0.097
         let path: Hitch = "$..type"
         
         largeData0.parsed { json in

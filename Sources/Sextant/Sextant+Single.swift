@@ -235,7 +235,8 @@ public extension Sextant {
         guard let path = cachedPath(query: path) else { return nil }
         guard let root = root else { return nil }
         if let result = path.evaluate(jsonElement: root,
-                                      rootJsonElement: root) {
+                                      rootJsonElement: root,
+                                      options: [.exportValues]) {
             return result.allResultsValues()
         }
         return nil
@@ -246,7 +247,8 @@ public extension Sextant {
         guard let path = cachedPath(query: path) else { return nil }
         guard let root = root else { return nil }
         if let result = path.evaluate(jsonElement: root,
-                                      rootJsonElement: root) {
+                                      rootJsonElement: root,
+                                      options: [.exportValues]) {
             return result.resultsValues()
         }
         return nil
@@ -257,7 +259,8 @@ public extension Sextant {
         guard let path = cachedPath(query: path) else { return nil }
         guard let root = root else { return nil }
         if let result = path.evaluate(jsonElement: root,
-                                      rootJsonElement: root) {
+                                      rootJsonElement: root,
+                                      options: [.exportPaths]) {
             return result.resultsPaths()
         }
         return nil
@@ -267,7 +270,8 @@ public extension Sextant {
                allValues path: Hitch) -> JsonArray? {
         guard let path = cachedPath(query: path) else { return nil }
         if let result = path.evaluate(jsonObject: root,
-                                      rootJsonObject: root) {
+                                      rootJsonObject: root,
+                                      options: [.exportValues]) {
             return result.allResultsValues()
         }
         return nil
@@ -277,7 +281,8 @@ public extension Sextant {
                values path: Hitch) -> JsonArray? {
         guard let path = cachedPath(query: path) else { return nil }
         if let result = path.evaluate(jsonObject: root,
-                                      rootJsonObject: root) {
+                                      rootJsonObject: root,
+                                      options: [.exportValues]) {
             return result.resultsValues()
         }
         return nil
@@ -287,7 +292,8 @@ public extension Sextant {
                paths path: Hitch) -> JsonArray? {
         guard let path = cachedPath(query: path) else { return nil }
         if let result = path.evaluate(jsonObject: root,
-                                      rootJsonObject: root) {
+                                      rootJsonObject: root,
+                                      options: [.exportPaths]) {
             return result.resultsPaths()
         }
         return nil

@@ -74,7 +74,9 @@ class ComplianceTest: TestsBase {
     
     func test_JsonPathComparison6() {
         let json = #"{ "u\u0308": 42 }"#
-        XCTAssertEqualAny(json.query(values: "$['ü']"), [42])
+        // Note: this not matching is correct, because even though ü and ü look exactly
+        // the same they are comprised differently
+        XCTAssertEqualAny(json.query(values: "$['ü']"), [])
         
         let json2 = #"{ "u": 42 }"#
         XCTAssertEqualAny(json2.query(values: "$['u']"), [42])

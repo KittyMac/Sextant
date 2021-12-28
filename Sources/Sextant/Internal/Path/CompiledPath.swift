@@ -50,9 +50,10 @@ struct CompiledPath: Path {
         return path
     }
 
-    func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny) -> EvaluationContext? {
+    func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext? {
         let context = EvaluationContext(path: self,
-                                        rootJsonObject: rootJsonObject)
+                                        rootJsonObject: rootJsonObject,
+                                        options: options)
 
         let op = nullPath()
 
@@ -69,9 +70,10 @@ struct CompiledPath: Path {
         }
     }
 
-    func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement) -> EvaluationContext? {
+    func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext? {
         let context = EvaluationContext(path: self,
-                                        rootJsonElement: rootJsonElement)
+                                        rootJsonElement: rootJsonElement,
+                                        options: options)
 
         let op = nullPath()
 

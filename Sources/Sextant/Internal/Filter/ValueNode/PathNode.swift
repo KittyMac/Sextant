@@ -67,13 +67,14 @@ struct PathNode: ValueNode {
         return typeHitch
     }
 
-    func evaluate(context: PredicateContext) -> ValueNode? {
+    func evaluate(context: PredicateContext, options: EvaluationOptions) -> ValueNode? {
 
         if existsCheck {
 
             if context.jsonObject != nil {
                 guard let evaluationContext = path.evaluate(jsonObject: context.jsonObject,
-                                                            rootJsonObject: context.rootJsonObject) else {
+                                                            rootJsonObject: context.rootJsonObject,
+                                                            options: options) else {
                     return BooleanNode.false
                 }
 
@@ -83,7 +84,8 @@ struct PathNode: ValueNode {
                 return BooleanNode.false
             } else {
                 guard let evaluationContext = path.evaluate(jsonElement: context.jsonElement,
-                                                            rootJsonElement: context.rootJsonElement) else {
+                                                            rootJsonElement: context.rootJsonElement,
+                                                            options: options) else {
                     return BooleanNode.false
                 }
 
@@ -95,7 +97,7 @@ struct PathNode: ValueNode {
 
         } else {
 
-            let object = context.evaluate(path: path)
+            let object = context.evaluate(path: path, options: options)
 
             if object == nil {
                 return BooleanNode.false

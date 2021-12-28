@@ -27,14 +27,14 @@ class RelationalExpressionNode: ExpressionNode {
                                shouldExists: tmp.shouldExists)
             }
 
-            guard let result = tmp.evaluate(context: predicateContext) else {
+            guard let result = tmp.evaluate(context: predicateContext, options: .default) else {
                 return .error
             }
             left = result
         }
 
         if let pathNode = right as? PathNode {
-            guard let result = pathNode.evaluate(context: predicateContext) else {
+            guard let result = pathNode.evaluate(context: predicateContext, options: .default) else {
                 return .error
             }
             right = result

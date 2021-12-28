@@ -74,6 +74,20 @@ extension JsonAny {
     }
 }
 
+@usableFromInline
+struct EvaluationOptions: OptionSet {
+    public let rawValue: Int
+
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    public static let exportPaths = EvaluationOptions(rawValue: 1 << 0)
+    public static let exportValues = EvaluationOptions(rawValue: 1 << 1)
+
+    public static let `default`: EvaluationOptions = [.exportValues]
+}
+
 /// The exposed API for performing JSON path queries works like this:
 /// 1. All practical incoming data types should be handled (ie, you can perform against a String, or Data, or Any?)
 /// 2. All practical outgoing data type should be handled (ie, you can receive JsonArray of all results, or a String of the first result)

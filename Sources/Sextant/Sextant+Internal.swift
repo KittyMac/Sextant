@@ -14,7 +14,7 @@ func anyEquals(_ a: JsonAny, _ b: JsonAny?) -> Bool {
 
 func error(_ error: String) {
     #if DEBUG
-    print("Error: " + error)
+    // print("Error: " + error)
     #endif
 }
 
@@ -110,6 +110,7 @@ extension Hitch {
                             index: Int,
                             _ block: () -> (T)) -> T {
         return appending(hitch: hitch, block: block) {
+            hitch.reserveCapacity(hitch.count + 32)
             hitch.append(UInt8.openBrace)
             hitch.append(number: index)
             hitch.append(UInt8.closeBrace)
@@ -121,6 +122,7 @@ extension Hitch {
                             property: Hitch,
                             _ block: () -> (T)) -> T {
         return appending(hitch: hitch, block: block) {
+            hitch.reserveCapacity(hitch.count + 2 + property.count)
             hitch.append(UInt8.openBrace)
             hitch.append(property)
             hitch.append(UInt8.closeBrace)
@@ -133,6 +135,7 @@ extension Hitch {
                             wrap: UInt8,
                             _ block: () -> (T)) -> T {
         return appending(hitch: hitch, block: block) {
+            hitch.reserveCapacity(hitch.count + 4 + property.count)
             hitch.append(UInt8.openBrace)
             hitch.append(wrap)
             hitch.append(property)
@@ -147,6 +150,7 @@ extension Hitch {
                             wrap: UInt8,
                             _ block: () -> (T)) -> T {
         return appending(hitch: hitch, block: block) {
+            hitch.reserveCapacity(hitch.count + 4 + property.count)
             hitch.append(UInt8.openBrace)
             hitch.append(wrap)
             hitch.append(property)
@@ -161,6 +165,7 @@ extension Hitch {
                             wrap: UInt8,
                             _ block: () -> (T)) -> T {
         return appending(hitch: hitch, block: block) {
+            hitch.reserveCapacity(hitch.count + 4 + property.count)
             hitch.append(UInt8.openBrace)
             hitch.append(wrap)
             hitch.append(property)
@@ -169,23 +174,4 @@ extension Hitch {
         }
     }
 
-    // ---------------------------
-    /*
-    @inlinable @inline(__always)
-    class func appended(hitch: Hitch,
-                        property: HalfHitch,
-                        wrap: UInt8,
-                        _ block: () -> Void) {
-        let savedCount = hitch.count
-
-        hitch.append(UInt8.openBrace)
-        hitch.append(wrap)
-        hitch.append(property)
-        hitch.append(wrap)
-        hitch.append(UInt8.closeBrace)
-
-        block()
-        hitch.count = savedCount
-    }
-*/
 }
