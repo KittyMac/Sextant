@@ -17,6 +17,10 @@ struct NumberNode: ValueNode, Equatable {
         self.intValue = Int(value)
     }
 
+    init(value: Int) {
+        self.intValue = value
+    }
+
     init(value: Double) {
         self.doubleValue = value
     }

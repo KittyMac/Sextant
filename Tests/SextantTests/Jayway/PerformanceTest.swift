@@ -16,6 +16,8 @@ class PerformanceTest: TestsBase {
     }
     
     func testPerformance0() {
+        // 0.007
+        
         let path: Hitch = "$[*]"
         
         XCTAssertEqualAny(large0.query(values: path)?.count, 11351)
@@ -25,6 +27,8 @@ class PerformanceTest: TestsBase {
     }
     
     func testSpankerPerformance0() {
+        // 0.644
+        
         let path: Hitch = "$[*]"
 
         largeData0.parsed { json in
@@ -56,7 +60,7 @@ class PerformanceTest: TestsBase {
         // -- Spanker now unescapes all strings --
         // 0.104
         // -- Evaluation options allows paths to be skipped --
-        // 0.097
+        // 0.095
         let path: Hitch = "$..type"
         
         largeData0.parsed { json in
@@ -70,6 +74,8 @@ class PerformanceTest: TestsBase {
     }
     
     func testPerformance2() {
+        // 0.198
+        
         let path: Hitch = "$[*].payload[?(@.ref == 'master')]"
         
         XCTAssertEqualAny(large0.query(values: path)?.count, 388)
@@ -79,6 +85,8 @@ class PerformanceTest: TestsBase {
     }
     
     func testSpankerPerformance2() {
+        // 0.070
+        
         let path: Hitch = "$[*].payload[?(@.ref == 'master')]"
 
         largeData0.parsed { json in
@@ -92,6 +100,8 @@ class PerformanceTest: TestsBase {
     }
     
     func testPerformance3() {
+        // 1.193
+        
         let path: Hitch = "$..repo[?(@.name =~ /-/)]"
         
         XCTAssertEqualAny(large0.query(values: path)?.count, 4209)
@@ -101,6 +111,7 @@ class PerformanceTest: TestsBase {
     }
     
     func testSpankerPerformance3() {
+        // 0.268
         let path: Hitch = "$..repo[?(@.name =~ /-/)]"
 
         largeData0.parsed { json in

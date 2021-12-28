@@ -99,45 +99,35 @@ struct PathNode: ValueNode {
 
             let object = context.evaluate(path: path, options: options)
 
-            if object == nil {
+            switch object {
+            case nil:
                 return BooleanNode.false
+            case _ as NSNull:
+                return BooleanNode.false
+            case let value as Int:
+                return NumberNode(value: value)
+            case let value as Double:
+                return NumberNode(value: value)
+            case let value as Float:
+                return NumberNode(value: value)
+            case let value as NSNumber:
+                return NumberNode(value: value.doubleValue)
+            case let value as Bool:
+                return BooleanNode(value: value)
+            case let value as Hitch:
+                return StringNode(hitch: value, escape: false)
+            case let value as HalfHitch:
+                return StringNode(hitch: value.hitch(), escape: false)
+            case let value as String:
+                return StringNode(hitch: value.hitch())
+            case let value as JsonArray:
+                return JsonNode(jsonObject: value)
+            case let value as JsonDictionary:
+                return JsonNode(jsonObject: value)
+            default:
+                error("Could not convert \(object ?? "nil") to a ValueNode")
+                return nil
             }
-            if let _ = object as? NSNull {
-                return NullNode()
-            }
-            if let object = object as? Int {
-                return NumberNode(value: object)
-            }
-            if let object = object as? Double {
-                return NumberNode(value: object)
-            }
-            if let object = object as? Float {
-                return NumberNode(value: object)
-            }
-            if let object = object as? NSNumber {
-                return NumberNode(value: object.doubleValue)
-            }
-            if let object = object as? Bool {
-                return BooleanNode(value: object)
-            }
-            if let object = object as? Hitch {
-                return StringNode(hitch: object, escape: false)
-            }
-            if let object = object as? HalfHitch {
-                return StringNode(hitch: object.hitch(), escape: false)
-            }
-            if let object = object as? String {
-                return StringNode(hitch: object.hitch())
-            }
-            if let object = object as? JsonArray {
-                return JsonNode(jsonObject: object)
-            }
-            if let object = object as? JsonDictionary {
-                return JsonNode(jsonObject: object)
-            }
-
-            error("Could not convert \(object ?? "nil") to a ValueNode")
-            return nil
         }
     }
 
