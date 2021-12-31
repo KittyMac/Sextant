@@ -3,7 +3,6 @@ import Hitch
 
 private let trueHitch = Hitch("true")
 private let falseHitch = Hitch("false")
-private let typeHitch = Hitch("bool")
 
 struct BooleanNode: ValueNode, Equatable {
     static let `true` = BooleanNode(value: true)
@@ -37,8 +36,15 @@ struct BooleanNode: ValueNode, Equatable {
         return falseHitch
     }
 
-    var typeName: Hitch {
-        return typeHitch
+    func stringValue() -> String? {
+        if value {
+            return "true"
+        }
+        return "false"
+    }
+
+    var typeName: ValueNodeType {
+        return .boolean
     }
 
     var numericValue: Double? {

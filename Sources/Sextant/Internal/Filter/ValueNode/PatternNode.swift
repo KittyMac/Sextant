@@ -1,8 +1,6 @@
 import Foundation
 import Hitch
 
-private let typeHitch = Hitch("pattern")
-
 struct PatternNode: ValueNode {
     let hitch: Hitch
     let pattern: Hitch
@@ -32,15 +30,23 @@ struct PatternNode: ValueNode {
         return hitch.description
     }
 
-    var typeName: Hitch {
-        return typeHitch
+    var typeName: ValueNodeType {
+        return .pattern
     }
 
     var literalValue: Hitch? {
         return nil
     }
 
+    func stringValue() -> String? {
+        return nil
+    }
+
     var numericValue: Double? {
         return nil
+    }
+
+    func getRegex() -> NSRegularExpression? {
+        return regex
     }
 }

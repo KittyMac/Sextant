@@ -1,8 +1,6 @@
 import Foundation
 import Hitch
 
-private let typeHitch = Hitch("number")
-
 struct NumberNode: ValueNode, Equatable {
     static let zero = NumberNode(value: 0)
 
@@ -48,6 +46,10 @@ struct NumberNode: ValueNode, Equatable {
         return description.hitch()
     }
 
+    func stringValue() -> String? {
+        return description
+    }
+
     var numericValue: Double? {
         if let double = doubleValue {
             return double
@@ -58,7 +60,7 @@ struct NumberNode: ValueNode, Equatable {
         return nil
     }
 
-    var typeName: Hitch {
-        return typeHitch
+    var typeName: ValueNodeType {
+        return .number
     }
 }

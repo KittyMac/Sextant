@@ -126,65 +126,59 @@ private func evaluateLT(left: ValueNode?, right: ValueNode?, context: PredicateC
 }
 
 private func evaluateREGEX(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    var regex0: NSRegularExpression?
-    var hitch0: Hitch?
+    guard let left = left else { return .false }
+    guard let right = right else { return .false }
 
-    if let left = left as? PatternNode {
-        regex0 = left.regex
-        hitch0 = right?.literalValue
-    } else if let right = right as? PatternNode {
-        regex0 = right.regex
-        hitch0 = left?.literalValue
+    var regex0: NSRegularExpression?
+    var valueAsString0: String?
+
+    if left.typeName == .pattern {
+        regex0 = left.getRegex()
+        valueAsString0 = right.stringValue()
+    } else if right.typeName == .pattern {
+        regex0 = right.getRegex()
+        valueAsString0 = left.stringValue()
     }
 
     guard let regex = regex0 else { return .error }
-    guard let hitch = hitch0 else { return .false }
+    guard let valueAsString = valueAsString0 else { return .false }
 
-    let valueAsString = hitch.description
-    let matches = regex.numberOfMatches(in: valueAsString,
-                                        options: [],
-                                        range: NSRange(location: 0, length: valueAsString.count))
-
-    if matches > 0 {
-        return .true
-    }
-    return .false
+    return regex.firstMatch(in: valueAsString, options: [], range: NSRange(location: 0, length: valueAsString.count)) != nil ? .true : .false
 }
 
 private func evaluateEXISTS(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let left = left as? BooleanNode else {
+    guard let left = left, left.typeName == .boolean else {
         error("Failed to evaluate EXISTS expression")
         return .error
     }
-    guard let right = right as? BooleanNode else {
+    guard let right = right, right.typeName == .boolean else {
         error("Failed to evaluate EXISTS expression")
         return .error
     }
 
-    if left == right {
+    if left.numericValue == right.numericValue {
         return .true
     }
     return .false
 }
 
 private func evaluateSIZE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let right = right as? NumberNode else {
-        return .false
-    }
+    guard let left = left else { return .false }
+    guard let right = right, right.typeName == .number else { return .false }
     guard let expectedSize = right.numericValue else { return .false }
 
-    if let left = left as? StringNode {
+    if left.typeName == .string {
         if left.literalValue?.count == Int(expectedSize) {
             return .true
         }
         return .false
     }
-    if let left = left as? JsonNode {
-        if let array = left.json as? JsonArray,
+    if left.typeName == .json {
+        if let array = left.getJsonArray(),
            array.count == Int(expectedSize) {
             return .true
         }
-        if let dict = left.json as? JsonDictionary,
+        if let dict = left.getJsonDictionary(),
            dict.count == Int(expectedSize) {
             return .true
         }
@@ -194,8 +188,7 @@ private func evaluateSIZE(left: ValueNode?, right: ValueNode?, context: Predicat
 }
 
 private func evaluateIN(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let right = right as? JsonNode else { return .false }
-    guard let rightArray = right.json as? JsonArray else { return .false }
+    guard let rightArray = right?.getJsonArray() else { return .false }
     guard let left = left else { return .false }
     for item in rightArray where left.equals(to: item) == .same {
         return .true
@@ -208,8 +201,10 @@ private func evaluateNIN(left: ValueNode?, right: ValueNode?, context: Predicate
 }
 
 private func evaluateCONTAINS(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    if let left = left as? StringNode,
-       let right = right as? StringNode {
+    guard let left = left else { return .false }
+    guard let right = right else { return .false }
+
+    if left.typeName == .string && right.typeName == .string {
         guard let left = left.literalValue else { return .false }
         guard let right = right.literalValue else { return .false }
         if left.contains(right) {
@@ -221,8 +216,8 @@ private func evaluateCONTAINS(left: ValueNode?, right: ValueNode?, context: Pred
 }
 
 private func evaluateALL(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let left = (left as? JsonNode)?.json as? JsonArray else { return .false }
-    guard let right = (right as? JsonNode)?.json as? JsonArray else { return .false }
+    guard let left = left?.getJsonArray() else { return .false }
+    guard let right = right?.getJsonArray() else { return .false }
 
     for rightObject in right {
         var hasValue = false
@@ -237,18 +232,21 @@ private func evaluateALL(left: ValueNode?, right: ValueNode?, context: Predicate
 }
 
 private func evaluateTYPE(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    if let right = right as? StringNode {
-        return left?.typeName == right.literalValue ? .true : .false
+    guard let left = left else { return .false }
+    guard let right = right else { return .false }
+
+    if right.typeName == .string {
+        return left.typeName.literalValue() == right.literalValue ? .true : .false
     }
-    if left?.typeName == right?.typeName {
+    if left.typeName == right.typeName {
         return .true
     }
     return .false
 }
 
 private func evaluateSUBSETOF(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let left = (left as? JsonNode)?.json as? JsonArray else { return .false }
-    guard let right = (right as? JsonNode)?.json as? JsonArray else { return .false }
+    guard let left = left?.getJsonArray() else { return .false }
+    guard let right = right?.getJsonArray() else { return .false }
 
     var count = 0
     for leftObject in left {
@@ -265,8 +263,8 @@ private func evaluateSUBSETOF(left: ValueNode?, right: ValueNode?, context: Pred
 }
 
 private func evaluateANYOF(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let left = (left as? JsonNode)?.json as? JsonArray else { return .false }
-    guard let right = (right as? JsonNode)?.json as? JsonArray else { return .false }
+    guard let left = left?.getJsonArray() else { return .false }
+    guard let right = right?.getJsonArray() else { return .false }
 
     for leftObject in left {
         for rightObject in right where anyEquals(rightObject, leftObject) {
@@ -281,12 +279,15 @@ private func evaluateNONEOF(left: ValueNode?, right: ValueNode?, context: Predic
 }
 
 private func evaluateEMPTY(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-    guard let right = right as? BooleanNode else { return .false }
-    if left?.literalValue == nil {
+    guard let left = left else { return .false }
+    guard let right = right else { return .false }
+
+    guard right.typeName == .boolean else { return .false }
+    if left.literalValue == nil {
         return .false
     }
 
-    if right.value {
+    if right.numericValue == 1 {
         return evaluateSIZE(left: left, right: NumberNode.zero, context: context)
     }
     return evaluateSIZE(left: left, right: NumberNode.zero, context: context).inverse()

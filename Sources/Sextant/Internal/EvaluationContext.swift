@@ -6,6 +6,9 @@ import Spanker
 final class EvaluationContext {
     let options: EvaluationOptions
 
+    var allValueTypeResults = [JsonType?]()
+    var valueTypeResults = [JsonType?]()
+
     var allValueResults = JsonArray()
     var valueResults = JsonArray()
     var pathResults = [Hitch]()
@@ -39,8 +42,10 @@ final class EvaluationContext {
              jsonObject: JsonAny) -> EvaluationStatus {
 
         if options.contains(.exportValues) {
+            allValueTypeResults.append(nil)
             allValueResults.append(jsonObject)
             if jsonObject != nil {
+                valueTypeResults.append(nil)
                 valueResults.append(jsonObject)
             }
         }
@@ -57,8 +62,10 @@ final class EvaluationContext {
 
         if options.contains(.exportValues) {
             let jsonObject = jsonElement.reify(true)
+            allValueTypeResults.append(jsonElement.type)
             allValueResults.append(jsonObject)
             if jsonObject != nil {
+                valueTypeResults.append(jsonElement.type)
                 valueResults.append(jsonObject)
             }
         }
@@ -67,6 +74,18 @@ final class EvaluationContext {
         }
 
         return .done
+    }
+
+    internal func jsonType() -> JsonType? {
+        if path.isDefinite() {
+            if valueTypeResults.count == 0 {
+                return nil
+            }
+
+            return valueTypeResults[valueTypeResults.count - 1]
+        }
+
+        return .array
     }
 
     internal func jsonObject() -> JsonAny {

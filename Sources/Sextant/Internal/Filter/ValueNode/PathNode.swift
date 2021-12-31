@@ -1,7 +1,6 @@
 import Foundation
 import Hitch
-
-private let typeHitch = Hitch("path")
+import Spanker
 
 struct PathNode: ValueNode {
     let pathString: Hitch
@@ -59,12 +58,16 @@ struct PathNode: ValueNode {
         return description.hitch()
     }
 
+    func stringValue() -> String? {
+        return description
+    }
+
     var numericValue: Double? {
         return nil
     }
 
-    var typeName: Hitch {
-        return typeHitch
+    var typeName: ValueNodeType {
+        return .path
     }
 
     func evaluate(context: PredicateContext, options: EvaluationOptions) -> ValueNode? {
@@ -97,36 +100,58 @@ struct PathNode: ValueNode {
 
         } else {
 
-            let object = context.evaluate(path: path, options: options)
-
-            switch object {
-            case nil:
-                return BooleanNode.false
-            case _ as NSNull:
-                return NullNode.null
-            case let value as Int:
-                return NumberNode(value: value)
-            case let value as Double:
-                return NumberNode(value: value)
-            case let value as Float:
-                return NumberNode(value: value)
-            case let value as NSNumber:
-                return NumberNode(value: value.doubleValue)
-            case let value as Bool:
-                return BooleanNode(value: value)
-            case let value as Hitch:
-                return StringNode(hitch: value, escape: false)
-            case let value as HalfHitch:
-                return StringNode(hitch: value.hitch(), escape: false)
-            case let value as String:
-                return StringNode(hitch: value.hitch())
-            case let value as JsonArray:
-                return JsonNode(jsonObject: value)
-            case let value as JsonDictionary:
-                return JsonNode(jsonObject: value)
-            default:
-                error("Could not convert \(object ?? "nil") to a ValueNode")
+            let (object, type) = context.evaluate(path: path, options: options)
+            if object == nil {
                 return nil
+            }
+
+            if let type = type {
+
+                switch type {
+                case .null:
+                    return NullNode.null
+                case .int:
+                    return NumberNode(value: object.toInt() ?? 0)
+                case .double:
+                    return NumberNode(value: object.toDouble() ?? 0.0)
+                case .boolean:
+                    return BooleanNode(value: object as? Bool ?? false)
+                case .string:
+                    return StringNode(hitch: object.toHitch() ?? Hitch.empty)
+                case .array:
+                    return JsonNode(array: object as? JsonArray ?? [])
+                case .dictionary:
+                    return JsonNode(dictionary: object as? JsonDictionary ?? [:])
+                }
+
+            } else {
+                switch object {
+                case _ as NSNull:
+                    return NullNode.null
+                case let value as Int:
+                    return NumberNode(value: value)
+                case let value as Double:
+                    return NumberNode(value: value)
+                case let value as Float:
+                    return NumberNode(value: value)
+                case let value as NSNumber:
+                    return NumberNode(value: value.doubleValue)
+                case let value as Bool:
+                    return BooleanNode(value: value)
+                case let value as Hitch:
+                    return StringNode(hitch: value, escape: false)
+                case let value as HalfHitch:
+                    return StringNode(hitch: value.hitch(), escape: false)
+                case let value as String:
+                    return StringNode(hitch: value.hitch())
+                case let value as JsonArray:
+                    return JsonNode(array: value)
+                case let value as JsonDictionary:
+                    return JsonNode(dictionary: value)
+                default:
+                    error("Could not convert \(object ?? "nil") to a ValueNode")
+                    return nil
+                }
             }
         }
     }

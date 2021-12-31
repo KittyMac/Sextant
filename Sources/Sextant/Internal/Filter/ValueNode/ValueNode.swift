@@ -1,6 +1,36 @@
 import Foundation
 import Hitch
 
+private let boolHitch = Hitch("bool")
+private let jsonHitch = Hitch("json")
+private let nullHitch = Hitch("null")
+private let numberHitch = Hitch("number")
+private let pathHitch = Hitch("path")
+private let patternHitch = Hitch("pattern")
+private let stringHitch = Hitch("string")
+
+enum ValueNodeType {
+    case boolean
+    case json
+    case null
+    case number
+    case path
+    case pattern
+    case string
+
+    func literalValue() -> Hitch {
+        switch self {
+        case .boolean: return boolHitch
+        case .json: return jsonHitch
+        case .null: return nullHitch
+        case .number: return numberHitch
+        case .path: return pathHitch
+        case .pattern: return patternHitch
+        case .string: return stringHitch
+        }
+    }
+}
+
 enum ValueComparisonResult {
     case same
     case differ
@@ -10,13 +40,29 @@ enum ValueComparisonResult {
 }
 
 protocol ValueNode: CustomStringConvertible {
-    var typeName: Hitch { get }
+    var typeName: ValueNodeType { get }
+
+    func stringValue() -> String?
 
     var literalValue: Hitch? { get }
     var numericValue: Double? { get }
+
+    func getJsonArray() -> JsonArray?
+    func getJsonDictionary() -> JsonDictionary?
+    func getRegex() -> NSRegularExpression?
 }
 
 extension ValueNode {
+    func getJsonArray() -> JsonArray? {
+        return nil
+    }
+    func getJsonDictionary() -> JsonDictionary? {
+        return nil
+    }
+    func getRegex() -> NSRegularExpression? {
+        return nil
+    }
+
     func equals(to other: JsonAny) -> ValueComparisonResult {
         if (other == nil || other is NSNull) && self is NullNode {
             return .same

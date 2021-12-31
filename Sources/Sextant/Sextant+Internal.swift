@@ -100,7 +100,7 @@ extension Hitch {
             var total = hitch.count
             parts.forEach { total += $0.count }
 
-            hitch.reserveCapacity(total)
+            hitch.reserveCapacity(total * 2)
             parts.forEach { hitch.append($0) }
         }
     }
@@ -110,7 +110,7 @@ extension Hitch {
                             index: Int,
                             _ block: () -> (T)) -> T {
         return appending(hitch: hitch, block: block) {
-            hitch.reserveCapacity(hitch.count + 32)
+            hitch.reserveCapacity((hitch.count + 32) * 2)
             hitch.append(UInt8.openBrace)
             hitch.append(number: index)
             hitch.append(UInt8.closeBrace)
@@ -122,7 +122,7 @@ extension Hitch {
                             property: Hitch,
                             _ block: () -> (T)) -> T {
         return appending(hitch: hitch, block: block) {
-            hitch.reserveCapacity(hitch.count + 2 + property.count)
+            hitch.reserveCapacity((hitch.count + 2 + property.count) * 2)
             hitch.append(UInt8.openBrace)
             hitch.append(property)
             hitch.append(UInt8.closeBrace)
@@ -135,7 +135,7 @@ extension Hitch {
                             wrap: UInt8,
                             _ block: () -> (T)) -> T {
         return appending(hitch: hitch, block: block) {
-            hitch.reserveCapacity(hitch.count + 4 + property.count)
+            hitch.reserveCapacity((hitch.count + 4 + property.count) * 2)
             hitch.append(UInt8.openBrace)
             hitch.append(wrap)
             hitch.append(property)
@@ -150,7 +150,7 @@ extension Hitch {
                             wrap: UInt8,
                             _ block: () -> (T)) -> T {
         return appending(hitch: hitch, block: block) {
-            hitch.reserveCapacity(hitch.count + 4 + property.count)
+            hitch.reserveCapacity((hitch.count + 4 + property.count) * 2)
             hitch.append(UInt8.openBrace)
             hitch.append(wrap)
             hitch.append(property)
@@ -165,7 +165,7 @@ extension Hitch {
                             wrap: UInt8,
                             _ block: () -> (T)) -> T {
         return appending(hitch: hitch, block: block) {
-            hitch.reserveCapacity(hitch.count + 4 + property.count)
+            hitch.reserveCapacity((hitch.count + 4 + property.count) * 2)
             hitch.append(UInt8.openBrace)
             hitch.append(wrap)
             hitch.append(property)

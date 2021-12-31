@@ -1,9 +1,8 @@
 import Foundation
 import Hitch
 
-private let typeHitch = Hitch("string")
-
 struct StringNode: ValueNode {
+    var valueAsString: String?
     let value: Hitch
     let useSingleQuote: Bool
 
@@ -53,11 +52,15 @@ struct StringNode: ValueNode {
         return value
     }
 
+    func stringValue() -> String? {
+        return value.description
+    }
+
     var numericValue: Double? {
         return value.toDouble()
     }
 
-    var typeName: Hitch {
-        return typeHitch
+    var typeName: ValueNodeType {
+        return .string
     }
 }
