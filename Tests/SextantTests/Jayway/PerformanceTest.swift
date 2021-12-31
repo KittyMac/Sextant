@@ -89,6 +89,7 @@ class PerformanceTest: TestsBase {
     func testSpankerPerformance2() {
         // 0.070
         // 0.062
+        // 0.054
         
         let path: Hitch = "$[?(@.payload.ref=='master')].payload"
 

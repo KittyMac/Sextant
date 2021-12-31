@@ -19,6 +19,8 @@ final class EvaluationContext {
     var rootJsonObject: JsonAny = nil
     var rootJsonElement: JsonElement = JsonElement.null
 
+    var pathIsDefinite: Bool = false
+
     init(path: Path,
          rootJsonObject: JsonAny,
          options: EvaluationOptions) {
@@ -26,6 +28,7 @@ final class EvaluationContext {
         self.path = path
         self.rootJsonObject = rootJsonObject
         self.options = options
+        self.pathIsDefinite = path.isDefinite()
     }
 
     init(path: Path,
@@ -35,6 +38,7 @@ final class EvaluationContext {
         self.path = path
         self.rootJsonElement = rootJsonElement
         self.options = options
+        self.pathIsDefinite = path.isDefinite()
     }
 
     func add(path: Hitch,
@@ -77,7 +81,7 @@ final class EvaluationContext {
     }
 
     internal func jsonType() -> JsonType? {
-        if path.isDefinite() {
+        if pathIsDefinite {
             if valueTypeResults.count == 0 {
                 return nil
             }
@@ -89,7 +93,7 @@ final class EvaluationContext {
     }
 
     internal func jsonObject() -> JsonAny {
-        if path.isDefinite() {
+        if pathIsDefinite {
             if valueResults.count == 0 {
                 return nil
             }
@@ -101,7 +105,7 @@ final class EvaluationContext {
     }
 
     func resultsValues() -> JsonArray? {
-        if path.isDefinite() {
+        if pathIsDefinite {
             if valueResults.count == 0 {
                 return []
             }
@@ -113,7 +117,7 @@ final class EvaluationContext {
     }
 
     func allResultsValues() -> JsonArray? {
-        if path.isDefinite() {
+        if pathIsDefinite {
             if allValueResults.count == 0 {
                 return []
             }
@@ -125,7 +129,7 @@ final class EvaluationContext {
     }
 
     func resultsPaths() -> [String] {
-        if path.isDefinite() {
+        if pathIsDefinite {
             if pathResults.count == 0 {
                 return []
             }
