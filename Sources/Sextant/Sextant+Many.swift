@@ -132,6 +132,38 @@ public extension JsonAny {
     @inlinable func query(double path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(stringLiteral: $0) }) }
 }
 
+public extension JsonElement {
+    @inlinable func query(paths: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, paths: paths) }
+    @inlinable func query(values path: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, values: path) }
+    @inlinable func query(_ path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(string path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(hitch path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(int path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(_ path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(double path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query<A, B>(_ path: [Hitch]) -> (A, B)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C>(_ path: [Hitch]) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D>(_ path: [Hitch]) -> (A, B, C, D)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E>(_ path: [Hitch]) -> (A, B, C, D, E)? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query<A, B, C, D, E, F>(_ path: [Hitch]) -> (A, B, C, D, E, F)? { return Sextant.shared.query(self, value: path) }
+
+    @inlinable func query<T: Decodable>(_ path: [Hitch]) -> T? { return Sextant.shared.query(self, values: path) }
+
+    @inlinable func query(paths: [String]) -> JsonArray? { return Sextant.shared.query(self, paths: paths.map { Hitch(stringLiteral: $0) }) }
+    @inlinable func query(values path: [String]) -> JsonArray? { return Sextant.shared.query(self, values: path.map { Hitch(stringLiteral: $0) }) }
+    @inlinable func query(_ path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(stringLiteral: $0) }) }
+    @inlinable func query(string path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(stringLiteral: $0) }) }
+    @inlinable func query(_ path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(stringLiteral: $0) }) }
+    @inlinable func query(hitch path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(stringLiteral: $0) }) }
+    @inlinable func query(_ path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(stringLiteral: $0) }) }
+    @inlinable func query(int path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(stringLiteral: $0) }) }
+    @inlinable func query(_ path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(stringLiteral: $0) }) }
+    @inlinable func query(double path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(stringLiteral: $0) }) }
+}
+
 public extension Array {
     @inlinable func query(paths: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, paths: paths) }
     @inlinable func query(values path: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, values: path) }
@@ -334,6 +366,14 @@ public extension Sextant {
         guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
         return try? JSONDecoder().decode(T.self, from: resultsJson)
     }
+
+    @inlinable func query<T: Decodable>(_ root: JsonElement,
+                                        values paths: [Hitch]) -> T? {
+        // Not exactly performant, but this will work in all cases...
+        guard let results = query(root, values: paths) else { return nil }
+        guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+        return try? JSONDecoder().decode(T.self, from: resultsJson)
+    }
 }
 
 // MARK: - All Results -> JsonArray
@@ -454,6 +494,57 @@ public extension Sextant {
         return (a, b, c, d, e)
     }
     @inlinable func query<A, B, C, D, E, F>(_ root: JsonAny, value pathArray: [Hitch]) -> (A, B, C, D, E, F)? {
+        guard let values: JsonArray = query(root, values: pathArray) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D,
+              let e = values.get(4) as? E,
+              let f = values.get(5) as? F else {
+            return nil
+        }
+        return (a, b, c, d, e, f)
+    }
+
+    @inlinable func query<A, B>(_ root: JsonElement, value pathArray: [Hitch]) -> (A, B)? {
+        guard let values: JsonArray = query(root, values: pathArray) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B else {
+            return nil
+        }
+        return (a, b)
+    }
+    @inlinable func query<A, B, C>(_ root: JsonElement, value pathArray: [Hitch]) -> (A, B, C)? {
+        guard let values: JsonArray = query(root, values: pathArray) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C else {
+            return nil
+        }
+        return (a, b, c)
+    }
+    @inlinable func query<A, B, C, D>(_ root: JsonElement, value pathArray: [Hitch]) -> (A, B, C, D)? {
+        guard let values: JsonArray = query(root, values: pathArray) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D else {
+            return nil
+        }
+        return (a, b, c, d)
+    }
+    @inlinable func query<A, B, C, D, E>(_ root: JsonElement, value pathArray: [Hitch]) -> (A, B, C, D, E)? {
+        guard let values: JsonArray = query(root, values: pathArray) else { return nil }
+        guard let a = values.get(0) as? A,
+              let b = values.get(1) as? B,
+              let c = values.get(2) as? C,
+              let d = values.get(3) as? D,
+              let e = values.get(4) as? E else {
+            return nil
+        }
+        return (a, b, c, d, e)
+    }
+    @inlinable func query<A, B, C, D, E, F>(_ root: JsonElement, value pathArray: [Hitch]) -> (A, B, C, D, E, F)? {
         guard let values: JsonArray = query(root, values: pathArray) else { return nil }
         guard let a = values.get(0) as? A,
               let b = values.get(1) as? B,
