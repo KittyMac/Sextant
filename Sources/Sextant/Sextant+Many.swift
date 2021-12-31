@@ -279,7 +279,14 @@ public extension Sextant {
     @inlinable func query<T: Decodable>(_ root: String,
                                         values paths: [Hitch]) -> T? {
         // Not exactly performant, but this will work in all cases...
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                guard let results = query(jsonData, values: paths) else { return nil }
+                guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+                return try? JSONDecoder().decode(T.self, from: resultsJson)
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             guard let results = query(jsonData, values: paths) else { return nil }
             guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
             return try? JSONDecoder().decode(T.self, from: resultsJson)
@@ -289,7 +296,14 @@ public extension Sextant {
     @inlinable func query<T: Decodable>(_ root: Hitch,
                                         values paths: [Hitch]) -> T? {
         // Not exactly performant, but this will work in all cases...
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                guard let results = query(jsonData, values: paths) else { return nil }
+                guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+                return try? JSONDecoder().decode(T.self, from: resultsJson)
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             guard let results = query(jsonData, values: paths) else { return nil }
             guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
             return try? JSONDecoder().decode(T.self, from: resultsJson)
@@ -299,7 +313,14 @@ public extension Sextant {
     @inlinable func query<T: Decodable>(_ root: Data,
                                         values paths: [Hitch]) -> T? {
         // Not exactly performant, but this will work in all cases...
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                guard let results = query(jsonData, values: paths) else { return nil }
+                guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
+                return try? JSONDecoder().decode(T.self, from: resultsJson)
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             guard let results = query(jsonData, values: paths) else { return nil }
             guard let resultsJson = try? JSONSerialization.data(withJSONObject: results, options: [.sortedKeys, .fragmentsAllowed]) else { return nil }
             return try? JSONDecoder().decode(T.self, from: resultsJson)
@@ -320,42 +341,72 @@ public extension Sextant {
 public extension Sextant {
     @inlinable func query(_ root: String,
                           values pathArray: [Hitch]) -> JsonArray? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)
         }
     }
 
     @inlinable func query(_ root: Hitch,
                           values pathArray: [Hitch]) -> JsonArray? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)
         }
     }
 
     @inlinable func query(_ root: Data,
                           values pathArray: [Hitch]) -> JsonArray? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)
         }
     }
 
     @inlinable func query(_ root: String,
                           paths pathArray: [Hitch]) -> JsonArray? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, paths: pathArray)
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, paths: pathArray)
         }
     }
 
     @inlinable func query(_ root: Hitch,
                           paths pathArray: [Hitch]) -> JsonArray? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, paths: pathArray)
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, paths: pathArray)
         }
     }
 
     @inlinable func query(_ root: Data,
                           paths pathArray: [Hitch]) -> JsonArray? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, paths: pathArray)
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, paths: pathArray)
         }
     }
@@ -579,21 +630,36 @@ public extension Sextant {
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> String? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toString()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toString()
         }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> String? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toString()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toString()
         }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> String? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toString()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toString()
         }
     }
@@ -609,21 +675,36 @@ public extension Sextant {
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> Hitch? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toHitch()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toHitch()
         }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> Hitch? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toHitch()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toHitch()
         }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> Hitch? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toHitch()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toHitch()
         }
     }
@@ -639,21 +720,36 @@ public extension Sextant {
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> Int? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toInt()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toInt()
         }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> Int? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toInt()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toInt()
         }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> Int? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toInt()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toInt()
         }
     }
@@ -669,21 +765,36 @@ public extension Sextant {
 
     @inlinable func query(_ root: String,
                           value pathArray: [Hitch]) -> Double? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toDouble()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toDouble()
         }
     }
 
     @inlinable func query(_ root: Hitch,
                           value pathArray: [Hitch]) -> Double? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toDouble()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toDouble()
         }
     }
 
     @inlinable func query(_ root: Data,
                           value pathArray: [Hitch]) -> Double? {
-        return root.parsed { jsonData in
+        if shouldUseSpanker {
+            return root.parsed { jsonData in
+                return query(jsonData, values: pathArray)?.first?.toDouble()
+            }
+        } else {
+            guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: pathArray)?.first?.toDouble()
         }
     }

@@ -11,8 +11,8 @@ let package = Package(
         .library(name: "Sextant", targets: ["Sextant"])
     ],
     dependencies: [
-        .package(url: "https://github.com/KittyMac/Hitch.git", .branch("main")),
-        .package(url: "https://github.com/KittyMac/Spanker.git", .branch("main")),
+        .package(url: "https://github.com/KittyMac/Hitch.git", .upToNextMinor(from: "0.1.0")),
+        .package(url: "https://github.com/KittyMac/Spanker.git", .upToNextMinor(from: "0.1.0")),
     ],
     targets: [
         .target(

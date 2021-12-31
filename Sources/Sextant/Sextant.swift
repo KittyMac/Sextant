@@ -108,11 +108,33 @@ struct EvaluationOptions: OptionSet {
 
 // MARK: - Incoming Extensions - Parsing
 
+public extension Hitch {
+    @inlinable
+    func jsonDeserialized() -> JsonAny {
+        return self.dataNoCopy().jsonDeserialized()
+    }
+}
+
+public extension String {
+    @inlinable
+    func jsonDeserialized() -> JsonAny {
+        return self.data(using: .utf8)?.jsonDeserialized()
+    }
+}
+
+public extension Data {
+    @inlinable
+    func jsonDeserialized() -> JsonAny {
+        return try? JSONSerialization.jsonObject(with: self, options: [.allowFragments])
+    }
+}
+
 public final class Sextant {
     public static let shared = Sextant()
     private init() { }
 
     public var shouldCachePaths = true
+    public var shouldUseSpanker = true
 
     var cachedPaths = [Hitch: Path]()
     private var lock = NSLock()
