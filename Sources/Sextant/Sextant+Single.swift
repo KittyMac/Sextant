@@ -703,6 +703,11 @@ public extension Sextant {
         return query(root, values: path)?.first?.toString()
     }
 
+    @inlinable func query(_ root: JsonElement?,
+                          value path: Hitch) -> String? {
+        return query(root, values: path)?.first?.toString()
+    }
+
     @inlinable func query(_ root: String,
                           value path: Hitch) -> String? {
         if shouldUseSpanker {
@@ -744,6 +749,11 @@ public extension Sextant {
 
 public extension Sextant {
     @inlinable func query(_ root: JsonAny,
+                          value path: Hitch) -> Hitch? {
+        return query(root, values: path)?.first?.toHitch()
+    }
+
+    @inlinable func query(_ root: JsonElement?,
                           value path: Hitch) -> Hitch? {
         return query(root, values: path)?.first?.toHitch()
     }
@@ -793,6 +803,11 @@ public extension Sextant {
         return query(root, values: path)?.first?.toInt()
     }
 
+    @inlinable func query(_ root: JsonElement?,
+                          value path: Hitch) -> Int? {
+        return query(root, values: path)?.first?.toInt()
+    }
+
     @inlinable func query(_ root: String,
                           value path: Hitch) -> Int? {
         if shouldUseSpanker {
@@ -834,6 +849,11 @@ public extension Sextant {
 
 public extension Sextant {
     @inlinable func query(_ root: JsonAny,
+                          value path: Hitch) -> Double? {
+        return query(root, values: path)?.first?.toDouble()
+    }
+
+    @inlinable func query(_ root: JsonElement?,
                           value path: Hitch) -> Double? {
         return query(root, values: path)?.first?.toDouble()
     }

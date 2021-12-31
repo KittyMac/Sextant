@@ -109,6 +109,16 @@ class ExamplesTest: TestsBase {
             XCTFail()
         }
     }
+    
+    func testSimple8() {
+        let data = #"{"data":{"attributes":{"about":null,"created":"2021-12-19T18:06:51.000+00:00","social_connections":{"deviantart":null,"discord":null,"facebook":null,"google":null,"instagram":null,"reddit":null,"spotify":null,"twitch":null,"twitter":null,"vimeo":null,"youtube":null},"vanity":null},"id":"66480799","type":"user"}}"#
+        
+        data.parsed { json in
+            guard let json = json else { XCTFail(); return }
+            guard let id: String = json.query("$.data.id") else { XCTFail(); return }
+            XCTAssertEqual(id, "66480799")
+        }
+    }
 }
 
 extension ExamplesTest {
