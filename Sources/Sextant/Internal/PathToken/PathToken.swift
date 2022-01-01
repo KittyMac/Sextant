@@ -75,84 +75,79 @@ class PathToken: CustomStringConvertible {
     }
 
     @inlinable
-    func handle(properties: [Hitch],
+    func handle(property: Hitch,
                 currentPath: Hitch,
                 jsonObject: JsonAny,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
-        if properties.count == 1 {
-            let property = properties[0]
-            let path = nullPath()
+        let path = nullPath()
 
-            let propertyVal = read(property: property,
-                                   jsonObject: jsonObject,
-                                   evaluationContext: evaluationContext)
-            if propertyVal == nil {
-                // [From original source] Conditions below heavily depend on current token type (and its logic) and are not "universal",
-                // so this code is quite dangerous (I'd rather rewrite it & move to PropertyPathToken and implemented
-                // WildcardPathToken as a dynamic multi prop case of PropertyPathToken).
-                // Better safe than sorry.
+        let propertyVal = read(property: property,
+                               jsonObject: jsonObject,
+                               evaluationContext: evaluationContext)
+        if propertyVal == nil {
+            // [From original source] Conditions below heavily depend on current token type (and its logic) and are not "universal",
+            // so this code is quite dangerous (I'd rather rewrite it & move to PropertyPathToken and implemented
+            // WildcardPathToken as a dynamic multi prop case of PropertyPathToken).
+            // Better safe than sorry.
 
-                if isLeaf() {
-                    if let jsonObject = jsonObject as? JsonDictionary,
-                       jsonObject.keys.contains(property.description) {
-                        let result = Hitch.appending(hitch: currentPath,
-                                                     property: property,
-                                                     wrap: .singleQuote) {
-                            evaluationContext.add(path: currentPath,
-                                                  operation: path,
-                                                  jsonObject: NSNull())
-                        }
-                        if result == .aborted {
-                            return .aborted
-                        }
-                    } else {
-                        let result = Hitch.appending(hitch: currentPath,
-                                                     property: property,
-                                                     wrap: .singleQuote) {
-                            evaluationContext.add(path: currentPath,
-                                                  operation: path,
-                                                  jsonObject: nil)
-                        }
-                        if result == .aborted {
-                            return .aborted
-                        }
+            if isLeaf() {
+                if let jsonObject = jsonObject as? JsonDictionary,
+                   jsonObject.keys.contains(property.description) {
+                    let result = Hitch.appending(hitch: currentPath,
+                                                 property: property,
+                                                 wrap: .singleQuote) {
+                        evaluationContext.add(path: currentPath,
+                                              operation: path,
+                                              jsonObject: NSNull())
                     }
-                    return .done
+                    if result == .aborted {
+                        return .aborted
+                    }
                 } else {
-                    if (isUpstreamDefinite() && isTokenDefinite()) == false {
-                        return .done
+                    let result = Hitch.appending(hitch: currentPath,
+                                                 property: property,
+                                                 wrap: .singleQuote) {
+                        evaluationContext.add(path: currentPath,
+                                              operation: path,
+                                              jsonObject: nil)
                     }
-                    return .aborted
+                    if result == .aborted {
+                        return .aborted
+                    }
                 }
-            }
-
-            if let next = next {
-                let result = Hitch.appending(hitch: currentPath,
-                                             property: property,
-                                             wrap: .singleQuote) {
-                    next.evaluate(currentPath: currentPath,
-                                  parentPath: path,
-                                  jsonObject: propertyVal,
-                                  evaluationContext: evaluationContext)
-                }
-                if result != .done {
-                    return result
-                }
+                return .done
             } else {
-                let result = Hitch.appending(hitch: currentPath,
-                                             property: property,
-                                             wrap: .singleQuote) {
-                    evaluationContext.add(path: currentPath,
-                                          operation: path,
-                                          jsonObject: propertyVal)
+                if (isUpstreamDefinite() && isTokenDefinite()) == false {
+                    return .done
                 }
-                if result == .aborted {
-                    return .aborted
-                }
+                return .aborted
+            }
+        }
+
+        if let next = next {
+            let result = Hitch.appending(hitch: currentPath,
+                                         property: property,
+                                         wrap: .singleQuote) {
+                next.evaluate(currentPath: currentPath,
+                              parentPath: path,
+                              jsonObject: propertyVal,
+                              evaluationContext: evaluationContext)
+            }
+            if result != .done {
+                return result
             }
         } else {
-            fatalError("not allowed to merge")
+            let result = Hitch.appending(hitch: currentPath,
+                                         property: property,
+                                         wrap: .singleQuote) {
+                evaluationContext.add(path: currentPath,
+                                      operation: path,
+                                      jsonObject: propertyVal)
+            }
+            if result == .aborted {
+                return .aborted
+            }
         }
 
         return .done

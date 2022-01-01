@@ -60,11 +60,13 @@ enum ArrayPathCheck: Equatable {
     }
 }
 
+@usableFromInline
 enum EvaluationStatus: Equatable {
     case done
     case aborted
     case error(_ error: String)
 
+    @usableFromInline
     static func == (lhs: EvaluationStatus, rhs: EvaluationStatus) -> Bool {
         switch (lhs, rhs) {
         case (.error, .error):

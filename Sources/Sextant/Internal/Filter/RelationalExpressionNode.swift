@@ -14,12 +14,13 @@ class RelationalExpressionNode: ExpressionNode {
         self.right = right
     }
 
+    @inlinable @inline(__always)
     override func apply(predicateContext: PredicateContext) -> PredicateApply {
         var left: ValueNode = self.left
         var right: ValueNode = self.right
 
-        if let pathNode = left as? PathNode {
-            var tmp = pathNode
+        if left.typeName == .path {
+            guard var tmp = left as? PathNode else { return .error }
 
             // SourceMac-Note: we support the "EXISTS" token, event if it's similar (and so redoundant) to don't use operator and right value.
             if relationalOperator == .EXISTS && tmp.existsCheck == false {
@@ -33,8 +34,10 @@ class RelationalExpressionNode: ExpressionNode {
             left = result
         }
 
-        if let pathNode = right as? PathNode {
-            guard let result = pathNode.evaluate(context: predicateContext, options: .default) else {
+        if right.typeName == .path {
+            guard let tmp = right as? PathNode else { return .error }
+
+            guard let result = tmp.evaluate(context: predicateContext, options: .default) else {
                 return .error
             }
             right = result

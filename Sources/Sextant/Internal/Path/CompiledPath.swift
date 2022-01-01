@@ -7,12 +7,18 @@ struct CompiledPath: Path {
     var root: RootPathToken
     let rootPath: Bool
 
+    var evaluationContext: EvaluationContext?
+
     init(root: RootPathToken, isRootPath: Bool) {
         parent = root
         rootPath = isRootPath
 
         self.root = root
         self.root = invertScannerFunctionRelationshipWithToken(path: root)
+
+        evaluationContext = EvaluationContext(path: self,
+                                              rootJsonObject: JsonElement.null,
+                                              options: EvaluationOptions.default)
     }
 
     private func invertScannerFunctionRelationshipWithToken(path: RootPathToken) -> RootPathToken {
@@ -50,43 +56,47 @@ struct CompiledPath: Path {
         return path
     }
 
+    @inlinable @inline(__always)
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext? {
-        let context = EvaluationContext(path: self,
-                                        rootJsonObject: rootJsonObject,
-                                        options: options)
+        guard let evaluationContext = self.evaluationContext else { return nil }
+
+        evaluationContext.reset(rootJsonObject: rootJsonObject,
+                                options: options)
 
         let op = nullPath()
 
         let result = root.evaluate(currentPath: Hitch.empty,
                                    parentPath: op,
                                    jsonObject: jsonObject,
-                                   evaluationContext: context)
+                                   evaluationContext: evaluationContext)
         switch result {
         case .error(let message):
             error("\(message)")
             return nil
         default:
-            return context
+            return evaluationContext
         }
     }
 
+    @inlinable @inline(__always)
     func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext? {
-        let context = EvaluationContext(path: self,
-                                        rootJsonElement: rootJsonElement,
-                                        options: options)
+        guard let evaluationContext = self.evaluationContext else { return nil }
+
+        evaluationContext.reset(rootJsonElement: rootJsonElement,
+                                options: options)
 
         let op = nullPath()
 
         let result = root.evaluate(currentPath: Hitch.empty,
                                    parentPath: op,
                                    jsonElement: jsonElement,
-                                   evaluationContext: context)
+                                   evaluationContext: evaluationContext)
         switch result {
         case .error(let message):
             error("\(message)")
             return nil
         default:
-            return context
+            return evaluationContext
         }
     }
 

@@ -4,7 +4,7 @@ import Spanker
 
 extension PathToken {
 
-    @inlinable
+    @inlinable @inline(__always)
     func checkArray(currentPath: Hitch,
                     jsonElement: JsonElement,
                     evaluationContext: EvaluationContext) -> ArrayPathCheck {
@@ -19,7 +19,7 @@ extension PathToken {
         return .skip
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func handle(arrayIndex: Int,
                 currentPath: Hitch,
                 jsonElement: JsonElement,
@@ -65,91 +65,82 @@ extension PathToken {
         return .done
     }
 
-    @inlinable
-    func handle(properties: [Hitch],
+    @inlinable @inline(__always)
+    func handle(property: Hitch,
                 currentPath: Hitch,
                 jsonElement: JsonElement,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
-        if properties.count == 1 {
-            let property = properties[0]
-            let path = nullPath()
+        let propertyVal = read(property: property,
+                               jsonElement: jsonElement,
+                               evaluationContext: evaluationContext)
+        if propertyVal == nil {
+            // [From original source] Conditions below heavily depend on current token type (and its logic) and are not "universal",
+            // so this code is quite dangerous (I'd rather rewrite it & move to PropertyPathToken and implemented
+            // WildcardPathToken as a dynamic multi prop case of PropertyPathToken).
+            // Better safe than sorry.
 
-            let propertyVal = read(property: property,
-                                   jsonElement: jsonElement,
-                                   evaluationContext: evaluationContext)
-            if propertyVal == nil {
-                // [From original source] Conditions below heavily depend on current token type (and its logic) and are not "universal",
-                // so this code is quite dangerous (I'd rather rewrite it & move to PropertyPathToken and implemented
-                // WildcardPathToken as a dynamic multi prop case of PropertyPathToken).
-                // Better safe than sorry.
-
-                if isLeaf() {
-                    if jsonElement.type == .dictionary,
-                       jsonElement.contains(key: property) {
-                        let result = Hitch.appending(hitch: currentPath,
-                                                     property: property,
-                                                     wrap: .singleQuote) {
-                            evaluationContext.add(path: currentPath,
-                                                     operation: path,
-                                                     jsonObject: NSNull())
-                        }
-                        if result == .aborted {
-                            return .aborted
-                        }
-                    } else {
-                        let result = Hitch.appending(hitch: currentPath,
-                                                     property: property,
-                                                     wrap: .singleQuote) {
-                            evaluationContext.add(path: currentPath,
-                                                     operation: path,
-                                                     jsonObject: nil)
-                        }
-                        if result == .aborted {
-                            return .aborted
-                        }
+            if isLeaf() {
+                if jsonElement.type == .dictionary,
+                   jsonElement.contains(key: property) {
+                    if Hitch.appending(hitch: currentPath,
+                                                 property: property,
+                                                 wrap: .singleQuote, {
+                        evaluationContext.add(path: currentPath,
+                                                 operation: nullPath(),
+                                                 jsonObject: NSNull())
+                    }) == .aborted {
+                        return .aborted
                     }
-                    return .done
+
                 } else {
-                    if (isUpstreamDefinite() && isTokenDefinite()) == false {
-                        return .done
+                    if Hitch.appending(hitch: currentPath,
+                                                 property: property,
+                                                 wrap: .singleQuote, {
+                        evaluationContext.add(path: currentPath,
+                                                 operation: nullPath(),
+                                                 jsonObject: nil)
+                    }) == .aborted {
+                        return .aborted
                     }
-                    return .aborted
                 }
-            }
-
-            if let next = next {
-                let result = Hitch.appending(hitch: currentPath,
-                                             property: property,
-                                             wrap: .singleQuote) {
-                    next.evaluate(currentPath: currentPath,
-                                               parentPath: path,
-                                               jsonElement: propertyVal ?? JsonElement.null,
-                                               evaluationContext: evaluationContext)
-                }
-                if result != .done {
-                    return result
-                }
+                return .done
             } else {
-                let result = Hitch.appending(hitch: currentPath,
-                                             property: property,
-                                             wrap: .singleQuote) {
-                    evaluationContext.add(path: currentPath,
-                                          operation: path,
-                                          jsonElement: propertyVal ?? JsonElement.null)
+                if (isUpstreamDefinite() && isTokenDefinite()) == false {
+                    return .done
                 }
-                if result == .aborted {
-                    return .aborted
-                }
+                return .aborted
+            }
+        }
+
+        if let next = next {
+            let result = Hitch.appending(hitch: currentPath,
+                                         property: property,
+                                         wrap: .singleQuote) {
+                next.evaluate(currentPath: currentPath,
+                                           parentPath: nullPath(),
+                                           jsonElement: propertyVal ?? JsonElement.null,
+                                           evaluationContext: evaluationContext)
+            }
+            if result != .done {
+                return result
             }
         } else {
-            fatalError("not allowed to merge")
+            if Hitch.appending(hitch: currentPath,
+                                         property: property,
+                                         wrap: .singleQuote, {
+                evaluationContext.add(path: currentPath,
+                                      operation: nullPath(),
+                                      jsonElement: propertyVal ?? JsonElement.null)
+            }) == .aborted {
+                return .aborted
+            }
         }
 
         return .done
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func has(property: Hitch,
              jsonElement: JsonElement,
              evaluationContext: EvaluationContext) -> Bool {
@@ -158,14 +149,13 @@ extension PathToken {
                     evaluationContext: evaluationContext) != nil
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func read(property: Hitch,
               jsonElement: JsonElement,
               evaluationContext: EvaluationContext) -> JsonElement? {
         if jsonElement.type == .dictionary {
             return jsonElement[property] ?? nil
-        }
-        if jsonElement.type == .array {
+        } else if jsonElement.type == .array {
             guard let index = property.toInt() else { return nil }
             guard index >= 0 && index < jsonElement.count else { return nil }
             return jsonElement[index]

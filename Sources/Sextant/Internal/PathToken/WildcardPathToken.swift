@@ -11,7 +11,7 @@ class WildcardPathToken: PathToken {
 
         if let dictionary = jsonObject as? JsonDictionary {
             for property in dictionary.keys {
-                let result = handle(properties: [property.hitch()],
+                let result = handle(property: property.hitch(),
                                     currentPath: currentPath,
                                     jsonObject: jsonObject,
                                     evaluationContext: evaluationContext)
@@ -41,7 +41,7 @@ class WildcardPathToken: PathToken {
 
         if jsonElement.type == .dictionary {
             for property in jsonElement.keyArray {
-                let result = handle(properties: [property.hitch()],
+                let result = handle(property: property.hitch(),
                                     currentPath: currentPath,
                                     jsonElement: jsonElement,
                                     evaluationContext: evaluationContext)

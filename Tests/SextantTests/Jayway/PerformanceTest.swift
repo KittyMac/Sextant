@@ -63,6 +63,7 @@ class PerformanceTest: TestsBase {
         // 0.095
         // 0.088
         // 0.086
+        // 0.081
         let path: Hitch = "$..type"
         
         largeData0.parsed { json in
@@ -90,6 +91,7 @@ class PerformanceTest: TestsBase {
         // 0.070
         // 0.062
         // 0.054
+        // 0.035
         
         let path: Hitch = "$[?(@.payload.ref=='master')].payload"
 
@@ -119,6 +121,7 @@ class PerformanceTest: TestsBase {
         // 0.205
         // 0.201
         // 0.184
+        // 0.170
         let path: Hitch = "$..repo[?(@.name =~ /-/)]"
 
         largeData0.parsed { json in

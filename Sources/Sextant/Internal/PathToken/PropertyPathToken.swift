@@ -30,7 +30,7 @@ class PropertyPathToken: PathToken {
         }
 
         for property in properties {
-            let result = handle(properties: [property],
+            let result = handle(property: property,
                                 currentPath: currentPath,
                                 jsonObject: jsonObject,
                                 evaluationContext: evaluationContext)
@@ -55,7 +55,7 @@ class PropertyPathToken: PathToken {
         }
 
         for property in properties {
-            let result = handle(properties: [property],
+            let result = handle(property: property,
                                 currentPath: currentPath,
                                 jsonElement: jsonElement,
                                 evaluationContext: evaluationContext)

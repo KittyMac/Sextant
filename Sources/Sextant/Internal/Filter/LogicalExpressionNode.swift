@@ -10,6 +10,7 @@ class LogicalExpressionNode: ExpressionNode {
         self.chain = nodes
     }
 
+    @inlinable @inline(__always)
     override func apply(predicateContext: PredicateContext) -> PredicateApply {
         if op == LogicalOperator.logicalOperatorOR() {
             for expression in chain {

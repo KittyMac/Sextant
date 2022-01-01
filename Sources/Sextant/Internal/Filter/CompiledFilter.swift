@@ -8,6 +8,7 @@ class CompiledFilter: Filter {
         self.predicate = predicate
     }
 
+    @inlinable @inline(__always)
     override func apply(predicateContext: PredicateContext) -> PredicateApply {
         return predicate.apply(predicateContext: predicateContext)
     }

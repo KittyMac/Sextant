@@ -4,21 +4,34 @@ import Spanker
 
 @usableFromInline
 final class EvaluationContext {
-    let options: EvaluationOptions
+    @usableFromInline
+    var options: EvaluationOptions
 
+    @usableFromInline
     var allValueTypeResults = [JsonType?]()
+    @usableFromInline
     var valueTypeResults = [JsonType?]()
 
+    @usableFromInline
     var allValueResults = JsonArray()
+    @usableFromInline
     var valueResults = JsonArray()
+    @usableFromInline
     var pathResults = [Hitch]()
 
+    @usableFromInline
     var evaluationCache = [Hitch: JsonAny]()
 
+    @usableFromInline
     var path: Path
+
+    @usableFromInline
     var rootJsonObject: JsonAny = nil
+
+    @usableFromInline
     var rootJsonElement: JsonElement = JsonElement.null
 
+    @usableFromInline
     var pathIsDefinite: Bool = false
 
     init(path: Path,
@@ -41,6 +54,37 @@ final class EvaluationContext {
         self.pathIsDefinite = path.isDefinite()
     }
 
+    @inlinable @inline(__always)
+    func reset(options: EvaluationOptions) {
+        self.options = options
+
+        allValueTypeResults.removeAll(keepingCapacity: true)
+        valueTypeResults.removeAll(keepingCapacity: true)
+
+        allValueResults.removeAll(keepingCapacity: true)
+        valueResults.removeAll(keepingCapacity: true)
+        pathResults.removeAll(keepingCapacity: true)
+
+        evaluationCache.removeAll(keepingCapacity: true)
+    }
+
+    @inlinable @inline(__always)
+    func reset(rootJsonObject: JsonAny,
+               options: EvaluationOptions) {
+        self.rootJsonObject = rootJsonObject
+        self.rootJsonElement = JsonElement.null
+        reset(options: options)
+    }
+
+    @inlinable @inline(__always)
+    func reset(rootJsonElement: JsonElement,
+               options: EvaluationOptions) {
+        self.rootJsonElement = rootJsonElement
+        self.rootJsonObject = nil
+        reset(options: options)
+    }
+
+    @inlinable @inline(__always)
     func add(path: Hitch,
              operation: Path,
              jsonObject: JsonAny) -> EvaluationStatus {
@@ -60,6 +104,7 @@ final class EvaluationContext {
         return .done
     }
 
+    @inlinable @inline(__always)
     func add(path: Hitch,
              operation: Path,
              jsonElement: JsonElement) -> EvaluationStatus {
