@@ -64,8 +64,3 @@ internal func newPath(object: JsonAny, property: Hitch) -> Path {
 internal func newPath(object: JsonAny, properties: [Hitch]) -> Path {
     return ObjectMultiPropertyPath(object: object, properties: properties)
 }
-
-@inlinable @inline(__always)
-internal func nullPath() -> Path {
-    return NullPath.shared
-}

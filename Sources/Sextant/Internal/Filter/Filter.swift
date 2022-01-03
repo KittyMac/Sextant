@@ -1,14 +1,8 @@
 import Foundation
 import Hitch
 
-enum PredicateApply {
-    case `true`
-    case `false`
-    case error
-}
-
 protocol Predicate: CustomStringConvertible {
-    func apply(predicateContext: PredicateContext) -> PredicateApply
+    func apply(predicateContext: PredicateContext) -> EvaluatorResult
 }
 
 class Filter: Predicate {
@@ -16,7 +10,7 @@ class Filter: Predicate {
         fatalError("should be overwritten")
     }
 
-    func apply(predicateContext: PredicateContext) -> PredicateApply {
+    func apply(predicateContext: PredicateContext) -> EvaluatorResult {
         fatalError("should be overwritten")
     }
 }

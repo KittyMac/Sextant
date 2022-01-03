@@ -50,6 +50,10 @@ protocol ValueNode: CustomStringConvertible {
     func getJsonArray() -> JsonArray?
     func getJsonDictionary() -> JsonDictionary?
     func getRegex() -> NSRegularExpression?
+
+    func evaluate(context: PredicateContext, options: EvaluationOptions) -> ValueNode?
+    func copyForExistsCheck() -> ValueNode
+    func shouldExists() -> Bool
 }
 
 extension ValueNode {
@@ -61,6 +65,16 @@ extension ValueNode {
     }
     func getRegex() -> NSRegularExpression? {
         return nil
+    }
+
+    func evaluate(context: PredicateContext, options: EvaluationOptions) -> ValueNode? {
+        return nil
+    }
+    func copyForExistsCheck() -> ValueNode {
+        return self
+    }
+    func shouldExists() -> Bool {
+        return false
     }
 
     func equals(to other: JsonAny) -> ValueComparisonResult {

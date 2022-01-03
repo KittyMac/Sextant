@@ -30,6 +30,7 @@ final class RootPathToken: PathToken {
         return self
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -41,14 +42,13 @@ final class RootPathToken: PathToken {
                                  jsonObject: jsonObject,
                                  evaluationContext: evaluationContext)
         } else {
-            let op = nullPath()
-
             return evaluationContext.add(path: rootToken,
-                                         operation: op,
+                                         operation: NullPath.shared,
                                          jsonObject: jsonObject)
         }
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,
@@ -60,10 +60,8 @@ final class RootPathToken: PathToken {
                                  jsonElement: jsonElement,
                                  evaluationContext: evaluationContext)
         } else {
-            let op = nullPath()
-
             return evaluationContext.add(path: rootToken,
-                                         operation: op,
+                                         operation: NullPath.shared,
                                          jsonElement: jsonElement)
         }
     }

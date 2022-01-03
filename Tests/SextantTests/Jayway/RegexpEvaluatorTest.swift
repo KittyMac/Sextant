@@ -6,19 +6,14 @@ import Hitch
 
 class RegexEvaluatorTest: TestsBase {
     
-    func checkRegex(regex: Hitch, valueNode: ValueNode, result expected: Bool) {        
-        guard let evaluator = Evaluator(relationalOperator: .REGEX) else {
-            XCTFail("Cannot create REGEX evaluator")
-            return
-        }
-        
+    func checkRegex(regex: Hitch, valueNode: ValueNode, result expected: Bool) {
         let context = PredicateContext(jsonObject: [:],
                                        rootJsonObject: [:],
                                        pathCache: [:])
         
         let patternNode = PatternNode(regex: regex)
         
-        let result = evaluator.evaluate(left: patternNode, right: valueNode, context: context)
+        let result = Evaluator.evaluate(relationalOperator: .REGEX, left: patternNode, right: valueNode, context: context)
         
         if result == .error {
             XCTFail("evaluation error")

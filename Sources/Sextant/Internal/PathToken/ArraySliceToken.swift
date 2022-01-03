@@ -9,6 +9,7 @@ class ArraySliceToken: PathToken {
         self.operation = operation
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -59,6 +60,7 @@ class ArraySliceToken: PathToken {
         }
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,

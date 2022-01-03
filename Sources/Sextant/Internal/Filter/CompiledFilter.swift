@@ -9,7 +9,7 @@ class CompiledFilter: Filter {
     }
 
     @inlinable @inline(__always)
-    override func apply(predicateContext: PredicateContext) -> PredicateApply {
+    override func apply(predicateContext: PredicateContext) -> EvaluatorResult {
         return predicate.apply(predicateContext: predicateContext)
     }
 

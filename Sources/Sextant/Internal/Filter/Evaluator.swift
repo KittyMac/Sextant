@@ -2,8 +2,8 @@ import Foundation
 import Hitch
 
 private typealias EvaluatorBlock = (_ left: ValueNode?,
-                                        _ right: ValueNode?,
-                                        _ context: PredicateContext) -> EvaluatorResult
+                                    _ right: ValueNode?,
+                                    _ context: PredicateContext) -> EvaluatorResult
 
 enum EvaluatorResult {
     case `true`
@@ -21,57 +21,60 @@ enum EvaluatorResult {
     }
 }
 
-class Evaluator {
+enum Evaluator {
 
-    fileprivate let block: EvaluatorBlock
-
-    init?(relationalOperator: RelationalOperator) {
+    @inline(__always)
+    fileprivate static func block(relationalOperator: RelationalOperator) -> EvaluatorBlock {
         switch relationalOperator {
         case .GTE:
-            block = evaluateGTE
+            return evaluateGTE
         case .LTE:
-            block = evaluateLTE
+            return evaluateLTE
         case .EQ:
-            block = evaluateEQ
+            return evaluateEQ
         case .TSEQ:
-            block = evaluateTSEQ
+            return evaluateTSEQ
         case .NE:
-            block = evaluateNE
+            return evaluateNE
         case .TSNE:
-            block = evaluateTSNE
+            return evaluateTSNE
         case .LT:
-            block = evaluateLT
+            return evaluateLT
         case .GT:
-            block = evaluateGT
+            return evaluateGT
         case .REGEX:
-            block = evaluateREGEX
+            return evaluateREGEX
         case .NIN:
-            block = evaluateNIN
+            return evaluateNIN
         case .IN:
-            block = evaluateIN
+            return evaluateIN
         case .CONTAINS:
-            block = evaluateCONTAINS
+            return evaluateCONTAINS
         case .ALL:
-            block = evaluateALL
+            return evaluateALL
         case .SIZE:
-            block = evaluateSIZE
+            return evaluateSIZE
         case .EXISTS:
-            block = evaluateEXISTS
+            return evaluateEXISTS
         case .TYPE:
-            block = evaluateTYPE
+            return evaluateTYPE
         case .EMPTY:
-            block = evaluateEMPTY
+            return evaluateEMPTY
         case .SUBSETOF:
-            block = evaluateSUBSETOF
+            return evaluateSUBSETOF
         case .ANYOF:
-            block = evaluateANYOF
+            return evaluateANYOF
         case .NONEOF:
-            block = evaluateNONEOF
+            return evaluateNONEOF
         }
     }
 
-    func evaluate(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
-        block(left, right, context)
+    @inlinable @inline(__always)
+    static func evaluate(relationalOperator: RelationalOperator,
+                         left: ValueNode?,
+                         right: ValueNode?,
+                         context: PredicateContext) -> EvaluatorResult {
+        return block(relationalOperator: relationalOperator)(left, right, context)
     }
 }
 

@@ -7,13 +7,13 @@ struct PathNode: ValueNode {
     let path: Path
 
     let existsCheck: Bool
-    let shouldExists: Bool
+    let pathShouldExists: Bool
 
     init(prebuiltPath: Path) {
         self.path = prebuiltPath
         self.pathString = prebuiltPath.description.hitch()
         self.existsCheck = false
-        self.shouldExists = false
+        self.pathShouldExists = false
     }
 
     init(path pathString: Hitch,
@@ -23,7 +23,7 @@ struct PathNode: ValueNode {
         self.pathString = pathString
         self.path = prebuiltPath
         self.existsCheck = existsCheck
-        self.shouldExists = shouldExists
+        self.pathShouldExists = shouldExists
     }
 
     init?(path pathString: Hitch,
@@ -31,7 +31,7 @@ struct PathNode: ValueNode {
          shouldExists: Bool) {
         self.pathString = pathString
         self.existsCheck = existsCheck
-        self.shouldExists = shouldExists
+        self.pathShouldExists = shouldExists
 
         guard let path = PathCompiler.compile(query: pathString) else {
             return nil
@@ -39,16 +39,20 @@ struct PathNode: ValueNode {
         self.path = path
     }
 
-    func copy(existsCheck: Bool,
-              shouldExists: Bool) -> PathNode {
+    func copyForExistsCheck() -> ValueNode {
+        guard existsCheck == false else { return self }
         return PathNode(path: pathString,
                         prebuiltPath: path,
-                        existsCheck: existsCheck,
-                        shouldExists: shouldExists)
+                        existsCheck: true,
+                        shouldExists: pathShouldExists)
+    }
+
+    func shouldExists() -> Bool {
+        return pathShouldExists
     }
 
     var description: String {
-        if existsCheck && shouldExists == false {
+        if existsCheck && pathShouldExists == false {
             return "!\(path.description)"
         }
         return path.description

@@ -30,6 +30,7 @@ class PredicatePathToken: PathToken {
         return true
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -38,11 +39,9 @@ class PredicatePathToken: PathToken {
             if accept(jsonObject: jsonObject,
                       rootJsonObject: evaluationContext.rootJsonObject,
                       evaluationContext: evaluationContext) {
-                let op = nullPath()
-
                 if let next = next {
                     let result = next.evaluate(currentPath: currentPath,
-                                               parentPath: op,
+                                               parentPath: NullPath.shared,
                                                jsonObject: jsonObject,
                                                evaluationContext: evaluationContext)
                     if result != .done {
@@ -50,7 +49,7 @@ class PredicatePathToken: PathToken {
                     }
                 } else {
                     return evaluationContext.add(path: currentPath,
-                                                 operation: op,
+                                                 operation: NullPath.shared,
                                                  jsonObject: jsonObject)
                 }
             }
@@ -94,6 +93,7 @@ class PredicatePathToken: PathToken {
         return true
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,
@@ -102,11 +102,9 @@ class PredicatePathToken: PathToken {
             if accept(jsonElement: jsonElement,
                       rootJsonElement: evaluationContext.rootJsonElement,
                       evaluationContext: evaluationContext) {
-                let op = nullPath()
-
                 if let next = next {
                     let result = next.evaluate(currentPath: currentPath,
-                                               parentPath: op,
+                                               parentPath: NullPath.shared,
                                                jsonElement: jsonElement,
                                                evaluationContext: evaluationContext)
                     if result != .done {
@@ -114,7 +112,7 @@ class PredicatePathToken: PathToken {
                     }
                 } else {
                     return evaluationContext.add(path: currentPath,
-                                                 operation: op,
+                                                 operation: NullPath.shared,
                                                  jsonElement: jsonElement)
                 }
             }

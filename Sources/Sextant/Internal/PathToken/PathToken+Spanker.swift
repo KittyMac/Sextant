@@ -25,7 +25,7 @@ extension PathToken {
                 jsonElement: JsonElement,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
-        let path = nullPath()
+        let path = NullPath.shared
 
         let effectiveIndex = arrayIndex < 0 ? jsonElement.count + arrayIndex : arrayIndex
 
@@ -87,7 +87,7 @@ extension PathToken {
                                                  property: property,
                                                  wrap: .singleQuote, {
                         evaluationContext.add(path: currentPath,
-                                                 operation: nullPath(),
+                                                 operation: NullPath.shared,
                                                  jsonObject: NSNull())
                     }) == .aborted {
                         return .aborted
@@ -98,7 +98,7 @@ extension PathToken {
                                                  property: property,
                                                  wrap: .singleQuote, {
                         evaluationContext.add(path: currentPath,
-                                                 operation: nullPath(),
+                                                 operation: NullPath.shared,
                                                  jsonObject: nil)
                     }) == .aborted {
                         return .aborted
@@ -118,7 +118,7 @@ extension PathToken {
                                          property: property,
                                          wrap: .singleQuote) {
                 next.evaluate(currentPath: currentPath,
-                                           parentPath: nullPath(),
+                                           parentPath: NullPath.shared,
                                            jsonElement: propertyVal ?? JsonElement.null,
                                            evaluationContext: evaluationContext)
             }
@@ -130,7 +130,7 @@ extension PathToken {
                                          property: property,
                                          wrap: .singleQuote, {
                 evaluationContext.add(path: currentPath,
-                                      operation: nullPath(),
+                                      operation: NullPath.shared,
                                       jsonElement: propertyVal ?? JsonElement.null)
             }) == .aborted {
                 return .aborted

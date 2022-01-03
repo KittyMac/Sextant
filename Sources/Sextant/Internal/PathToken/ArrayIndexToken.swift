@@ -9,6 +9,7 @@ class ArrayIndexToken: ArrayPathToken {
         self.indexOperation = operation
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -19,7 +20,7 @@ class ArrayIndexToken: ArrayPathToken {
         switch checkResult {
         case .skip:
             if evaluationContext.add(path: currentPath,
-                                     operation: nullPath(),
+                                     operation: NullPath.shared,
                                      jsonObject: nil) == .aborted {
                 return .aborted
             }
@@ -49,6 +50,7 @@ class ArrayIndexToken: ArrayPathToken {
         return .done
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,
@@ -59,7 +61,7 @@ class ArrayIndexToken: ArrayPathToken {
         switch checkResult {
         case .skip:
             if evaluationContext.add(path: currentPath,
-                                     operation: nullPath(),
+                                     operation: NullPath.shared,
                                      jsonObject: nil) == .aborted {
                 return .aborted
             }

@@ -3,6 +3,7 @@ import Hitch
 import Spanker
 
 class PropertyPathToken: PathToken {
+    var property: Hitch?
     var properties: [Hitch]
     var wrap: UInt8
 
@@ -15,8 +16,13 @@ class PropertyPathToken: PathToken {
 
         self.properties = properties
         self.wrap = wrap
+
+        if properties.count == 1 {
+            property = properties.first
+        }
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -42,6 +48,7 @@ class PropertyPathToken: PathToken {
         return .done
     }
 
+    @inlinable @inline(__always)
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,
@@ -52,6 +59,13 @@ class PropertyPathToken: PathToken {
                 return .done
             }
             return .aborted
+        }
+
+        if let property = property {
+            return handle(property: property,
+                          currentPath: currentPath,
+                          jsonElement: jsonElement,
+                          evaluationContext: evaluationContext)
         }
 
         for property in properties {

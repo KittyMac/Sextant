@@ -11,7 +11,7 @@ class LogicalExpressionNode: ExpressionNode {
     }
 
     @inlinable @inline(__always)
-    override func apply(predicateContext: PredicateContext) -> PredicateApply {
+    override func apply(predicateContext: PredicateContext) -> EvaluatorResult {
         if op == LogicalOperator.logicalOperatorOR() {
             for expression in chain {
                 let result = expression.apply(predicateContext: predicateContext)

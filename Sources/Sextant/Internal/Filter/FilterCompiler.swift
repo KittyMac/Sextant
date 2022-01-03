@@ -177,15 +177,14 @@ final class FilterCompiler {
 
         filter.position = savepoint
 
-        guard let pathNode = left as? PathNode else {
+        guard left.typeName == .path else {
             error("path node expected")
             return nil
         }
 
-        return RelationalExpressionNode(left: pathNode.copy(existsCheck: true,
-                                                            shouldExists: pathNode.shouldExists),
+        return RelationalExpressionNode(left: left.copyForExistsCheck(),
                                         relationalOperator: .EXISTS,
-                                        right: pathNode.shouldExists ? BooleanNode.true : BooleanNode.false)
+                                        right: left.shouldExists() ? BooleanNode.true : BooleanNode.false)
     }
 
     func readRelationalOperator() -> RelationalOperator? {

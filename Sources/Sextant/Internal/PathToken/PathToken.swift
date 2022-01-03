@@ -34,7 +34,7 @@ class PathToken: CustomStringConvertible {
                 jsonObject: JsonArray,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
-        let path = nullPath()
+        let path = NullPath.shared
 
         let effectiveIndex = arrayIndex < 0 ? jsonObject.count + arrayIndex : arrayIndex
 
@@ -80,7 +80,7 @@ class PathToken: CustomStringConvertible {
                 jsonObject: JsonAny,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
-        let path = nullPath()
+        let path = NullPath.shared
 
         let propertyVal = read(property: property,
                                jsonObject: jsonObject,

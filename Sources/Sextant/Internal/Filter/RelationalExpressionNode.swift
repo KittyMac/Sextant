@@ -15,49 +15,48 @@ class RelationalExpressionNode: ExpressionNode {
     }
 
     @inlinable @inline(__always)
-    override func apply(predicateContext: PredicateContext) -> PredicateApply {
-        var left: ValueNode = self.left
-        var right: ValueNode = self.right
-
-        if left.typeName == .path {
-            guard var tmp = left as? PathNode else { return .error }
-
-            // SourceMac-Note: we support the "EXISTS" token, event if it's similar (and so redoundant) to don't use operator and right value.
-            if relationalOperator == .EXISTS && tmp.existsCheck == false {
-                tmp = tmp.copy(existsCheck: true,
-                               shouldExists: tmp.shouldExists)
+    override func apply(predicateContext: PredicateContext) -> EvaluatorResult {
+        // Note: this is broken out verbosely to avoid performance problems caused by copy of a value type.
+        if left.typeName != .path && right.typeName != .path {
+            return Evaluator.evaluate(relationalOperator: relationalOperator,
+                                      left: left,
+                                      right: right,
+                                      context: predicateContext)
+        } else if left.typeName == .path && right.typeName != .path {
+            if relationalOperator == .EXISTS {
+                guard let left = left.copyForExistsCheck().evaluate(context: predicateContext, options: .default) else { return .error }
+                return Evaluator.evaluate(relationalOperator: relationalOperator,
+                                          left: left,
+                                          right: right,
+                                          context: predicateContext)
+            } else {
+                guard let left = left.evaluate(context: predicateContext, options: .default) else { return .error }
+                return Evaluator.evaluate(relationalOperator: relationalOperator,
+                                          left: left,
+                                          right: right,
+                                          context: predicateContext)
             }
-
-            guard let result = tmp.evaluate(context: predicateContext, options: .default) else {
-                return .error
+        } else if left.typeName != .path && right.typeName == .path {
+            guard let right = right.evaluate(context: predicateContext, options: .default) else { return .error }
+           return Evaluator.evaluate(relationalOperator: relationalOperator,
+                                     left: left,
+                                     right: right,
+                                     context: predicateContext)
+        } else {
+            guard let right = right.evaluate(context: predicateContext, options: .default) else { return .error }
+            if relationalOperator == .EXISTS {
+                guard let left = left.copyForExistsCheck().evaluate(context: predicateContext, options: .default) else { return .error }
+                return Evaluator.evaluate(relationalOperator: relationalOperator,
+                                          left: left,
+                                          right: right,
+                                          context: predicateContext)
+            } else {
+                guard let left = left.evaluate(context: predicateContext, options: .default) else { return .error }
+                return Evaluator.evaluate(relationalOperator: relationalOperator,
+                                          left: left,
+                                          right: right,
+                                          context: predicateContext)
             }
-            left = result
-        }
-
-        if right.typeName == .path {
-            guard let tmp = right as? PathNode else { return .error }
-
-            guard let result = tmp.evaluate(context: predicateContext, options: .default) else {
-                return .error
-            }
-            right = result
-        }
-
-        guard let evaluator = Evaluator(relationalOperator: relationalOperator) else {
-            return .error
-        }
-
-        let result = evaluator.evaluate(left: left,
-                                        right: right,
-                                        context: predicateContext)
-
-        switch result {
-        case .true:
-            return .true
-        case .false:
-            return .false
-        case .error:
-            return .error
         }
     }
 

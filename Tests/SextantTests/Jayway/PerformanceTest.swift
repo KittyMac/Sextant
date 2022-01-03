@@ -44,6 +44,7 @@ class PerformanceTest: TestsBase {
     func testPerformance1() {
         // 0.881
         // 0.891
+        // 0.878
         let path: Hitch = "$..type"
         
         XCTAssertEqualAny(large0.query(values: path)?.count, 17906)
@@ -64,6 +65,7 @@ class PerformanceTest: TestsBase {
         // 0.088
         // 0.086
         // 0.081
+        // 0.080
         let path: Hitch = "$..type"
         
         largeData0.parsed { json in
@@ -92,6 +94,8 @@ class PerformanceTest: TestsBase {
         // 0.062
         // 0.054
         // 0.035
+        // 0.029
+        // 0.026
         
         let path: Hitch = "$[?(@.payload.ref=='master')].payload"
 
@@ -122,6 +126,7 @@ class PerformanceTest: TestsBase {
         // 0.201
         // 0.184
         // 0.170
+        // 0.159
         let path: Hitch = "$..repo[?(@.name =~ /-/)]"
 
         largeData0.parsed { json in

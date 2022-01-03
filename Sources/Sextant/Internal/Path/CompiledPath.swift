@@ -63,10 +63,8 @@ struct CompiledPath: Path {
         evaluationContext.reset(rootJsonObject: rootJsonObject,
                                 options: options)
 
-        let op = nullPath()
-
         let result = root.evaluate(currentPath: Hitch.empty,
-                                   parentPath: op,
+                                   parentPath: NullPath.shared,
                                    jsonObject: jsonObject,
                                    evaluationContext: evaluationContext)
         switch result {
@@ -85,10 +83,8 @@ struct CompiledPath: Path {
         evaluationContext.reset(rootJsonElement: rootJsonElement,
                                 options: options)
 
-        let op = nullPath()
-
         let result = root.evaluate(currentPath: Hitch.empty,
-                                   parentPath: op,
+                                   parentPath: NullPath.shared,
                                    jsonElement: jsonElement,
                                    evaluationContext: evaluationContext)
         switch result {
