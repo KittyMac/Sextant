@@ -84,23 +84,23 @@ extension PathToken {
                 if jsonElement.type == .dictionary,
                    jsonElement.contains(key: property) {
                     if Hitch.appending(hitch: currentPath,
-                                                 property: property,
-                                                 wrap: .singleQuote, {
-                        evaluationContext.add(path: currentPath,
-                                                 operation: NullPath.shared,
-                                                 jsonObject: NSNull())
-                    }) == .aborted {
+                                       property: property,
+                                       wrap: .singleQuote, {
+                                        evaluationContext.add(path: currentPath,
+                                                              operation: NullPath.shared,
+                                                              jsonObject: NSNull())
+                                       }) == .aborted {
                         return .aborted
                     }
 
                 } else {
                     if Hitch.appending(hitch: currentPath,
-                                                 property: property,
-                                                 wrap: .singleQuote, {
-                        evaluationContext.add(path: currentPath,
-                                                 operation: NullPath.shared,
-                                                 jsonObject: nil)
-                    }) == .aborted {
+                                       property: property,
+                                       wrap: .singleQuote, {
+                                        evaluationContext.add(path: currentPath,
+                                                              operation: NullPath.shared,
+                                                              jsonObject: nil)
+                                       }) == .aborted {
                         return .aborted
                     }
                 }
@@ -118,17 +118,17 @@ extension PathToken {
                                          property: property,
                                          wrap: .singleQuote) {
                 next.evaluate(currentPath: currentPath,
-                                           parentPath: NullPath.shared,
-                                           jsonElement: propertyVal ?? JsonElement.null,
-                                           evaluationContext: evaluationContext)
+                              parentPath: NullPath.shared,
+                              jsonElement: propertyVal ?? JsonElement.null,
+                              evaluationContext: evaluationContext)
             }
             if result != .done {
                 return result
             }
         } else {
             if Hitch.appending(hitch: currentPath,
-                                         property: property,
-                                         wrap: .singleQuote, {
+                               property: property,
+                               wrap: .singleQuote, {
                 evaluationContext.add(path: currentPath,
                                       operation: NullPath.shared,
                                       jsonElement: propertyVal ?? JsonElement.null)

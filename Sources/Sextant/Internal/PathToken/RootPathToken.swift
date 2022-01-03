@@ -6,17 +6,21 @@ final class RootPathToken: PathToken {
     weak var tail: PathToken?
     var tokenCount = 0
     var rootToken = Hitch(capacity: 1)
+    let isRootPathToken: Bool
 
     init(root: UInt8) {
         rootToken.append(root)
         tokenCount = 1
 
+        isRootPathToken = root == UInt8.dollarSign
+
         super.init()
         tail = self
     }
 
+    @inlinable @inline(__always)
     func isRootPath() -> Bool {
-        return rootToken[0] == UInt8.dollarSign
+        return isRootPathToken
     }
 
     func isFunctionPath() -> Bool {

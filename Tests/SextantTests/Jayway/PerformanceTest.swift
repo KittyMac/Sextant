@@ -126,7 +126,7 @@ class PerformanceTest: TestsBase {
         // 0.201
         // 0.184
         // 0.170
-        // 0.159
+        // 0.157
         let path: Hitch = "$..repo[?(@.name =~ /-/)]"
 
         largeData0.parsed { json in

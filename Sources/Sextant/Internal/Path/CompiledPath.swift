@@ -7,6 +7,8 @@ struct CompiledPath: Path {
     var root: RootPathToken
     let rootPath: Bool
 
+    var currentPathEmpty = Hitch(capacity: 128)
+
     var evaluationContext: EvaluationContext?
 
     init(root: RootPathToken, isRootPath: Bool) {
@@ -63,7 +65,7 @@ struct CompiledPath: Path {
         evaluationContext.reset(rootJsonObject: rootJsonObject,
                                 options: options)
 
-        let result = root.evaluate(currentPath: Hitch.empty,
+        let result = root.evaluate(currentPath: currentPathEmpty,
                                    parentPath: NullPath.shared,
                                    jsonObject: jsonObject,
                                    evaluationContext: evaluationContext)
@@ -83,7 +85,7 @@ struct CompiledPath: Path {
         evaluationContext.reset(rootJsonElement: rootJsonElement,
                                 options: options)
 
-        let result = root.evaluate(currentPath: Hitch.empty,
+        let result = root.evaluate(currentPath: currentPathEmpty,
                                    parentPath: NullPath.shared,
                                    jsonElement: jsonElement,
                                    evaluationContext: evaluationContext)
@@ -96,14 +98,17 @@ struct CompiledPath: Path {
         }
     }
 
+    @inlinable @inline(__always)
     func isDefinite() -> Bool {
         return root.isPathDefinite()
     }
 
+    @inlinable @inline(__always)
     func isFunctionPath() -> Bool {
         return root.isFunctionPath()
     }
 
+    @inlinable @inline(__always)
     func isRootPath() -> Bool {
         return rootPath
     }

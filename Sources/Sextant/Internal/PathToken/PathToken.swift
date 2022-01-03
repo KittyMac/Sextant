@@ -6,7 +6,7 @@ class PathToken: CustomStringConvertible {
     weak var prev: PathToken?
     var next: PathToken?
 
-    @inlinable
+    @inlinable @inline(__always)
     func checkArray(currentPath: Hitch,
                     jsonObject: JsonAny,
                     evaluationContext: EvaluationContext) -> ArrayPathCheck {
@@ -28,7 +28,7 @@ class PathToken: CustomStringConvertible {
         return .skip
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func handle(arrayIndex: Int,
                 currentPath: Hitch,
                 jsonObject: JsonArray,
@@ -74,7 +74,7 @@ class PathToken: CustomStringConvertible {
         return .done
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func handle(property: Hitch,
                 currentPath: Hitch,
                 jsonObject: JsonAny,
@@ -153,7 +153,7 @@ class PathToken: CustomStringConvertible {
         return .done
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func has(property: Hitch,
              jsonObject: JsonAny,
              evaluationContext: EvaluationContext) -> Bool {
@@ -162,7 +162,7 @@ class PathToken: CustomStringConvertible {
                     evaluationContext: evaluationContext) != nil
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func read(property: Hitch,
               jsonObject: JsonAny,
               evaluationContext: EvaluationContext) -> JsonAny {
@@ -177,7 +177,7 @@ class PathToken: CustomStringConvertible {
         return nil
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func evaluate(currentPath: Hitch,
                   parentPath: Path,
                   jsonObject: JsonAny,
@@ -185,7 +185,7 @@ class PathToken: CustomStringConvertible {
         fatalError("should be overwritten")
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func evaluate(currentPath: Hitch,
                   parentPath: Path,
                   jsonElement: JsonElement,
@@ -193,28 +193,28 @@ class PathToken: CustomStringConvertible {
         fatalError("should be overwritten")
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func isRoot() -> Bool {
         return prev == nil
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func isLeaf() -> Bool {
         return next == nil
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func isUpstreamDefinite() -> Bool {
         guard let prev = prev else { return true }
         return prev.isTokenDefinite() && prev.isUpstreamDefinite()
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func isTokenDefinite() -> Bool {
         fatalError("should be overwritten")
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func isPathDefinite() -> Bool {
         if let next = next,
            isTokenDefinite() {
@@ -223,12 +223,12 @@ class PathToken: CustomStringConvertible {
         return isTokenDefinite()
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     func pathFragment() -> String {
         fatalError("should be overwritten")
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     @discardableResult
     func append(tail token: PathToken) -> PathToken {
         next = token
@@ -236,13 +236,13 @@ class PathToken: CustomStringConvertible {
         return token
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     @discardableResult
     func append(token: PathToken) -> PathToken {
         return append(tail: token)
     }
 
-    @inlinable
+    @inlinable @inline(__always)
     var description: String {
         if let next = next {
             return pathFragment() + next.description
