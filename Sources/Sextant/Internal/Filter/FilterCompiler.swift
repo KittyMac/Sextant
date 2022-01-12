@@ -34,10 +34,6 @@ private let kNotChar = UInt8.bang
 private let kPatternChar = UInt8.forwardSlash
 private let kIgnoreCaseChar = UInt8.i
 
-private let nullHitch = Hitch("null")
-private let trueHitch = Hitch("true")
-private let falseHitch = Hitch("false")
-
 final class FilterCompiler {
     var filter: CharacterIndex
 

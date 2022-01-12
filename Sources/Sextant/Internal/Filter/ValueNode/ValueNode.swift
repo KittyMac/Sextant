@@ -3,7 +3,6 @@ import Hitch
 
 private let boolHitch = Hitch("bool")
 private let jsonHitch = Hitch("json")
-private let nullHitch = Hitch("null")
 private let numberHitch = Hitch("number")
 private let pathHitch = Hitch("path")
 private let patternHitch = Hitch("pattern")

@@ -1,5 +1,6 @@
 const {JSONPath} = require('jsonpath-plus');
 const jp = require('jsonpath');
+const jpf = require('jsonpath-faster');
 
 const fs = require('fs');
 
@@ -15,6 +16,33 @@ function runJsonPathTest(title, json, path, result) {
     for(i = 0; i < 3; i++) {
         var start = process.hrtime();
         let results = jp.query(json, path);
+        let queryCount = results.length;
+        if (queryCount == 0) {
+            print(jp.parse(path));
+        }
+        var stop = process.hrtime(start);
+        var thisTime = (stop[0] * 1e9 + stop[1])/1e9;
+        
+        if (queryCount != result) {
+            print(`${title} - Failed - ${queryCount} != ${result}`)
+        } else {
+            console.log(`  ${title}: ${thisTime} seconds`);
+        }
+        
+        totalTime += thisTime;
+        
+    }
+    totalTime /= 3
+    
+    console.log(`${title}: ${totalTime} seconds`);
+}
+
+function runJsonPathFasterTest(title, json, path, result) {
+    
+    var totalTime = 0;
+    for(i = 0; i < 10; i++) {
+        var start = process.hrtime();
+        let results = jpf.query(json, path);
         let queryCount = results.length;
         if (queryCount == 0) {
             print(jp.parse(path));
@@ -64,6 +92,12 @@ try {
     let json = JSON.parse(data);
     
     print(json.length)
+    
+    print("jsonpath-faster")
+    runJsonPathFasterTest("Test 1", json, "$[*]", 11351)
+    runJsonPathFasterTest("Test 2", json, "$..type", 17906)
+    runJsonPathFasterTest("Test 3", json, `$[?(@.payload.ref==='master')].payload`, 388)
+    runJsonPathFasterTest("Test 4", json, `$..[?(@.repo.name.match(/-/i))].repo`, 4209)
     
     print("jsonpath")
     runJsonPathTest("Test 1", json, "$[*]", 11351)

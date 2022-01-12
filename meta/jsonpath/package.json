@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "fs": "0.0.1-security",
-    "jsonpath-plus": "^0.18.1",
-    "jsonpath": "^1.1.1"
+    "jsonpath": "^1.1.1",
+    "jsonpath-faster": "^0.0.12",
+    "jsonpath-plus": "^0.18.1"
   }
 }

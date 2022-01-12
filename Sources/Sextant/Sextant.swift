@@ -6,7 +6,38 @@ public typealias JsonAny = Any?
 public typealias JsonArray = [JsonAny]
 public typealias JsonDictionary = [String: JsonAny]
 
+@usableFromInline
+let nullHitch = Hitch("null")
+
+@usableFromInline
+let trueHitch = Hitch("true")
+
+@usableFromInline
+let falseHitch = Hitch("false")
+
 extension JsonAny {
+
+    @inlinable @inline(__always)
+    func toBool() -> Bool? {
+
+        switch self {
+        case let bool as Bool:
+            return bool
+        case let int as Int:
+            return int == 0 ? false : true
+        case let double as Double:
+            return double == 0 ? false : true
+        case let string as String:
+            return string == "true"
+        case let hitch as Hitch:
+            return hitch == trueHitch
+        case let halfHitch as HalfHitch:
+            return halfHitch == trueHitch
+        default:
+            return nil
+        }
+    }
+
     @inlinable @inline(__always)
     func toDouble() -> Double? {
         switch self {

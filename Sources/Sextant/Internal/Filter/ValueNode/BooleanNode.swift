@@ -1,9 +1,6 @@
 import Foundation
 import Hitch
 
-private let trueHitch = Hitch("true")
-private let falseHitch = Hitch("false")
-
 struct BooleanNode: ValueNode, Equatable {
     static let `true` = BooleanNode(value: true)
     static let `false` = BooleanNode(value: false)

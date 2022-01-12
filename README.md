@@ -104,7 +104,7 @@ Sextant is fully compatible with the Swift Package Manager
 
 ```
 dependencies: [
-    .package(url: "https://github.com/KittyMac/Sextant.git", .branch("main"))
+    .package(url: "https://github.com/KittyMac/Sextant.git", .upToNextMinor(from: "0.3.0"))
 ],
 ```
 

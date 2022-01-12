@@ -174,6 +174,16 @@ class ComplianceTest: TestsBase {
         let json = #"[ { "title": "Sayings of the Century", "bookmarks": [ { "page": 40 } ] }, { "title": "Sword of Honour", "bookmarks": [ { "page": 35 }, { "page": 45 } ] }, { "title": "Moby Dick", "bookmarks": [ { "page": 3035 }, { "page": 45 } ] } ]"#
         XCTAssertEqualAny(json.query(values: "$[*].bookmarks[?(@.page == 45)]^^^"), [])
     }
+    
+    func test_JsonPathComparison26() {
+        let json = #"[{"d": 1}, {"d": 2}, {"d": 1}, {"d": 3}, {"d": 4}]"#
+        XCTAssertEqualAny(json.query(values: "$[?(@.d in [2, 3])]"), [["d":2],["d":3]])
+    }
+    
+    func test_JsonPathComparison27() {
+        let json = #"[{"d": [1, 2, 3]}, {"d": [2]}, {"d": [1]}, {"d": [3, 4]}, {"d": [4, 2]}]"#
+        XCTAssertEqualAny(json.query(values: "$[?(2 in @.d)]"), [["d":[1,2,3]],["d":[2]],["d":[4,2]]])
+    }
 }
 
 extension ComplianceTest {
