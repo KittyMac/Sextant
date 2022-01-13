@@ -1,6 +1,7 @@
 import Foundation
 import Hitch
 import Spanker
+import Chronometer
 
 public typealias JsonAny = Any?
 public typealias JsonArray = [JsonAny]
@@ -102,6 +103,24 @@ extension JsonAny {
         default:
             return nil
         }
+    }
+
+    @inlinable @inline(__always)
+    func toDate() -> Date? {
+        var dateString = ""
+
+        switch self {
+        case let string as String:
+            dateString = string
+        case let hitch as Hitch:
+            dateString = hitch.description
+        case let halfHitch as HalfHitch:
+            dateString = halfHitch.description
+        default:
+            return nil
+        }
+
+        return dateString.date()
     }
 }
 

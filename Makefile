@@ -19,7 +19,6 @@ xcode:
 	meta/addBuildPhase Sextant.xcodeproj/project.pbxproj 'Sextant::Sextant' 'cd $${SRCROOT}; ./meta/CombinedBuildPhases.sh'
 
 docker:
-	-DOCKER_HOST=tcp://192.168.1.170:2376 docker buildx create --name cluster --platform linux/arm/v7
 	-DOCKER_HOST=tcp://192.168.1.209:2376 docker buildx create --name cluster --platform linux/arm64/v8 --append
 	-DOCKER_HOST=tcp://192.168.1.198:2376 docker buildx create --name cluster --platform linux/amd64 --append
 	-docker buildx use cluster

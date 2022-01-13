@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Chronometer",
+        "repositoryURL": "https://github.com/KittyMac/Chronometer.git",
+        "state": {
+          "branch": null,
+          "revision": "35289a90ee0bb4a76f8acd647b773aeacf4d8856",
+          "version": "0.1.2"
+        }
+      },
+      {
         "package": "Hitch",
         "repositoryURL": "https://github.com/KittyMac/Hitch.git",
         "state": {

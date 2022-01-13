@@ -11,6 +11,7 @@ let package = Package(
         .library(name: "Sextant", targets: ["Sextant"])
     ],
     dependencies: [
+        .package(url: "https://github.com/KittyMac/Chronometer.git", .upToNextMinor(from: "0.1.0")),
         .package(url: "https://github.com/KittyMac/Hitch.git", .upToNextMinor(from: "0.1.0")),
         .package(url: "https://github.com/KittyMac/Spanker.git", .upToNextMinor(from: "0.1.0")),
     ],
@@ -19,7 +20,8 @@ let package = Package(
             name: "Sextant",
             dependencies: [
                 "Hitch",
-                "Spanker"
+                "Spanker",
+                "Chronometer"
             ]),
         .testTarget(
             name: "SextantTests",

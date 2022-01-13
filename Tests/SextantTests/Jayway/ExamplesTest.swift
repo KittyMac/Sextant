@@ -119,6 +119,20 @@ class ExamplesTest: TestsBase {
             XCTAssertEqual(id, "66480799")
         }
     }
+    
+    func testSimple9() {
+        let data = #"{"DtCutOff":"2018-01-01 00:00:00","ServiceGroups":[{"ServiceName":"Service1","DtUpdate":"2021-11-22 00:00:00","OrderNumber":"123456","Active":"true"},{"ServiceName":"Service2","DtUpdate":"2021-11-20 00:00:00","OrderNumber":"123456","Active":true},{"ServiceName":"Service3","DtUpdate":"2021-11-10 00:00:00","OrderNumber":"123456","Active":false}]}"#
+            
+        data.parsed { json in
+            guard let json = json else { XCTFail(); return }
+        
+            guard let isActive: Bool = json.query("$..ServiceGroups[*][?(@.ServiceName=='Service1')].Active") else { XCTFail(); return }
+            XCTAssertEqual(isActive, true)
+            
+            guard let date: Date = json.query("$..ServiceGroups[*][?(@.ServiceName=='Service1')].DtUpdate") else { XCTFail(); return }
+            XCTAssertEqual(date, "2021-11-22 00:00:00".date())
+        }
+    }
 }
 
 extension ExamplesTest {
