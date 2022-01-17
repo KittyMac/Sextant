@@ -17,6 +17,7 @@ class PerformanceTest: TestsBase {
     
     func testPerformance0() {
         // 0.007
+        // 0.005
         
         let path: Hitch = "$[*]"
         
@@ -28,6 +29,7 @@ class PerformanceTest: TestsBase {
     
     func testSpankerPerformance0() {
         // 0.006
+        // 0.005
         
         let path: Hitch = "$[*]"
 

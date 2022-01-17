@@ -126,10 +126,10 @@ class ExamplesTest: TestsBase {
         data.parsed { json in
             guard let json = json else { XCTFail(); return }
         
-            guard let isActive: Bool = json.query("$..ServiceGroups[*][?(@.ServiceName=='Service1')].Active") else { XCTFail(); return }
+            guard let isActive: Bool = json.query("$.ServiceGroups[*][?(@.ServiceName=='Service1')].Active") else { XCTFail(); return }
             XCTAssertEqual(isActive, true)
             
-            guard let date: Date = json.query("$..ServiceGroups[*][?(@.ServiceName=='Service1')].DtUpdate") else { XCTFail(); return }
+            guard let date: Date = json.query("$.ServiceGroups[*][?(@.ServiceName=='Service1')].DtUpdate") else { XCTFail(); return }
             XCTAssertEqual(date, "2021-11-22 00:00:00".date())
         }
     }
