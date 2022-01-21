@@ -25,14 +25,12 @@ extension PathToken {
                 jsonElement: JsonElement,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
-        let path = NullPath.shared
-
         let effectiveIndex = arrayIndex < 0 ? jsonElement.count + arrayIndex : arrayIndex
 
         guard effectiveIndex >= 0 && effectiveIndex < jsonElement.count else {
             let result = Hitch.appending(hitch: currentPath, index: arrayIndex) {
                 evaluationContext.add(path: currentPath,
-                                      operation: path,
+                                      operation: NullPath.shared,
                                       jsonObject: nil)
             }
             if result == .aborted {
@@ -42,6 +40,10 @@ extension PathToken {
         }
 
         let evalHit = jsonElement[effectiveIndex] ?? JsonElement.null
+
+        let path = evaluationContext.options.contains(.updateOperation) ?
+            newPath(object: jsonElement, index: effectiveIndex, item: evalHit) :
+            NullPath.shared
 
         if isLeaf() {
             let result = Hitch.appending(hitch: currentPath, index: arrayIndex) {
@@ -71,6 +73,10 @@ extension PathToken {
                 jsonElement: JsonElement,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
+        let path = evaluationContext.options.contains(.updateOperation) ?
+            newPath(object: jsonElement, property: property) :
+            NullPath.shared
+
         let propertyVal = read(property: property,
                                jsonElement: jsonElement,
                                evaluationContext: evaluationContext)
@@ -87,7 +93,7 @@ extension PathToken {
                                        property: property,
                                        wrap: .singleQuote, {
                                         evaluationContext.add(path: currentPath,
-                                                              operation: NullPath.shared,
+                                                              operation: path,
                                                               jsonObject: NSNull())
                                        }) == .aborted {
                         return .aborted
@@ -98,7 +104,7 @@ extension PathToken {
                                        property: property,
                                        wrap: .singleQuote, {
                                         evaluationContext.add(path: currentPath,
-                                                              operation: NullPath.shared,
+                                                              operation: path,
                                                               jsonObject: nil)
                                        }) == .aborted {
                         return .aborted
@@ -118,7 +124,7 @@ extension PathToken {
                                          property: property,
                                          wrap: .singleQuote) {
                 next.evaluate(currentPath: currentPath,
-                              parentPath: NullPath.shared,
+                              parentPath: path,
                               jsonElement: propertyVal ?? JsonElement.null,
                               evaluationContext: evaluationContext)
             }
@@ -130,7 +136,7 @@ extension PathToken {
                                property: property,
                                wrap: .singleQuote, {
                 evaluationContext.add(path: currentPath,
-                                      operation: NullPath.shared,
+                                      operation: path,
                                       jsonElement: propertyVal ?? JsonElement.null)
             }) == .aborted {
                 return .aborted

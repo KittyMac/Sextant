@@ -30,7 +30,7 @@ extension ScanPathToken {
                 let result = Hitch.appending(hitch: currentPath, index: idx) {
                     walk(object: path,
                          currentPath: currentPath,
-                         parentPath: newPath(object: jsonArray, item: evalObject),
+                         parentPath: newPath(object: jsonArray, index: idx, item: evalObject),
                          jsonDictionary: evalObject,
                          evaluationContext: evaluationContext,
                          predicate: predicate)
@@ -44,7 +44,7 @@ extension ScanPathToken {
                 let result = Hitch.appending(hitch: currentPath, index: idx) {
                     walk(array: path,
                          currentPath: currentPath,
-                         parentPath: newPath(object: jsonArray, item: evalObject),
+                         parentPath: newPath(object: jsonArray, index: idx, item: evalObject),
                          jsonArray: evalObject,
                          evaluationContext: evaluationContext,
                          predicate: predicate)
@@ -89,7 +89,7 @@ extension ScanPathToken {
                                              wrap: .singleQuote) {
                     walk(object: object,
                          currentPath: currentPath,
-                         parentPath: newPath(object: jsonDictionary, item: property),
+                         parentPath: newPath(object: jsonDictionary, property: property.hitch()),
                          jsonDictionary: propertyObject,
                          evaluationContext: evaluationContext,
                          predicate: predicate)
@@ -104,7 +104,7 @@ extension ScanPathToken {
                                              wrap: .singleQuote) {
                     walk(array: object,
                          currentPath: currentPath,
-                         parentPath: newPath(object: jsonDictionary, item: property),
+                         parentPath: newPath(object: jsonDictionary, property: property.hitch()),
                          jsonArray: propertyObject,
                          evaluationContext: evaluationContext,
                          predicate: predicate)

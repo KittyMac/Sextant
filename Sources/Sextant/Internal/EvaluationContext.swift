@@ -8,6 +8,9 @@ final class EvaluationContext {
     var options: EvaluationOptions
 
     @usableFromInline
+    var updateOperations = [Path]()
+
+    @usableFromInline
     var allValueTypeResults = [JsonType?]()
     @usableFromInline
     var valueTypeResults = [JsonType?]()
@@ -89,6 +92,10 @@ final class EvaluationContext {
              operation: Path,
              jsonObject: JsonAny) -> EvaluationStatus {
 
+        if options.contains(.updateOperation) {
+            updateOperations.append(operation)
+        }
+
         if options.contains(.exportValues) {
             allValueTypeResults.append(nil)
             allValueResults.append(jsonObject)
@@ -108,6 +115,10 @@ final class EvaluationContext {
     func add(path: Hitch,
              operation: Path,
              jsonElement: JsonElement) -> EvaluationStatus {
+
+        if options.contains(.updateOperation) {
+            updateOperations.append(operation)
+        }
 
         if options.contains(.exportValues) {
             let jsonObject = jsonElement.reify(true)

@@ -8,4 +8,27 @@ struct NullPath: Path {
 
     @usableFromInline
     static let shared = NullPath()
+
+    @usableFromInline
+    var description: String {
+        return "null"
+    }
+
+    @usableFromInline
+    @discardableResult
+    func set(value: JsonAny) -> Bool {
+        return true
+    }
+
+    @usableFromInline
+    @discardableResult
+    func map(block: MapObjectBlock) -> Bool {
+        return true
+    }
+
+    @usableFromInline
+    @discardableResult
+    func filter(block: FilterObjectBlock) -> Bool {
+        return true
+    }
 }

@@ -62,11 +62,15 @@ struct CompiledPath: Path {
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext? {
         guard let evaluationContext = self.evaluationContext else { return nil }
 
+        let path = options.contains(.updateOperation) ?
+            newPath(rootObject: rootJsonObject, options: options) :
+            NullPath.shared
+
         evaluationContext.reset(rootJsonObject: rootJsonObject,
                                 options: options)
 
         let result = root.evaluate(currentPath: currentPathEmpty,
-                                   parentPath: NullPath.shared,
+                                   parentPath: path,
                                    jsonObject: jsonObject,
                                    evaluationContext: evaluationContext)
         switch result {
@@ -82,11 +86,15 @@ struct CompiledPath: Path {
     func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext? {
         guard let evaluationContext = self.evaluationContext else { return nil }
 
+        let path = options.contains(.updateOperation) ?
+            newPath(rootObject: rootJsonElement, options: options) :
+            NullPath.shared
+
         evaluationContext.reset(rootJsonElement: rootJsonElement,
                                 options: options)
 
         let result = root.evaluate(currentPath: currentPathEmpty,
-                                   parentPath: NullPath.shared,
+                                   parentPath: path,
                                    jsonElement: jsonElement,
                                    evaluationContext: evaluationContext)
         switch result {

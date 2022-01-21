@@ -134,6 +134,7 @@ struct EvaluationOptions: OptionSet {
 
     public static let exportPaths = EvaluationOptions(rawValue: 1 << 0)
     public static let exportValues = EvaluationOptions(rawValue: 1 << 1)
+    public static let updateOperation = EvaluationOptions(rawValue: 1 << 2)
 
     public static let `default`: EvaluationOptions = [.exportValues]
 }

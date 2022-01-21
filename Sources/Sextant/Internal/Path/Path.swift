@@ -2,6 +2,9 @@ import Foundation
 import Hitch
 import Spanker
 
+public typealias MapObjectBlock = (JsonAny, JsonAny) -> Void
+public typealias FilterObjectBlock = (JsonAny, JsonAny) -> Void
+
 @usableFromInline
 protocol Path: CustomStringConvertible {
     var parent: JsonAny { get }
@@ -10,12 +13,19 @@ protocol Path: CustomStringConvertible {
     func isDefinite() -> Bool
     func isFunctionPath() -> Bool
     func isRootPath() -> Bool
+
+    @discardableResult
+    func set(value: JsonAny) -> Bool
+    @discardableResult
+    func map(block: MapObjectBlock) -> Bool
+    @discardableResult
+    func filter(block: FilterObjectBlock) -> Bool
 }
 
 extension Path {
     @usableFromInline
     var description: String {
-        fatalError("should be overwritten")
+        return "<description missing>"
     }
 
     @usableFromInline
@@ -42,6 +52,24 @@ extension Path {
     func isRootPath() -> Bool {
         fatalError("should be overwritten")
     }
+
+    @usableFromInline
+    @discardableResult
+    func set(value: JsonAny) -> Bool {
+        fatalError("should be overwritten")
+    }
+
+    @usableFromInline
+    @discardableResult
+    func map(block: MapObjectBlock) -> Bool {
+        fatalError("should be overwritten")
+    }
+
+    @usableFromInline
+    @discardableResult
+    func filter(block: FilterObjectBlock) -> Bool {
+        fatalError("should be overwritten")
+    }
 }
 
 @inlinable @inline(__always)
@@ -51,8 +79,8 @@ internal func newPath(rootObject: JsonAny,
 }
 
 @inlinable @inline(__always)
-internal func newPath(object: JsonAny, item: JsonAny) -> Path {
-    return ArrayIndexPath(object: object, item: item)
+internal func newPath(object: JsonAny, index: Int, item: JsonAny) -> Path {
+    return ArrayIndexPath(object: object, index: index, item: item)
 }
 
 @inlinable @inline(__always)

@@ -15,4 +15,25 @@ struct RootPath: Path {
         parent = rootObject
         self.options = options
     }
+
+    @usableFromInline
+    @discardableResult
+    func set(value: JsonAny) -> Bool {
+        error("invalid set operation")
+        return false
+    }
+
+    @usableFromInline
+    @discardableResult
+    func map(block: MapObjectBlock) -> Bool {
+        error("invalid set operation")
+        return false
+    }
+
+    @usableFromInline
+    @discardableResult
+    func filter(block: FilterObjectBlock) -> Bool {
+        error("invalid set operation")
+        return false
+    }
 }

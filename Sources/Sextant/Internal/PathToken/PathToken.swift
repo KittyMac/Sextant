@@ -34,14 +34,12 @@ class PathToken: CustomStringConvertible {
                 jsonObject: JsonArray,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
-        let path = NullPath.shared
-
         let effectiveIndex = arrayIndex < 0 ? jsonObject.count + arrayIndex : arrayIndex
 
         guard effectiveIndex >= 0 && effectiveIndex < jsonObject.count else {
             let result = Hitch.appending(hitch: currentPath, index: arrayIndex) {
                 evaluationContext.add(path: currentPath,
-                                      operation: path,
+                                      operation: NullPath.shared,
                                       jsonObject: nil)
             }
             if result == .aborted {
@@ -51,6 +49,10 @@ class PathToken: CustomStringConvertible {
         }
 
         let evalHit = jsonObject[effectiveIndex]
+
+        let path = evaluationContext.options.contains(.updateOperation) ?
+            newPath(object: jsonObject, index: effectiveIndex, item: evalHit) :
+            NullPath.shared
 
         if isLeaf() {
             let result = Hitch.appending(hitch: currentPath, index: arrayIndex) {
@@ -80,11 +82,14 @@ class PathToken: CustomStringConvertible {
                 jsonObject: JsonAny,
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
-        let path = NullPath.shared
+        let path = evaluationContext.options.contains(.updateOperation) ?
+            newPath(object: jsonObject, property: property) :
+            NullPath.shared
 
         let propertyVal = read(property: property,
                                jsonObject: jsonObject,
                                evaluationContext: evaluationContext)
+
         if propertyVal == nil {
             // [From original source] Conditions below heavily depend on current token type (and its logic) and are not "universal",
             // so this code is quite dangerous (I'd rather rewrite it & move to PropertyPathToken and implemented

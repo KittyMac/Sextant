@@ -46,8 +46,13 @@ final class RootPathToken: PathToken {
                                  jsonObject: jsonObject,
                                  evaluationContext: evaluationContext)
         } else {
+
+            let path = evaluationContext.options.contains(.updateOperation) ?
+                parentPath :
+                NullPath.shared
+
             return evaluationContext.add(path: rootToken,
-                                         operation: NullPath.shared,
+                                         operation: path,
                                          jsonObject: jsonObject)
         }
     }
@@ -64,8 +69,13 @@ final class RootPathToken: PathToken {
                                  jsonElement: jsonElement,
                                  evaluationContext: evaluationContext)
         } else {
+
+            let path = evaluationContext.options.contains(.updateOperation) ?
+                parentPath :
+                NullPath.shared
+
             return evaluationContext.add(path: rootToken,
-                                         operation: NullPath.shared,
+                                         operation: path,
                                          jsonElement: jsonElement)
         }
     }
