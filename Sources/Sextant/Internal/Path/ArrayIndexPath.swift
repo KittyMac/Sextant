@@ -65,7 +65,9 @@ struct ArrayIndexPath: Path {
     func filter(block: FilterObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .array else { error("invalid set operation"); return false }
-        parentElement.valueArray = parentElement.valueArray.filter(block)
+        if block(parentElement.valueArray[index]) == false {
+            parentElement.valueArray.remove(at: index)
+        }
         return true
     }
 }

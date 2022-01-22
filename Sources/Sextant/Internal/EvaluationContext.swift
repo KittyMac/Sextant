@@ -32,7 +32,7 @@ final class EvaluationContext {
     var rootJsonObject: JsonAny = nil
 
     @usableFromInline
-    var rootJsonElement: JsonElement = JsonElement.null
+    var rootJsonElement: JsonElement = JsonElement.null()
 
     @usableFromInline
     var pathIsDefinite: Bool = false
@@ -75,7 +75,7 @@ final class EvaluationContext {
     func reset(rootJsonObject: JsonAny,
                options: EvaluationOptions) {
         self.rootJsonObject = rootJsonObject
-        self.rootJsonElement = JsonElement.null
+        self.rootJsonElement = JsonElement.null()
         reset(options: options)
     }
 

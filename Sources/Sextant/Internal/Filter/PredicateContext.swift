@@ -7,8 +7,8 @@ struct PredicateContext {
     var rootJsonObject: JsonAny = nil
     var pathObjectCache: [Hitch: JsonAny] = [:]
 
-    var jsonElement: JsonElement = JsonElement.null
-    var rootJsonElement: JsonElement = JsonElement.null
+    var jsonElement: JsonElement = JsonElement.null()
+    var rootJsonElement: JsonElement = JsonElement.null()
 
     init(jsonObject: JsonAny,
          rootJsonObject: JsonAny,

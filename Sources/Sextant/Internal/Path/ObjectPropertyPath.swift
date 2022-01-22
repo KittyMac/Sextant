@@ -61,21 +61,36 @@ struct ObjectPropertyPath: Path {
     @usableFromInline
     @discardableResult
     func set(value: JsonAny) -> Bool {
-        error("TO BE IMPLEMENTED")
-        return false
+        guard let parentElement = parentElement else { error("invalid set operation"); return false }
+        guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
+        guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
+        guard let index = parentElement.keyArray.firstIndex(of: propertyHalfHitch) else { error("invalid set operation"); return false }
+        parentElement.valueArray[index] = JsonElement(unknown: value)
+        return true
     }
 
     @usableFromInline
     @discardableResult
     func forEach(block: ForEachObjectBlock) -> Bool {
-        error("TO BE IMPLEMENTED")
-        return false
+        guard let parentElement = parentElement else { error("invalid set operation"); return false }
+        guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
+        guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
+        guard let index = parentElement.keyArray.firstIndex(of: propertyHalfHitch) else { error("invalid set operation"); return false }
+        block(parentElement.valueArray[index])
+        return true
     }
 
     @usableFromInline
     @discardableResult
     func filter(block: FilterObjectBlock) -> Bool {
-        error("TO BE IMPLEMENTED")
-        return false
+        guard let parentElement = parentElement else { error("invalid set operation"); return false }
+        guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
+        guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
+        guard let index = parentElement.keyArray.firstIndex(of: propertyHalfHitch) else { error("invalid set operation"); return false }
+        if block(parentElement.valueArray[index]) == false {
+            parentElement.valueArray.remove(at: index)
+            parentElement.keyArray.remove(at: index)
+        }
+        return true
     }
 }

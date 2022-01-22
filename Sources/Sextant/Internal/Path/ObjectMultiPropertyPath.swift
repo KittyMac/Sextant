@@ -38,21 +38,21 @@ struct ObjectMultiPropertyPath: Path {
     @usableFromInline
     @discardableResult
     func set(value: JsonAny) -> Bool {
-        error("TO BE IMPLEMENTED")
+        fatalError("TO BE IMPLEMENTED")
         return false
     }
 
     @usableFromInline
     @discardableResult
     func forEach(block: ForEachObjectBlock) -> Bool {
-        error("TO BE IMPLEMENTED")
+        fatalError("TO BE IMPLEMENTED")
         return false
     }
 
     @usableFromInline
     @discardableResult
     func filter(block: FilterObjectBlock) -> Bool {
-        error("TO BE IMPLEMENTED")
+        fatalError("TO BE IMPLEMENTED")
         return false
     }
 }

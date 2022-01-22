@@ -36,15 +36,41 @@ class UpdateTest: TestsBase {
         }
         
         let json2 = #"["John","Jackie","Jason"]"#
-        json.parsed { root in
+        json2.parsed { root in
             guard let root = root else { XCTFail(); return }
             
             print(root)
             
-            root.query(forEach: "$[*]") { $0.valueString.hitch().lowercase() }
+            // TODO: it would be nice if valueString was not a halfhitch here, as this is annoying
+            // or if calling a mutating thing (like lowercase()) were possible on a halfhitch in a non-destructive way, then
+            // this could simply be $0.valueString.lowercase()
+            root.query(forEach: "$[*]") { $0.valueString = $0.valueString.hitch().lowercase().halfhitch() }
             XCTAssertEqual(root.description, #"["john","jackie","jason"]"#)
-            root.query(forEach: "$[*]") { $0.valueString.hitch().uppercase() }
+            root.query(forEach: "$[*]") { $0.valueString = $0.valueString.hitch().uppercase().halfhitch() }
             XCTAssertEqual(root.description, #"["JOHN","JACKIE","JASON"]"#)
+        }
+    }
+    
+    func test_filter_index_in_array() {
+        let json = #"["Hello","World"]"#
+        
+        // TODO: implement filter
+        json.query(replace: "$[0]", with: "Goodbye") { root in
+            XCTAssertEqual(root.description, #"["Goodbye","World"]"#)
+        }
+        
+        json.query(replace: [
+            "$[0]",
+            "$[1]"
+        ], with: "Goodbye") { root in
+            XCTAssertEqual(root.description, #"["Goodbye","Goodbye"]"#)
+        }
+        
+        json.parsed { root in
+            guard let root = root else { XCTFail(); return }
+            root.query(replace: "$[0]", with: "Goodbye")
+            root.query(replace: "$[1]", with: "Moon")
+            XCTAssertEqual(root.description, #"["Goodbye","Moon"]"#)
         }
     }
     

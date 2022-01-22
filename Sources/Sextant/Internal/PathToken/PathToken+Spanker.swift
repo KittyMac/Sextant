@@ -39,7 +39,7 @@ extension PathToken {
             return .done
         }
 
-        let evalHit = jsonElement[effectiveIndex] ?? JsonElement.null
+        let evalHit = jsonElement[effectiveIndex] ?? JsonElement.null()
 
         let path = evaluationContext.options.contains(.updateOperation) ?
             newPath(element: jsonElement, index: effectiveIndex, item: evalHit) :
@@ -125,7 +125,7 @@ extension PathToken {
                                          wrap: .singleQuote) {
                 next.evaluate(currentPath: currentPath,
                               parentPath: path,
-                              jsonElement: propertyVal ?? JsonElement.null,
+                              jsonElement: propertyVal ?? JsonElement.null(),
                               evaluationContext: evaluationContext)
             }
             if result != .done {
@@ -137,7 +137,7 @@ extension PathToken {
                                wrap: .singleQuote, {
                 evaluationContext.add(path: currentPath,
                                       operation: path,
-                                      jsonElement: propertyVal ?? JsonElement.null)
+                                      jsonElement: propertyVal ?? JsonElement.null())
             }) == .aborted {
                 return .aborted
             }
