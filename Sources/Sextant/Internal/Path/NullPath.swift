@@ -1,10 +1,20 @@
 import Foundation
 import Hitch
+import Spanker
 
 @usableFromInline
 struct NullPath: Path {
     @usableFromInline
-    let parent: JsonAny = nil
+    let parentAny: JsonAny = nil
+
+    @usableFromInline
+    let parentDictionary: JsonDictionary? = nil
+
+    @usableFromInline
+    let parentArray: JsonArray? = nil
+
+    @usableFromInline
+    let parentElement: JsonElement? = nil
 
     @usableFromInline
     static let shared = NullPath()

@@ -3,7 +3,18 @@ import Hitch
 import Spanker
 
 struct CompiledPath: Path {
-    let parent: JsonAny
+    @usableFromInline
+    let parentAny: JsonAny
+
+    @usableFromInline
+    let parentDictionary: JsonDictionary? = nil
+
+    @usableFromInline
+    let parentArray: JsonArray? = nil
+
+    @usableFromInline
+    let parentElement: JsonElement? = nil
+
     var root: RootPathToken
     let rootPath: Bool
 
@@ -12,7 +23,7 @@ struct CompiledPath: Path {
     var evaluationContext: EvaluationContext?
 
     init(root: RootPathToken, isRootPath: Bool) {
-        parent = root
+        parentAny = root
         rootPath = isRootPath
 
         self.root = root

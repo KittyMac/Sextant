@@ -1,18 +1,37 @@
 import Foundation
 import Hitch
+import Spanker
 
 @usableFromInline
 struct ObjectMultiPropertyPath: Path {
     @usableFromInline
-    let parent: JsonAny
+    let parentAny: JsonAny = nil
+
+    @usableFromInline
+    let parentDictionary: JsonDictionary?
+
+    @usableFromInline
+    let parentArray: JsonArray? = nil
+
+    @usableFromInline
+    let parentElement: JsonElement?
 
     @usableFromInline
     let properties: [Hitch]
 
     @usableFromInline
-    init(object: JsonAny,
+    init(dictionary: JsonDictionary,
          properties: [Hitch]) {
-        parent = object
+        parentDictionary = dictionary
+        parentElement = nil
+        self.properties = properties
+    }
+
+    @usableFromInline
+    init(element: JsonElement,
+         properties: [Hitch]) {
+        parentElement = element
+        parentDictionary = nil
         self.properties = properties
     }
 

@@ -1,10 +1,20 @@
 import Foundation
 import Hitch
+import Spanker
 
 @usableFromInline
 struct RootPath: Path {
     @usableFromInline
-    var parent: JsonAny
+    let parentAny: JsonAny
+
+    @usableFromInline
+    let parentDictionary: JsonDictionary? = nil
+
+    @usableFromInline
+    let parentArray: JsonArray? = nil
+
+    @usableFromInline
+    let parentElement: JsonElement? = nil
 
     @usableFromInline
     var options: EvaluationOptions
@@ -12,7 +22,7 @@ struct RootPath: Path {
     @usableFromInline
     init(rootObject: JsonAny,
          options: EvaluationOptions) {
-        parent = rootObject
+        parentAny = rootObject
         self.options = options
     }
 

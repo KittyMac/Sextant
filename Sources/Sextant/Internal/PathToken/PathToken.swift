@@ -51,7 +51,7 @@ class PathToken: CustomStringConvertible {
         let evalHit = jsonObject[effectiveIndex]
 
         let path = evaluationContext.options.contains(.updateOperation) ?
-            newPath(object: jsonObject, index: effectiveIndex, item: evalHit) :
+            newPath(array: jsonObject, index: effectiveIndex, item: evalHit) :
             NullPath.shared
 
         if isLeaf() {
@@ -83,7 +83,7 @@ class PathToken: CustomStringConvertible {
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
         let path = evaluationContext.options.contains(.updateOperation) ?
-            newPath(object: jsonObject, property: property) :
+            newPath(any: jsonObject, property: property) :
             NullPath.shared
 
         let propertyVal = read(property: property,

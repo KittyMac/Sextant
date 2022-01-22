@@ -90,7 +90,7 @@ class ScanPathToken: PathToken {
                 let result = Hitch.appending(hitch: currentPath, index: idx) {
                     walk(object: path,
                          currentPath: currentPath,
-                         parentPath: newPath(object: jsonObject, index: idx, item: evalObject),
+                         parentPath: newPath(array: jsonObject, index: idx, item: evalObject),
                          jsonObject: dictionary,
                          evaluationContext: evaluationContext,
                          predicate: predicate)
@@ -102,7 +102,7 @@ class ScanPathToken: PathToken {
                 let result = Hitch.appending(hitch: currentPath, index: idx) {
                     walk(array: path,
                          currentPath: currentPath,
-                         parentPath: newPath(object: jsonObject, index: idx, item: evalObject),
+                         parentPath: newPath(array: jsonObject, index: idx, item: evalObject),
                          jsonObject: array,
                          evaluationContext: evaluationContext,
                          predicate: predicate)
@@ -144,7 +144,7 @@ class ScanPathToken: PathToken {
                                              wrap: .singleQuote) {
                     walk(object: object,
                          currentPath: currentPath,
-                         parentPath: newPath(object: jsonObject, property: property.hitch()),
+                         parentPath: newPath(dictionary: jsonObject, property: property),
                          jsonObject: dictionary,
                          evaluationContext: evaluationContext,
                          predicate: predicate)
@@ -158,7 +158,7 @@ class ScanPathToken: PathToken {
                                              wrap: .singleQuote) {
                     walk(array: object,
                          currentPath: currentPath,
-                         parentPath: newPath(object: jsonObject, property: property.hitch()),
+                         parentPath: newPath(dictionary: jsonObject, property: property),
                          jsonObject: array,
                          evaluationContext: evaluationContext,
                          predicate: predicate)

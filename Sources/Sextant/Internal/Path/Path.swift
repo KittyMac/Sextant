@@ -7,7 +7,11 @@ public typealias FilterObjectBlock = (JsonElement) -> Bool
 
 @usableFromInline
 protocol Path: CustomStringConvertible {
-    var parent: JsonAny { get }
+    var parentAny: JsonAny { get }
+    var parentDictionary: JsonDictionary? { get }
+    var parentArray: JsonArray? { get }
+    var parentElement: JsonElement? { get }
+
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext?
     func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext?
     func isDefinite() -> Bool
@@ -79,16 +83,36 @@ internal func newPath(rootObject: JsonAny,
 }
 
 @inlinable @inline(__always)
-internal func newPath(object: JsonAny, index: Int, item: JsonAny) -> Path {
-    return ArrayIndexPath(object: object, index: index, item: item)
+internal func newPath(array: JsonArray, index: Int, item: JsonAny) -> Path {
+    return ArrayIndexPath(array: array, index: index, item: item)
 }
 
 @inlinable @inline(__always)
-internal func newPath(object: JsonAny, property: Hitch) -> Path {
-    return ObjectPropertyPath(object: object, property: property)
+internal func newPath(element: JsonElement, index: Int, item: JsonAny) -> Path {
+    return ArrayIndexPath(element: element, index: index, item: item)
 }
 
 @inlinable @inline(__always)
-internal func newPath(object: JsonAny, properties: [Hitch]) -> Path {
-    return ObjectMultiPropertyPath(object: object, properties: properties)
+internal func newPath(any: JsonAny, property: Hitch) -> Path {
+    return ObjectPropertyPath(any: any, property: property)
+}
+
+@inlinable @inline(__always)
+internal func newPath(dictionary: JsonDictionary, property: String) -> Path {
+    return ObjectPropertyPath(dictionary: dictionary, property: property)
+}
+
+@inlinable @inline(__always)
+internal func newPath(element: JsonElement, property: HalfHitch) -> Path {
+    return ObjectPropertyPath(element: element, property: property)
+}
+
+@inlinable @inline(__always)
+internal func newPath(dictionary: JsonDictionary, properties: [Hitch]) -> Path {
+    return ObjectMultiPropertyPath(dictionary: dictionary, properties: properties)
+}
+
+@inlinable @inline(__always)
+internal func newPath(element: JsonElement, properties: [Hitch]) -> Path {
+    return ObjectMultiPropertyPath(element: element, properties: properties)
 }

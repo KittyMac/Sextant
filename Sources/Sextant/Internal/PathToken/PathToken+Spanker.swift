@@ -42,7 +42,7 @@ extension PathToken {
         let evalHit = jsonElement[effectiveIndex] ?? JsonElement.null
 
         let path = evaluationContext.options.contains(.updateOperation) ?
-            newPath(object: jsonElement, index: effectiveIndex, item: evalHit) :
+            newPath(element: jsonElement, index: effectiveIndex, item: evalHit) :
             NullPath.shared
 
         if isLeaf() {
@@ -74,7 +74,7 @@ extension PathToken {
                 evaluationContext: EvaluationContext) -> EvaluationStatus {
 
         let path = evaluationContext.options.contains(.updateOperation) ?
-            newPath(object: jsonElement, property: property) :
+            newPath(element: jsonElement, property: property.halfhitch()) :
             NullPath.shared
 
         let propertyVal = read(property: property,

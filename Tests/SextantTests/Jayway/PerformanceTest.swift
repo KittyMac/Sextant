@@ -68,6 +68,9 @@ class PerformanceTest: TestsBase {
         // 0.086
         // 0.081
         // 0.080
+        // -- new hitch without bstrlib + changes for update --
+        // 0.085
+        
         let path: Hitch = "$..type"
         
         largeData0.parsed { json in
