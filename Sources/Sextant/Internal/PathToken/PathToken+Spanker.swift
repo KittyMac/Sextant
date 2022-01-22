@@ -41,7 +41,7 @@ extension PathToken {
             return .done
         }
 
-        let evalHit = jsonElement[effectiveIndex] ?? JsonElement.null
+        let evalHit = jsonElement[effectiveIndex] ?? JsonElement.null()
 
         if isLeaf() {
             let result = Hitch.appending(hitch: currentPath, index: arrayIndex) {
@@ -119,7 +119,7 @@ extension PathToken {
                                          wrap: .singleQuote) {
                 next.evaluate(currentPath: currentPath,
                               parentPath: NullPath.shared,
-                              jsonElement: propertyVal ?? JsonElement.null,
+                              jsonElement: propertyVal ?? JsonElement.null(),
                               evaluationContext: evaluationContext)
             }
             if result != .done {
@@ -131,7 +131,7 @@ extension PathToken {
                                wrap: .singleQuote, {
                 evaluationContext.add(path: currentPath,
                                       operation: NullPath.shared,
-                                      jsonElement: propertyVal ?? JsonElement.null)
+                                      jsonElement: propertyVal ?? JsonElement.null())
             }) == .aborted {
                 return .aborted
             }
