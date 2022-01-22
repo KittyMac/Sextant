@@ -25,7 +25,7 @@ struct ObjectPropertyPath: Path {
 
     @usableFromInline
     @discardableResult
-    func map(block: MapObjectBlock) -> Bool {
+    func forEach(block: ForEachObjectBlock) -> Bool {
         error("TO BE IMPLEMENTED")
         return false
     }

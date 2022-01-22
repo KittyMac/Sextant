@@ -22,7 +22,7 @@ struct NullPath: Path {
 
     @usableFromInline
     @discardableResult
-    func map(block: MapObjectBlock) -> Bool {
+    func forEach(block: ForEachObjectBlock) -> Bool {
         return true
     }
 

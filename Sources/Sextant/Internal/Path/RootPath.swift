@@ -25,7 +25,7 @@ struct RootPath: Path {
 
     @usableFromInline
     @discardableResult
-    func map(block: MapObjectBlock) -> Bool {
+    func forEach(block: ForEachObjectBlock) -> Bool {
         error("invalid set operation")
         return false
     }

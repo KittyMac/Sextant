@@ -25,30 +25,27 @@ struct ArrayIndexPath: Path {
     @usableFromInline
     @discardableResult
     func set(value: JsonAny) -> Bool {
-        if var array = parent as? JsonArray {
-            array[index] = value
-            return true
-        } else if let array = parent as? JsonElement,
-                  array.type == .array {
-            array.valueArray[index] = JsonElement(unknown: value)
-            return true
-        }
-
-        error("invalid set operation")
-        return false
+        guard let parent = parent as? JsonElement else { error("invalid set operation"); return false }
+        guard parent.type == .array else { error("invalid set operation"); return false }
+        parent.valueArray[index] = JsonElement(unknown: value)
+        return true
     }
 
     @usableFromInline
     @discardableResult
-    func map(block: MapObjectBlock) -> Bool {
-        error("TO BE IMPLEMENTED")
-        return false
+    func forEach(block: ForEachObjectBlock) -> Bool {
+        guard let parent = parent as? JsonElement else { error("invalid set operation"); return false }
+        guard parent.type == .array else { error("invalid set operation"); return false }
+        block(parent.valueArray[index])
+        return true
     }
 
     @usableFromInline
     @discardableResult
     func filter(block: FilterObjectBlock) -> Bool {
-        error("TO BE IMPLEMENTED")
-        return false
+        guard let parent = parent as? JsonElement else { error("invalid set operation"); return false }
+        guard parent.type == .array else { error("invalid set operation"); return false }
+        parent.valueArray = parent.valueArray.filter(block)
+        return true
     }
 }

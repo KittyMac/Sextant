@@ -2,8 +2,8 @@ import Foundation
 import Hitch
 import Spanker
 
-public typealias MapObjectBlock = (JsonAny, JsonAny) -> Void
-public typealias FilterObjectBlock = (JsonAny, JsonAny) -> Void
+public typealias ForEachObjectBlock = (JsonElement) -> Void
+public typealias FilterObjectBlock = (JsonElement) -> Bool
 
 @usableFromInline
 protocol Path: CustomStringConvertible {
@@ -17,7 +17,7 @@ protocol Path: CustomStringConvertible {
     @discardableResult
     func set(value: JsonAny) -> Bool
     @discardableResult
-    func map(block: MapObjectBlock) -> Bool
+    func forEach(block: ForEachObjectBlock) -> Bool
     @discardableResult
     func filter(block: FilterObjectBlock) -> Bool
 }
@@ -61,7 +61,7 @@ extension Path {
 
     @usableFromInline
     @discardableResult
-    func map(block: MapObjectBlock) -> Bool {
+    func forEach(block: ForEachObjectBlock) -> Bool {
         fatalError("should be overwritten")
     }
 
