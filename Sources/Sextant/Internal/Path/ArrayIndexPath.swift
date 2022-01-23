@@ -54,6 +54,16 @@ struct ArrayIndexPath: Path {
 
     @usableFromInline
     @discardableResult
+    func map(block: MapObjectBlock) -> Bool {
+        guard let parentElement = parentElement else { error("invalid set operation"); return false }
+        guard parentElement.type == .array else { error("invalid set operation"); return false }
+        guard let valueElement = parentElement[index] else { return false }
+        parentElement.replace(at: index, value: block(valueElement))
+        return true
+    }
+
+    @usableFromInline
+    @discardableResult
     func forEach(block: ForEachObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .array else { error("invalid set operation"); return false }

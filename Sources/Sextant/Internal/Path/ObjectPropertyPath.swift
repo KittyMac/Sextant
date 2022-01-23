@@ -71,6 +71,17 @@ struct ObjectPropertyPath: Path {
 
     @usableFromInline
     @discardableResult
+    func map(block: MapObjectBlock) -> Bool {
+        guard let parentElement = parentElement else { error("invalid set operation"); return false }
+        guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
+        guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
+        guard let valueElement = parentElement[propertyHalfHitch] else { return false }
+        parentElement.set(key: propertyHalfHitch, value: block(valueElement))
+        return true
+    }
+
+    @usableFromInline
+    @discardableResult
     func forEach(block: ForEachObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .dictionary else { error("invalid set operation"); return false }

@@ -45,6 +45,14 @@ struct RootPath: Path {
 
     @usableFromInline
     @discardableResult
+    func map(block: MapObjectBlock) -> Bool {
+        guard let parentElement = parentElement else { error("invalid set operation"); return false }
+        self.parentElement?.replace(with: JsonElement(unknown: block(parentElement)))
+        return true
+    }
+
+    @usableFromInline
+    @discardableResult
     func forEach(block: ForEachObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         block(parentElement)

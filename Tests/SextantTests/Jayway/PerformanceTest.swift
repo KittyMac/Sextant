@@ -18,6 +18,8 @@ class PerformanceTest: TestsBase {
     func testPerformance0() {
         // 0.007
         // 0.005
+        // -- v0.4 --
+        // 0.007
         
         let path: Hitch = "$[*]"
         
@@ -30,6 +32,8 @@ class PerformanceTest: TestsBase {
     func testSpankerPerformance0() {
         // 0.006
         // 0.005
+        // -- v0.4 --
+        // 0.007
         
         let path: Hitch = "$[*]"
 
@@ -47,6 +51,9 @@ class PerformanceTest: TestsBase {
         // 0.881
         // 0.891
         // 0.878
+        // -- v0.4 --
+        // 0.882
+        
         let path: Hitch = "$..type"
         
         XCTAssertEqualAny(large0.query(values: path)?.count, 17906)
@@ -70,6 +77,8 @@ class PerformanceTest: TestsBase {
         // 0.080
         // -- new hitch without bstrlib + changes for update --
         // 0.085
+        // -- v0.4 --
+        // 0.132
         
         let path: Hitch = "$..type"
         
@@ -85,6 +94,8 @@ class PerformanceTest: TestsBase {
     
     func testPerformance2() {
         // 0.198
+        // -- v0.4 --
+        // 0.170
         
         let path: Hitch = "$[?(@.payload.ref=='master')].payload"
         
@@ -101,6 +112,8 @@ class PerformanceTest: TestsBase {
         // 0.035
         // 0.029
         // 0.026
+        // -- v0.4 --
+        // 0.039
         
         let path: Hitch = "$[?(@.payload.ref=='master')].payload"
 
@@ -116,6 +129,8 @@ class PerformanceTest: TestsBase {
     
     func testPerformance3() {
         // 1.193
+        // -- v0.4 --
+        // 1.154
         
         let path: Hitch = "$..repo[?(@.name =~ /-/)]"
         
@@ -132,6 +147,9 @@ class PerformanceTest: TestsBase {
         // 0.184
         // 0.170
         // 0.157
+        // -- v0.4 --
+        // 0.238
+        
         let path: Hitch = "$..repo[?(@.name =~ /-/)]"
 
         largeData0.parsed { json in

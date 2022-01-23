@@ -32,6 +32,12 @@ struct NullPath: Path {
 
     @usableFromInline
     @discardableResult
+    func map(block: ForEachObjectBlock) -> Bool {
+        return true
+    }
+
+    @usableFromInline
+    @discardableResult
     func forEach(block: ForEachObjectBlock) -> Bool {
         return true
     }

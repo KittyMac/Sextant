@@ -207,6 +207,68 @@ class UpdateTest: TestsBase {
             XCTAssertEqualAny(results, [1])
         }
     }
+    
+    func test_a_path_can_be_renamed() {
+        jsonDocument.query(forEach: "$.store", { store in
+            store.rename(key: "book", with: "updated-book")
+        }) { root in
+            XCTAssertEqual(root.query(values: "$.store.book[*]")?.count, 0)
+            XCTAssertEqual(root.query(values: "$.store.updated-book[*]")?.count, 4)
+        }
+    }
+    
+    func test_keys_in_root_containing_map_can_be_renamed() {
+        jsonDocument.query(forEach: "$", { $0.rename(key: "store", with: "new-store") }) { root in
+            XCTAssertEqual(root.query(values: "$.store[*]")?.count, 0)
+            XCTAssertEqual(root.query(values: "$.new-store[*]")?.count, 2)
+        }
+    }
+    
+    func test_map_array_items_can_be_renamed() {
+        jsonDocument.query(forEach: "$.store.book[*]", { $0.rename(key: "category", with: "renamed-category") }) { root in
+            XCTAssertEqual(root.query(values: "$.store.book[*].category")?.count, 0)
+            XCTAssertEqual(root.query(values: "$.store.book[*].renamed-category")?.count, 4)
+        }
+    }
+    
+    func test_non_map_array_items_cannot_be_renamed() {
+        let json = #"[1,2]"#
+        json.query(forEach: "$[*]", { $0.rename(key: "oldKey", with: "newKey") }) { root in
+            XCTAssertEqualAny(root.query(values: "$"), [[1,2]])
+        }
+    }
+    
+    func test_multiple_properties_cannot_be_renamed() {
+        XCTAssertEqual(jsonDocument.query(values: "$.store.book[*]['author', 'category']")?.count, 8)
+        jsonDocument.query(forEach: "$.store.book[*]['author', 'category']", { $0.rename(key: "old-key", with: "new-key") }) { root in
+            XCTAssertEqual(root.query(values: "$.store.book[*]['author', 'category']")?.count, 8)
+        }
+    }
+    
+    func test_root_can_be_mapped() {
+        jsonDocument.query(map: "$", { _ in 1 }) { root in
+            XCTAssertEqualAny(root.query(values: "$"), [1])
+        }
+    }
+    
+    func test_single_match_value_can_be_mapped() {
+        jsonDocument.query(map: "$.string-property", { ($0.stringValue ?? "") +  "Converted" } ) { root in
+            XCTAssertEqualAny(root.query(values: "$.string-property"), ["string-valueConverted"])
+        }
+    }
+    
+    func test_object_can_be_mapped() {
+        jsonDocument.query(map: "$..book", { $0.description +  "Converted" } ) { root in
+            guard let string: String = root.query("$..book") else { XCTFail(); return }
+            XCTAssertTrue(string.hasSuffix("Converted"))
+        }
+    }
+    
+    func test_multi_match_path_can_be_mapped() {
+        jsonDocument.query(map: "$..display-price", { $0.description +  "Converted" } ) { root in
+            XCTAssertEqualAny(root.query(values: "$..display-price"), ["8.95Converted", "12.99Converted", "8.99Converted", "22.99Converted", "19.95Converted"])
+        }
+    }
 }
 
 extension UpdateTest {
