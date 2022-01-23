@@ -75,7 +75,8 @@ class ComplianceTest: TestsBase {
     func test_JsonPathComparison6() {
         let json = #"{ "u\u0308": 42 }"#
         // Note: this not matching is correct, because even though ü and ü look exactly
-        // the same they are comprised differently
+        // the same they are comprised differently. This test will fail on the non-spanker
+        // version of Sextant, as we're not in control of the utf8 -> unicode translation
         XCTAssertEqualAny(json.query(values: "$['ü']"), [])
         
         let json2 = #"{ "u": 42 }"#

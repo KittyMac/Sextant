@@ -24,7 +24,7 @@ extension ScanPathToken {
 
         // Recurse.
         var idx = 0
-        for evalObject in jsonArray.rawValues {
+        for evalObject in jsonArray.iterValues {
 
             if evalObject.type == .dictionary {
                 let result = Hitch.appending(hitch: currentPath, index: idx) {
@@ -79,9 +79,7 @@ extension ScanPathToken {
         }
 
         // Recurse.
-        for property in jsonDictionary.rawKeys {
-            guard let propertyObject = jsonDictionary[property] else { continue }
-
+        for (property, propertyObject) in jsonDictionary.iterWalking {
             if propertyObject.type == .dictionary {
                 let result = Hitch.appending(hitch: currentPath,
                                              property: property,

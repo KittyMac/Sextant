@@ -119,7 +119,7 @@ class PredicatePathToken: PathToken {
             }
         } else if jsonElement.type == .array {
             var idx = 0
-            for idxElement in jsonElement.rawValues {
+            for idxElement in jsonElement.iterValues {
                 if accept(jsonElement: idxElement,
                           rootJsonElement: evaluationContext.rootJsonElement,
                           evaluationContext: evaluationContext) {

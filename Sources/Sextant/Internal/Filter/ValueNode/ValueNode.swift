@@ -139,4 +139,24 @@ extension ValueNode {
 
         return .differ
     }
+
+    @inlinable @inline(__always)
+    func equal(to other: ValueNode) -> Bool {
+
+        if let number1 = numericValue,
+           let number2 = other.numericValue {
+            return number1 == number2
+        }
+
+        if let hitch1 = literalValue,
+           let hitch2 = other.literalValue {
+            return hitch1 == hitch2
+        }
+
+        if self.literalValue == other.literalValue {
+            return true
+        }
+
+        return false
+    }
 }

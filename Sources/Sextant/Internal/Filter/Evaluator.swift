@@ -89,8 +89,7 @@ private func evaluateLTE(left: ValueNode?, right: ValueNode?, context: Predicate
 private func evaluateEQ(left: ValueNode?, right: ValueNode?, context: PredicateContext) -> EvaluatorResult {
     guard let left = left else { return .false }
     guard let right = right else { return .false }
-    let result = left.compare(to: right)
-    if result == .same {
+    if left.equal(to: right) {
         return .true
     }
     return .false
