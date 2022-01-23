@@ -38,12 +38,6 @@ class UpdateTest: TestsBase {
         let json2 = #"["John","Jackie","Jason"]"#
         json2.parsed { root in
             guard let root = root else { XCTFail(); return }
-            
-            print(root)
-            
-            // TODO: it would be nice if valueString was not a halfhitch here, as this is annoying
-            // or if calling a mutating thing (like lowercase()) were possible on a halfhitch in a non-destructive way, then
-            // this could simply be $0.valueString.lowercase()
             root.query(forEach: "$[*]") { $0.hitchValue = $0.hitchValue?.lowercase() }
             XCTAssertEqual(root.description, #"["john","jackie","jason"]"#)
             root.query(forEach: "$[*]") { $0.hitchValue = $0.hitchValue?.uppercase() }
@@ -98,7 +92,6 @@ class UpdateTest: TestsBase {
         let json = #"[0,1,2,3]"#
         
         let modifiedJson: String? = json.query(replace: "$[?(@ == 1)]", with: 9) { root in
-            print(root)
             guard let results = root.query(values: "$[*]") else { XCTFail(); return nil }
             XCTAssertEqualAny(results, [0, 9, 2, 3])
             return root.description

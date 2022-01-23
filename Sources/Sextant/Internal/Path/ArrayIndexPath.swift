@@ -58,7 +58,11 @@ struct ArrayIndexPath: Path {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .array else { error("invalid set operation"); return false }
         guard let valueElement = parentElement[index] else { return false }
-        parentElement.replace(at: index, value: block(valueElement))
+        if let result = block(valueElement) {
+            parentElement.replace(at: index, value: result)
+        } else {
+            parentElement.remove(at: index)
+        }
         return true
     }
 

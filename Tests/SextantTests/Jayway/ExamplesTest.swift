@@ -120,6 +120,8 @@ class ExamplesTest: TestsBase {
         }
     }
     
+    /// High performance JSON processing by using .parsed() to get
+    /// a quick view of the raw json to execute on paths on
     func testSimple9() {
         let data = #"{"DtCutOff":"2018-01-01 00:00:00","ServiceGroups":[{"ServiceName":"Service1","DtUpdate":"2021-11-22 00:00:00","OrderNumber":"123456","Active":"true"},{"ServiceName":"Service2","DtUpdate":"2021-11-20 00:00:00","OrderNumber":"123456","Active":true},{"ServiceName":"Service3","DtUpdate":"2021-11-10 00:00:00","OrderNumber":"123456","Active":false}]}"#
             
@@ -132,6 +134,54 @@ class ExamplesTest: TestsBase {
             guard let date: Date = json.query("$.ServiceGroups[*][?(@.ServiceName=='Service1')].DtUpdate") else { XCTFail(); return }
             XCTAssertEqual(date, "2021-11-22 00:00:00".date())
         }
+    }
+    
+    /// Use replace, map, filter, remove and forEach to perform mofications to your json
+    func testSimple10() {
+        let json = #"{"data":{"people":[{"name":"Rocco","age":42,"gender":"m"},{"name":"John","age":12,"gender":"m"},{"name":"Elizabeth","age":35,"gender":"f"},{"name":"Victoria","age":85,"gender":"f"}]}}"#
+
+        let modifiedJson: String? = json.parsed { root in
+            guard let root = root else { XCTFail(); return nil }
+            
+            // Remove all females
+            root.query(remove: "$..people[?(@.gender=='f')]")
+            
+            // Incremet all ages by 1
+            root.query(map: "$..age", {
+                guard let age = $0.intValue else { return $0 }
+                return age + 1
+            })
+            
+            // Lowercase all names
+            root.query(map: "$..name", { $0.hitchValue?.lowercase() })
+            
+            return root.description
+        }
+        
+        XCTAssertEqual(modifiedJson, #"{"data":{"people":[{"name":"rocco","age":43,"gender":"m"},{"name":"john","age":13,"gender":"m"}]}}"#)
+    }
+    
+    /// Use a single map to accomplish the same task as above but with only one pass through the data
+    func testSimple11() {
+        let json = #"{"data":{"people":[{"name":"Rocco","age":42,"gender":"m"},{"name":"John","age":12,"gender":"m"},{"name":"Elizabeth","age":35,"gender":"f"},{"name":"Victoria","age":85,"gender":"f"}]}}"#
+        
+        let modifiedJson: String? = json.query(map: "$..people[*] ", { person in
+            // Remove all females, increment age by 1, lowercase all names
+            guard person["gender"]?.stringValue == "m" else {
+                return nil
+            }
+            if let age = person["age"]?.intValue {
+                person.set(key: "age", value: age + 1)
+            }
+            if let name = person["name"]?.hitchValue {
+                person.set(key: "name", value: name.lowercase())
+            }
+            return person
+        }) { root in
+            return root.description
+        }
+
+        XCTAssertEqual(modifiedJson, #"{"data":{"people":[{"name":"rocco","age":43,"gender":"m"},{"name":"john","age":13,"gender":"m"}]}}"#)
     }
 }
 

@@ -76,7 +76,11 @@ struct ObjectPropertyPath: Path {
         guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
         guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
         guard let valueElement = parentElement[propertyHalfHitch] else { return false }
-        parentElement.set(key: propertyHalfHitch, value: block(valueElement))
+        if let result = block(valueElement) {
+            parentElement.set(key: propertyHalfHitch, value: result)
+        } else {
+            parentElement.remove(key: propertyHalfHitch)
+        }
         return true
     }
 

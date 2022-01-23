@@ -247,6 +247,14 @@ public extension Sextant {
                                        rootJsonElement: root,
                                        options: [.updateOperation]) {
 
+            results.updateOperations.sort { lhs, rhs in
+                if lhs.parentElement != nil &&
+                    lhs.parentElement == rhs.parentElement {
+                    return lhs.index > rhs.index
+                }
+                return false
+            }
+
             for operation in results.updateOperations {
                 operation.map(block: block)
             }
