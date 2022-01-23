@@ -24,7 +24,7 @@ extension ScanPathToken {
 
         // Recurse.
         var idx = 0
-        for evalObject in jsonArray.valueArray {
+        for evalObject in jsonArray.rawValues {
 
             if evalObject.type == .dictionary {
                 let result = Hitch.appending(hitch: currentPath, index: idx) {
@@ -79,11 +79,10 @@ extension ScanPathToken {
         }
 
         // Recurse.
-        var idx = 0
-        for propertyObject in jsonDictionary.valueArray {
+        for property in jsonDictionary.rawKeys {
+            guard let propertyObject = jsonDictionary[property] else { continue }
 
             if propertyObject.type == .dictionary {
-                let property = jsonDictionary.keyArray[idx]
                 let result = Hitch.appending(hitch: currentPath,
                                              property: property,
                                              wrap: .singleQuote) {
@@ -98,7 +97,6 @@ extension ScanPathToken {
                     return result
                 }
             } else if propertyObject.type == .array {
-                let property = jsonDictionary.keyArray[idx]
                 let result = Hitch.appending(hitch: currentPath,
                                              property: property,
                                              wrap: .singleQuote) {
@@ -113,8 +111,6 @@ extension ScanPathToken {
                     return result
                 }
             }
-
-            idx += 1
         }
 
         return .done

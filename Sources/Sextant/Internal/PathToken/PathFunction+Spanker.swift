@@ -51,7 +51,7 @@ extension PathFunction {
             guard jsonElement.type == .array else { return jsonElement }
 
             var result = [JsonAny]()
-            for element in jsonElement.valueArray {
+            for element in jsonElement.rawValues {
                 result.append(element.reify())
             }
             for param in parameters {
@@ -66,11 +66,11 @@ extension PathFunction {
         var values = [Double]()
 
         if jsonElement.type == .array {
-            for element in jsonElement.valueArray {
+            for element in jsonElement.rawValues {
                 if element.type == .int {
-                    values.append(Double(element.valueInt))
+                    values.append(Double(element.intValue ?? 0))
                 } else if element.type == .double {
-                    values.append(element.valueDouble)
+                    values.append(element.doubleValue ?? 0.0)
                 }
             }
         }
@@ -90,9 +90,9 @@ extension PathFunction {
         var values = [HalfHitch]()
 
         if jsonElement.type == .array {
-            for element in jsonElement.valueArray {
-                if element.type == .string {
-                    values.append(element.valueString)
+            for element in jsonElement.rawValues {
+                if let value = element.halfHitchValue {
+                    values.append(value)
                 }
             }
         }

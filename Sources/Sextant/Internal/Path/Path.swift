@@ -11,6 +11,7 @@ protocol Path: CustomStringConvertible {
     var parentDictionary: JsonDictionary? { get }
     var parentArray: JsonArray? { get }
     var parentElement: JsonElement? { get }
+    var index: Int { get }
 
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext?
     func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext?
@@ -27,6 +28,11 @@ protocol Path: CustomStringConvertible {
 }
 
 extension Path {
+    @usableFromInline
+    var index: Int {
+        return 0
+    }
+
     @usableFromInline
     var description: String {
         return "<description missing>"
@@ -83,6 +89,12 @@ internal func newPath(rootObject: JsonAny,
 }
 
 @inlinable @inline(__always)
+internal func newPath(rootElement: JsonElement,
+                      options: EvaluationOptions) -> Path {
+    return RootPath(rootElement: rootElement, options: options)
+}
+
+@inlinable @inline(__always)
 internal func newPath(array: JsonArray, index: Int, item: JsonAny) -> Path {
     return ArrayIndexPath(array: array, index: index, item: item)
 }
@@ -105,14 +117,4 @@ internal func newPath(dictionary: JsonDictionary, property: String) -> Path {
 @inlinable @inline(__always)
 internal func newPath(element: JsonElement, property: HalfHitch) -> Path {
     return ObjectPropertyPath(element: element, property: property)
-}
-
-@inlinable @inline(__always)
-internal func newPath(dictionary: JsonDictionary, properties: [Hitch]) -> Path {
-    return ObjectMultiPropertyPath(dictionary: dictionary, properties: properties)
-}
-
-@inlinable @inline(__always)
-internal func newPath(element: JsonElement, properties: [Hitch]) -> Path {
-    return ObjectMultiPropertyPath(element: element, properties: properties)
 }

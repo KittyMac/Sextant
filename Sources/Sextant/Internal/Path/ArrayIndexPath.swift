@@ -47,7 +47,8 @@ struct ArrayIndexPath: Path {
     func set(value: JsonAny) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .array else { error("invalid set operation"); return false }
-        parentElement.valueArray[index] = JsonElement(unknown: value)
+        guard index >= 0 && index < parentElement.count else { return false }
+        parentElement.replace(at: index, value: JsonElement(unknown: value))
         return true
     }
 
@@ -56,7 +57,8 @@ struct ArrayIndexPath: Path {
     func forEach(block: ForEachObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .array else { error("invalid set operation"); return false }
-        block(parentElement.valueArray[index])
+        guard let valueElement = parentElement[index] else { return false }
+        block(valueElement)
         return true
     }
 
@@ -65,8 +67,9 @@ struct ArrayIndexPath: Path {
     func filter(block: FilterObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .array else { error("invalid set operation"); return false }
-        if block(parentElement.valueArray[index]) == false {
-            parentElement.valueArray.remove(at: index)
+        guard let valueElement = parentElement[index] else { return false }
+        if block(valueElement) == false {
+            parentElement.remove(at: index)
         }
         return true
     }

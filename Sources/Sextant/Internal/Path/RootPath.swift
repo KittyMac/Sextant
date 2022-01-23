@@ -14,7 +14,7 @@ struct RootPath: Path {
     let parentArray: JsonArray? = nil
 
     @usableFromInline
-    let parentElement: JsonElement? = nil
+    var parentElement: JsonElement?
 
     @usableFromInline
     var options: EvaluationOptions
@@ -23,27 +23,41 @@ struct RootPath: Path {
     init(rootObject: JsonAny,
          options: EvaluationOptions) {
         parentAny = rootObject
+        parentElement = nil
+        self.options = options
+    }
+
+    @usableFromInline
+    init(rootElement: JsonElement?,
+         options: EvaluationOptions) {
+        parentAny = nil
+        parentElement = rootElement
         self.options = options
     }
 
     @usableFromInline
     @discardableResult
     func set(value: JsonAny) -> Bool {
-        error("invalid set operation")
+        guard let parentElement = parentElement else { error("invalid set operation"); return false }
+        parentElement.replace(with: JsonElement(unknown: value))
         return false
     }
 
     @usableFromInline
     @discardableResult
     func forEach(block: ForEachObjectBlock) -> Bool {
-        error("invalid set operation")
-        return false
+        guard let parentElement = parentElement else { error("invalid set operation"); return false }
+        block(parentElement)
+        return true
     }
 
     @usableFromInline
     @discardableResult
     func filter(block: FilterObjectBlock) -> Bool {
-        error("invalid set operation")
-        return false
+        guard let parentElement = parentElement else { error("invalid set operation"); return false }
+        if block(parentElement) == false {
+            self.parentElement?.replace(with: JsonElement.null())
+        }
+        return true
     }
 }

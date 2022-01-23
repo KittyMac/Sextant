@@ -64,8 +64,8 @@ struct ObjectPropertyPath: Path {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
         guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
-        guard let index = parentElement.keyArray.firstIndex(of: propertyHalfHitch) else { error("invalid set operation"); return false }
-        parentElement.valueArray[index] = JsonElement(unknown: value)
+        guard parentElement.contains(key: propertyHalfHitch) else { return false }
+        parentElement.set(key: propertyHalfHitch, value: JsonElement(unknown: value))
         return true
     }
 
@@ -75,8 +75,8 @@ struct ObjectPropertyPath: Path {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
         guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
-        guard let index = parentElement.keyArray.firstIndex(of: propertyHalfHitch) else { error("invalid set operation"); return false }
-        block(parentElement.valueArray[index])
+        guard let valueElement = parentElement[propertyHalfHitch] else { return false }
+        block(valueElement)
         return true
     }
 
@@ -86,10 +86,9 @@ struct ObjectPropertyPath: Path {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
         guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
-        guard let index = parentElement.keyArray.firstIndex(of: propertyHalfHitch) else { error("invalid set operation"); return false }
-        if block(parentElement.valueArray[index]) == false {
-            parentElement.valueArray.remove(at: index)
-            parentElement.keyArray.remove(at: index)
+        guard let valueElement = parentElement[propertyHalfHitch] else { return false }
+        if block(valueElement) == false {
+            parentElement.remove(key: propertyHalfHitch)
         }
         return true
     }

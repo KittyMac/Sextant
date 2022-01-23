@@ -98,7 +98,7 @@ struct CompiledPath: Path {
         guard let evaluationContext = self.evaluationContext else { return nil }
 
         let path = options.contains(.updateOperation) ?
-            newPath(rootObject: rootJsonElement, options: options) :
+            newPath(rootElement: rootJsonElement, options: options) :
             NullPath.shared
 
         evaluationContext.reset(rootJsonElement: rootJsonElement,

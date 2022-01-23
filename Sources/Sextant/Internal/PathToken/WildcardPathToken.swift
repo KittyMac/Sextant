@@ -42,7 +42,7 @@ class WildcardPathToken: PathToken {
                            evaluationContext: EvaluationContext) -> EvaluationStatus {
 
         if jsonElement.type == .dictionary {
-            for property in jsonElement.keyArray {
+            for property in jsonElement.rawKeys {
                 let result = handle(property: property.hitch(),
                                     currentPath: currentPath,
                                     jsonElement: jsonElement,

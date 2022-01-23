@@ -98,6 +98,7 @@ class PredicatePathToken: PathToken {
                            parentPath: Path,
                            jsonElement: JsonElement,
                            evaluationContext: EvaluationContext) -> EvaluationStatus {
+
         if jsonElement.type == .dictionary {
             if accept(jsonElement: jsonElement,
                       rootJsonElement: evaluationContext.rootJsonElement,
@@ -112,13 +113,13 @@ class PredicatePathToken: PathToken {
                     }
                 } else {
                     return evaluationContext.add(path: currentPath,
-                                                 operation: NullPath.shared,
+                                                 operation: newPath(rootElement: jsonElement, options: evaluationContext.options),
                                                  jsonElement: jsonElement)
                 }
             }
         } else if jsonElement.type == .array {
             var idx = 0
-            for idxElement in jsonElement.valueArray {
+            for idxElement in jsonElement.rawValues {
                 if accept(jsonElement: idxElement,
                           rootJsonElement: evaluationContext.rootJsonElement,
                           evaluationContext: evaluationContext) {
