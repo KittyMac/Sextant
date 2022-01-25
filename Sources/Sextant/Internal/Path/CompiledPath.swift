@@ -27,7 +27,7 @@ struct CompiledPath: Path {
         rootPath = isRootPath
 
         self.root = root
-        self.root = invertScannerFunctionRelationshipWithToken(path: root)
+        // self.root = invertScannerFunctionRelationshipWithToken(path: root)
 
         evaluationContext = EvaluationContext(path: self,
                                               rootJsonObject: JsonElement.null,
