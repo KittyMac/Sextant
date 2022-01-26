@@ -1,5 +1,6 @@
 import XCTest
 import Hitch
+import Spanker
 import class Foundation.Bundle
 
 @testable import Sextant
@@ -182,6 +183,32 @@ class ExamplesTest: TestsBase {
         }
 
         XCTAssertEqual(modifiedJson, #"{"data":{"people":[{"name":"rocco","age":43,"gender":"m"},{"name":"john","age":13,"gender":"m"}]}}"#)
+    }
+    
+    /// You are not bound to just modify existing elements in your JSON,
+    /// you can return any json-like structure in your mapping
+    func testSimple12() {
+        let oldJson = #"{"someValue": ["elem1", "elem2", "elem3"]}"#
+        let newJson: String? = oldJson.query(map: "$.someValue", {_ in
+            return ["elem4", "elem5"]
+        } ) { root in
+            return root.description
+        }
+        XCTAssertEqual(newJson, #"{"someValue":["elem4","elem5"]}"#)
+    }
+    
+    /// For the performance minded, your maps should do as little work as possible
+    /// per replacement. To improve on the previous example, we could create our
+    /// replacement element outside of the mapping to reduce unnecessary work.
+    func testSimple13() {
+        let oldJson = #"{"someValue": ["elem1", "elem2", "elem3"]}"#
+        let replacementElement = JsonElement(unknown: ["elem4", "elem5"])
+        let newJson: String? = oldJson.query(map: "$.someValue", {_ in
+            return replacementElement
+        } ) { root in
+            return root.description
+        }
+        XCTAssertEqual(newJson, #"{"someValue":["elem4","elem5"]}"#)
     }
 }
 
