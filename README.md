@@ -6,7 +6,7 @@ Sextant is a complete, high performance JSONPath implementation written in Swift
 
 ## Getting Started
 
-- [Experience Sextant in our online playground!](https://www.swift-linux.com:9443/sextant)
+- [Experience Sextant in our online playground!](https://www.swift-linux.com:9443)
 - [New to JSONPath?  Read this.](#what-is-jsonpath)
 - [Using Sextant in your Swift project.](#usage)
 
@@ -319,23 +319,23 @@ Given the json
 
 | JsonPath (click link to try)| Result |
 | :------- | :----- |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$.store.book[*].author" target="_blank">$.store.book[*].author</a>| The authors of all books     |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..author" target="_blank">$..author</a>                   | All authors                         |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$.store.*" target="_blank">$.store.*</a>                  | All things, both books and bicycles  |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$.store..display-price" target="_blank">$.store..display-price</a>             | The price of everything         |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book[2]" target="_blank">$..book[2]</a>                 | The third book                      |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book[2]" target="_blank">$..book[-2]</a>                 | The second to last book            |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book[0,1]" target="_blank">$..book[0,1]</a>               | The first two books               |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book[:2]" target="_blank">$..book[:2]</a>                | All books from index 0 (inclusive) until index 2 (exclusive) |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book[1:2]" target="_blank">$..book[1:2]</a>                | All books from index 1 (inclusive) until index 2 (exclusive) |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book[-2:]" target="_blank">$..book[-2:]</a>                | Last two books                   |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book[2:]" target="_blank">$..book[2:]</a>                | Book number two from tail          |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book[?(@.isbn)]" target="_blank">$..book[?(@.isbn)]</a>          | All books with an ISBN number         |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$.store.book[?(@.display-price < 10)]" target="_blank">$.store.book[?(@.display-price < 10)]</a> | All books in store cheaper than 10  |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book[?(@.display-price <= $['expensive'])]" target="_blank">$..book[?(@.display-price <= $['expensive'])]</a> | All books in store that are not "expensive"  |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book[?(@.author =~ /.*REES/i)]" target="_blank">$..book[?(@.author =~ /.*REES/i)]</a> | All books matching regex (ignore case)  |
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..*" target="_blank">$..*</a>                        | Give me every thing   
-| <a href="https://www.swift-linux.com:9443/sextant/?path=$..book.length()" target="_blank">$..book.length()</a>                 | The number of books                      |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=0" target="_blank">$.store.book[*].author</a>| The authors of all books     |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=1" target="_blank">$..author</a>                   | All authors                         |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=2" target="_blank">$.store.*</a>                  | All things, both books and bicycles  |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=3" target="_blank">$.store..display-price</a>             | The price of everything         |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=4" target="_blank">$..book[2]</a>                 | The third book                      |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=5" target="_blank">$..book[-2]</a>                 | The second to last book            |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=6" target="_blank">$..book[0,1]</a>               | The first two books               |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=7" target="_blank">$..book[:2]</a>                | All books from index 0 (inclusive) until index 2 (exclusive) |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=8" target="_blank">$..book[1:2]</a>                | All books from index 1 (inclusive) until index 2 (exclusive) |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=9" target="_blank">$..book[-2:]</a>                | Last two books                   |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=10" target="_blank">$..book[2:]</a>                | Book number two from tail          |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=11" target="_blank">$..book[?(@.isbn)]</a>          | All books with an ISBN number         |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=12" target="_blank">$.store.book[?(@.display-price < 10)]</a> | All books in store cheaper than 10  |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=13" target="_blank">$..book[?(@.display-price <= $['expensive'])]</a> | All books in store that are not "expensive"  |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=14" target="_blank">$..book[?(@.author =~ /.*REES/i)]</a> | All books matching regex (ignore case)  |
+| <a href="https://www.swift-linux.com:9443/?example=0&path=15" target="_blank">$..*</a>                        | Give me every thing   
+| <a href="https://www.swift-linux.com:9443/?example=0&path=16" target="_blank">$..book.length()</a>                 | The number of books                      |
 
 
 ## License
