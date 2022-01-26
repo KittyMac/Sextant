@@ -6,9 +6,9 @@ Sextant is a complete, high performance JSONPath implementation written in Swift
 
 ## Getting Started
 
-- <a href="https://www.swift-linux.com:9443/sextant" target="_blank">Experience Sextant in our online playground!</a>
-- <a href="#whatisjsonpath">What is JSONPath?  Read this.</a>
-- <a href="#whatisjsonpath">Using Sextant in your Swift project.</a>
+- [Experience Sextant in our online playground!](https://www.swift-linux.com:9443/sextant)
+- [New to JSONPath?  Read this.](#what-is-jsonpath)
+- [Using Sextant in your Swift project.](#usage)
 
 ## Goals
 
@@ -206,6 +206,8 @@ dependencies: [
 ## What is JSONPath
 
 The original [Stefan Goessner JsonPath implemenentation](https://goessner.net/articles/JsonPath/) was released in 2007, and from it spawned dozens of different implementations. This [JSONPath Comparison](https://cburgmer.github.io/json-path-comparison/) chart shows the wide array of available implemenations, and at the time of this writing a Swift implementation is not present (note that there exists the [SwiftPath](https://github.com/g-mark/SwiftPath) project, but it is not included in said chart [due to critical errors when running on Linux](https://github.com/g-mark/SwiftPath/issues/15).
+
+The rest of this section is largely adapted from the [Jayway JsonPath Getting Started](https://github.com/json-path/JsonPath#getting-started) section.
 
 Operators
 ---------
