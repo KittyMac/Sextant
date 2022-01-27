@@ -1,5 +1,3 @@
-<meta name="google-site-verification" content="w_WlA_0TN1_G_s6inOCOGEkDRJ2eDPoykBrXPAMDF-I" />
-
 ![](meta/icon.png)
 
 ## Sextant
