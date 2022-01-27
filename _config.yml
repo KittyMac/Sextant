@@ -1,1 +1,4 @@
 theme: jekyll-theme-minimal
+name: Sextant
+description: High performance JSONPath for Swift
+markdown: kramdown
