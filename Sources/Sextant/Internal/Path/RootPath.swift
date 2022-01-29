@@ -19,7 +19,7 @@ struct RootPath: Path {
     @usableFromInline
     var options: EvaluationOptions
 
-    @usableFromInline
+    @inlinable @inline(__always)
     init(rootObject: JsonAny,
          options: EvaluationOptions) {
         parentAny = rootObject
@@ -27,7 +27,7 @@ struct RootPath: Path {
         self.options = options
     }
 
-    @usableFromInline
+    @inlinable @inline(__always)
     init(rootElement: JsonElement?,
          options: EvaluationOptions) {
         parentAny = nil
