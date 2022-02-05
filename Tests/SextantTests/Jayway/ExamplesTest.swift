@@ -210,6 +210,45 @@ class ExamplesTest: TestsBase {
         }
         XCTAssertEqual(newJson, #"{"someValue":["elem4","elem5"]}"#)
     }
+    
+    
+    /// Example of handling an heterogenous array. The task is to iterate over all
+    /// operations and perform a dynamic lookup to the operation function, perform
+    /// the task and coallate the results.
+    func testSimple14() {
+        let json = #"[{"name":"add","inputs":[3,4]},{"name":"subtract","inputs":[6,3]},{"echo":"Hello, world"},{"name":"increment","input":41},{"echo":"Hello, world"}]"#
+        
+        let operations: [HalfHitch: (JsonElement) -> (Int?)] = [
+            "add": { input in
+                guard let values = input[element: "inputs"] else { return nil }
+                guard let lhs = values[int: 0] else { return nil }
+                guard let rhs = values[int: 1] else { return nil }
+                return lhs + rhs
+            },
+            "subtract": { input in
+                guard let values = input[element: "inputs"] else { return nil }
+                guard let lhs = values[int: 0] else { return nil }
+                guard let rhs = values[int: 1] else { return nil }
+                return lhs - rhs
+            },
+            "increment": { input in
+                guard let value = input[int: "input"] else { return nil }
+                return value + 1
+            }
+        ]
+        
+        var results = [Int]()
+        
+        json.query(forEach: #"$[?(@.name)]"#) { operation in
+            if let opName = operation[halfHitch: "name"],
+               let opFunc = operations[opName] {
+                results.append(opFunc(operation) ?? 0)
+            }
+        }
+                
+        XCTAssertEqual(results, [7,3,42])
+    }
+    
 }
 
 extension ExamplesTest {

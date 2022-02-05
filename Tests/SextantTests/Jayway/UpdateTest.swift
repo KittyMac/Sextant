@@ -30,10 +30,10 @@ class UpdateTest: TestsBase {
     
     func test_foreach_index_in_array() {
         let json = #"[0,1,2,3,4,5,6,7,8,9]"#
-                
-        json.query(forEach: "$[*]", { $0.intValue = ($0.intValue ?? 0) * 10 }) { root in
-            XCTAssertEqual(root.description, #"[0,10,20,30,40,50,60,70,80,90]"#)
-        }
+        
+        var total = 0
+        json.query(forEach: "$[*]") { total += $0.intValue ?? 0 }
+        XCTAssertEqual(total, 45)
         
         let json2 = #"["John","Jackie","Jason"]"#
         json2.parsed { root in

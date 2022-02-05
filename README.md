@@ -187,6 +187,45 @@ func testSimple13() {
 }
 ```
 
+```swift
+/// Example of handling an heterogenous array. The task is to iterate over all
+/// operations and perform a dynamic lookup to the operation function, perform
+/// the task and coallate the results.
+func testSimple14() {
+    let json = #"[{"name":"add","inputs":[3,4]},{"name":"subtract","inputs":[6,3]},{"echo":"Hello, world"},{"name":"increment","input":41},{"echo":"Hello, world"}]"#
+    
+    let operations: [HalfHitch: (JsonElement) -> (Int?)] = [
+        "add": { input in
+            guard let values = input[element: "inputs"] else { return nil }
+            guard let lhs = values[int: 0] else { return nil }
+            guard let rhs = values[int: 1] else { return nil }
+            return lhs + rhs
+        },
+        "subtract": { input in
+            guard let values = input[element: "inputs"] else { return nil }
+            guard let lhs = values[int: 0] else { return nil }
+            guard let rhs = values[int: 1] else { return nil }
+            return lhs - rhs
+        },
+        "increment": { input in
+            guard let value = input[int: "input"] else { return nil }
+            return value + 1
+        }
+    ]
+    
+    var results = [Int]()
+    
+    json.query(forEach: #"$[?(@.name)]"#) { operation in
+        if let opName = operation[halfHitch: "name"],
+           let opFunc = operations[opName] {
+            results.append(opFunc(operation) ?? 0)
+        }
+    }
+            
+    XCTAssertEqual(results, [7,3,42])
+}
+```
+
 ## Performance
 
 Sextant utilizes [Hitch](https://github.com/KittyMac/Hitch) (high performance strings) and [Spanker](https://github.com/KittyMac/Spanker) (high performance, low overhead JSON deserialization) to provide a best-in-class JSONPath implementation for Swift. Hitch allows for fast, utf8 shared memory strings. Spanker generates a low cost view of the JSON blob which Sextant then queries the JSONPath against. Nothing is deserialized and no memory is copied from the source JSON blob until they are returned as results from the query. Sextant really shines in scenarios where you have a large amount of JSON and/or a large number of queries to run against it.

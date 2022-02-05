@@ -75,7 +75,7 @@ struct ObjectPropertyPath: Path {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
         guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
-        guard let valueElement = parentElement[propertyHalfHitch] else { return false }
+        guard let valueElement = parentElement[element: propertyHalfHitch] else { return false }
         if let result = block(valueElement) {
             parentElement.set(key: propertyHalfHitch, value: result)
         } else {
@@ -90,7 +90,7 @@ struct ObjectPropertyPath: Path {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
         guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
-        guard let valueElement = parentElement[propertyHalfHitch] else { return false }
+        guard let valueElement = parentElement[element: propertyHalfHitch] else { return false }
         block(valueElement)
         return true
     }
@@ -101,7 +101,7 @@ struct ObjectPropertyPath: Path {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .dictionary else { error("invalid set operation"); return false }
         guard let propertyHalfHitch = propertyHalfHitch else { error("invalid set operation"); return false }
-        guard let valueElement = parentElement[propertyHalfHitch] else { return false }
+        guard let valueElement = parentElement[element: propertyHalfHitch] else { return false }
         if block(valueElement) == false {
             parentElement.remove(key: propertyHalfHitch)
         }

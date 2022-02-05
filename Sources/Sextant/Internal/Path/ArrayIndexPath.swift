@@ -57,7 +57,7 @@ struct ArrayIndexPath: Path {
     func map(block: MapObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .array else { error("invalid set operation"); return false }
-        guard let valueElement = parentElement[index] else { return false }
+        guard let valueElement = parentElement[element: index] else { return false }
         if let result = block(valueElement) {
             parentElement.replace(at: index, value: result)
         } else {
@@ -71,7 +71,7 @@ struct ArrayIndexPath: Path {
     func forEach(block: ForEachObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .array else { error("invalid set operation"); return false }
-        guard let valueElement = parentElement[index] else { return false }
+        guard let valueElement = parentElement[element: index] else { return false }
         block(valueElement)
         return true
     }
@@ -81,7 +81,7 @@ struct ArrayIndexPath: Path {
     func filter(block: FilterObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .array else { error("invalid set operation"); return false }
-        guard let valueElement = parentElement[index] else { return false }
+        guard let valueElement = parentElement[element: index] else { return false }
         if block(valueElement) == false {
             parentElement.remove(at: index)
         }
