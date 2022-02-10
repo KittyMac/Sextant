@@ -40,8 +40,11 @@ final class RootPathToken: PathToken {
                            jsonObject: JsonAny,
                            evaluationContext: EvaluationContext) -> EvaluationStatus {
 
+        let rootPath = Hitch(capacity: 512)
+        rootPath.append(rootToken)
+
         if let next = next {
-            return next.evaluate(currentPath: rootToken,
+            return next.evaluate(currentPath: rootPath,
                                  parentPath: parentPath,
                                  jsonObject: jsonObject,
                                  evaluationContext: evaluationContext)
@@ -51,7 +54,7 @@ final class RootPathToken: PathToken {
                 parentPath :
                 NullPath.shared
 
-            return evaluationContext.add(path: rootToken,
+            return evaluationContext.add(path: rootPath,
                                          operation: path,
                                          jsonObject: jsonObject)
         }
@@ -63,8 +66,11 @@ final class RootPathToken: PathToken {
                            jsonElement: JsonElement,
                            evaluationContext: EvaluationContext) -> EvaluationStatus {
 
+        let rootPath = Hitch(capacity: 512)
+        rootPath.append(rootToken)
+
         if let next = next {
-            return next.evaluate(currentPath: rootToken,
+            return next.evaluate(currentPath: rootPath,
                                  parentPath: parentPath,
                                  jsonElement: jsonElement,
                                  evaluationContext: evaluationContext)
@@ -74,7 +80,7 @@ final class RootPathToken: PathToken {
                 parentPath :
                 NullPath.shared
 
-            return evaluationContext.add(path: rootToken,
+            return evaluationContext.add(path: rootPath,
                                          operation: path,
                                          jsonElement: jsonElement)
         }

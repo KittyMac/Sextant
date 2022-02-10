@@ -58,36 +58,6 @@ final class EvaluationContext {
     }
 
     @inlinable @inline(__always)
-    func reset(options: EvaluationOptions) {
-        self.options = options
-
-        allValueTypeResults.removeAll(keepingCapacity: true)
-        valueTypeResults.removeAll(keepingCapacity: true)
-
-        allValueResults.removeAll(keepingCapacity: true)
-        valueResults.removeAll(keepingCapacity: true)
-        pathResults.removeAll(keepingCapacity: true)
-
-        evaluationCache.removeAll(keepingCapacity: true)
-    }
-
-    @inlinable @inline(__always)
-    func reset(rootJsonObject: JsonAny,
-               options: EvaluationOptions) {
-        self.rootJsonObject = rootJsonObject
-        self.rootJsonElement = JsonElement.null()
-        reset(options: options)
-    }
-
-    @inlinable @inline(__always)
-    func reset(rootJsonElement: JsonElement,
-               options: EvaluationOptions) {
-        self.rootJsonElement = rootJsonElement
-        self.rootJsonObject = nil
-        reset(options: options)
-    }
-
-    @inlinable @inline(__always)
     func add(path: Hitch,
              operation: Path,
              jsonObject: JsonAny) -> EvaluationStatus {

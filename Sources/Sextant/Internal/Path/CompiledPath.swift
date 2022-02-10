@@ -18,20 +18,12 @@ struct CompiledPath: Path {
     var root: RootPathToken
     let rootPath: Bool
 
-    var currentPathEmpty = Hitch(capacity: 128)
-
-    var evaluationContext: EvaluationContext?
-
     init(root: RootPathToken, isRootPath: Bool) {
         parentAny = root
         rootPath = isRootPath
 
         self.root = root
         self.root = invertScannerFunctionRelationshipWithToken(path: root)
-
-        evaluationContext = EvaluationContext(path: self,
-                                              rootJsonObject: JsonElement.null,
-                                              options: EvaluationOptions.default)
     }
 
     private func invertScannerFunctionRelationshipWithToken(path: RootPathToken) -> RootPathToken {
@@ -71,16 +63,15 @@ struct CompiledPath: Path {
 
     @inlinable @inline(__always)
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext? {
-        guard let evaluationContext = self.evaluationContext else { return nil }
+        let evaluationContext = EvaluationContext(path: self,
+                                                  rootJsonObject: rootJsonObject,
+                                                  options: options)
 
         let path = options.contains(.updateOperation) ?
             newPath(rootObject: rootJsonObject, options: options) :
             NullPath.shared
 
-        evaluationContext.reset(rootJsonObject: rootJsonObject,
-                                options: options)
-
-        let result = root.evaluate(currentPath: currentPathEmpty,
+        let result = root.evaluate(currentPath: Hitch(capacity: 512),
                                    parentPath: path,
                                    jsonObject: jsonObject,
                                    evaluationContext: evaluationContext)
@@ -95,16 +86,15 @@ struct CompiledPath: Path {
 
     @inlinable @inline(__always)
     func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext? {
-        guard let evaluationContext = self.evaluationContext else { return nil }
+        let evaluationContext = EvaluationContext(path: self,
+                                                  rootJsonElement: rootJsonElement,
+                                                  options: options)
 
         let path = options.contains(.updateOperation) ?
             newPath(rootElement: rootJsonElement, options: options) :
             NullPath.shared
 
-        evaluationContext.reset(rootJsonElement: rootJsonElement,
-                                options: options)
-
-        let result = root.evaluate(currentPath: currentPathEmpty,
+        let result = root.evaluate(currentPath: Hitch(capacity: 512),
                                    parentPath: path,
                                    jsonElement: jsonElement,
                                    evaluationContext: evaluationContext)
