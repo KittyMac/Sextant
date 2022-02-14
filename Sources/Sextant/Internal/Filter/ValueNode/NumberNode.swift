@@ -43,7 +43,7 @@ struct NumberNode: ValueNode, Equatable {
     }
 
     var literalValue: Hitch? {
-        return description.hitch()
+        return Hitch(string: description)
     }
 
     func stringValue() -> String? {

@@ -94,7 +94,7 @@ final class FunctionPathToken: PathToken {
                     let value = try? JSONSerialization.jsonObject(with: json.dataNoCopy(),
                                                                   options: [.allowFragments])
                     if let value = value as? String {
-                        return Hitch(stringLiteral: value)
+                        return Hitch(string: value)
                     }
                     return value
                 }

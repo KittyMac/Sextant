@@ -160,7 +160,7 @@ extension PathToken {
               jsonElement: JsonElement,
               evaluationContext: EvaluationContext) -> JsonElement? {
         if jsonElement.type == .dictionary {
-            return jsonElement[property] ?? nil
+            return jsonElement[element: property.halfhitch()] ?? nil
         } else if jsonElement.type == .array {
             guard let index = property.toInt() else { return nil }
             guard index >= 0 && index < jsonElement.count else { return nil }

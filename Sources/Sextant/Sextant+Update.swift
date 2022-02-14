@@ -19,18 +19,18 @@ public extension String {
     @inlinable func query<T>(remove paths: [Hitch], _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths, { _ in false }, callback) }
     @inlinable func query<T>(remove path: Hitch, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: path, { _ in false }, callback) }
 
-    @inlinable func query<T>(forEach paths: [String], _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: paths.map { Hitch(stringLiteral: $0) }, block, callback) }
-    @inlinable func query<T>(forEach path: String, _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: Hitch(stringLiteral: path), block, callback) }
-    @inlinable func query(forEach paths: [String], _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: paths.map { Hitch(stringLiteral: $0) }, block) }
-    @inlinable func query(forEach path: String, _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: Hitch(stringLiteral: path), block) }
-    @inlinable func query<T>(replace paths: [String], with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: paths.map { Hitch(stringLiteral: $0) }, with: value, callback) }
-    @inlinable func query<T>(replace path: String, with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: Hitch(stringLiteral: path), with: value, callback) }
-    @inlinable func query<T>(map paths: [String], _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: paths.map { Hitch(stringLiteral: $0) }, block, callback) }
-    @inlinable func query<T>(map path: String, _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: Hitch(stringLiteral: path), block, callback) }
-    @inlinable func query<T>(filter paths: [String], _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(stringLiteral: $0) }, block, callback) }
-    @inlinable func query<T>(filter path: String, _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(stringLiteral: path), block, callback) }
-    @inlinable func query<T>(remove paths: [String], _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(stringLiteral: $0) }, { _ in false }, callback) }
-    @inlinable func query<T>(remove path: String, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(stringLiteral: path), { _ in false }, callback) }
+    @inlinable func query<T>(forEach paths: [String], _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: paths.map { Hitch(string: $0) }, block, callback) }
+    @inlinable func query<T>(forEach path: String, _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: Hitch(string: path), block, callback) }
+    @inlinable func query(forEach paths: [String], _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: paths.map { Hitch(string: $0) }, block) }
+    @inlinable func query(forEach path: String, _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: Hitch(string: path), block) }
+    @inlinable func query<T>(replace paths: [String], with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: paths.map { Hitch(string: $0) }, with: value, callback) }
+    @inlinable func query<T>(replace path: String, with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: Hitch(string: path), with: value, callback) }
+    @inlinable func query<T>(map paths: [String], _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: paths.map { Hitch(string: $0) }, block, callback) }
+    @inlinable func query<T>(map path: String, _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: Hitch(string: path), block, callback) }
+    @inlinable func query<T>(filter paths: [String], _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(string: $0) }, block, callback) }
+    @inlinable func query<T>(filter path: String, _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(string: path), block, callback) }
+    @inlinable func query<T>(remove paths: [String], _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(string: $0) }, { _ in false }, callback) }
+    @inlinable func query<T>(remove path: String, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(string: path), { _ in false }, callback) }
 }
 
 public extension Hitch {
@@ -48,18 +48,18 @@ public extension Hitch {
     @inlinable func query<T>(remove paths: [Hitch], _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths, { _ in false }, callback) }
     @inlinable func query<T>(remove path: Hitch, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: path, { _ in false }, callback) }
 
-    @inlinable func query<T>(forEach paths: [String], _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: paths.map { Hitch(stringLiteral: $0) }, block, callback) }
-    @inlinable func query<T>(forEach path: String, _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: Hitch(stringLiteral: path), block, callback) }
-    @inlinable func query(forEach paths: [String], _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: paths.map { Hitch(stringLiteral: $0) }, block) }
-    @inlinable func query(forEach path: String, _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: Hitch(stringLiteral: path), block) }
-    @inlinable func query<T>(replace paths: [String], with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: paths.map { Hitch(stringLiteral: $0) }, with: value, callback) }
-    @inlinable func query<T>(replace path: String, with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: Hitch(stringLiteral: path), with: value, callback) }
-    @inlinable func query<T>(map paths: [String], _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: paths.map { Hitch(stringLiteral: $0) }, block, callback) }
-    @inlinable func query<T>(map path: String, _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: Hitch(stringLiteral: path), block, callback) }
-    @inlinable func query<T>(filter paths: [String], _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(stringLiteral: $0) }, block, callback) }
-    @inlinable func query<T>(filter path: String, _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(stringLiteral: path), block, callback) }
-    @inlinable func query<T>(remove paths: [String], _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(stringLiteral: $0) }, { _ in false }, callback) }
-    @inlinable func query<T>(remove path: String, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(stringLiteral: path), { _ in false }, callback) }
+    @inlinable func query<T>(forEach paths: [String], _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: paths.map { Hitch(string: $0) }, block, callback) }
+    @inlinable func query<T>(forEach path: String, _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: Hitch(string: path), block, callback) }
+    @inlinable func query(forEach paths: [String], _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: paths.map { Hitch(string: $0) }, block) }
+    @inlinable func query(forEach path: String, _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: Hitch(string: path), block) }
+    @inlinable func query<T>(replace paths: [String], with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: paths.map { Hitch(string: $0) }, with: value, callback) }
+    @inlinable func query<T>(replace path: String, with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: Hitch(string: path), with: value, callback) }
+    @inlinable func query<T>(map paths: [String], _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: paths.map { Hitch(string: $0) }, block, callback) }
+    @inlinable func query<T>(map path: String, _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: Hitch(string: path), block, callback) }
+    @inlinable func query<T>(filter paths: [String], _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(string: $0) }, block, callback) }
+    @inlinable func query<T>(filter path: String, _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(string: path), block, callback) }
+    @inlinable func query<T>(remove paths: [String], _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(string: $0) }, { _ in false }, callback) }
+    @inlinable func query<T>(remove path: String, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(string: path), { _ in false }, callback) }
 }
 
 public extension Data {
@@ -77,18 +77,18 @@ public extension Data {
     @inlinable func query<T>(remove paths: [Hitch], _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths, { _ in false }, callback) }
     @inlinable func query<T>(remove path: Hitch, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: path, { _ in false }, callback) }
 
-    @inlinable func query<T>(forEach paths: [String], _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: paths.map { Hitch(stringLiteral: $0) }, block, callback) }
-    @inlinable func query<T>(forEach path: String, _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: Hitch(stringLiteral: path), block, callback) }
-    @inlinable func query(forEach paths: [String], _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: paths.map { Hitch(stringLiteral: $0) }, block) }
-    @inlinable func query(forEach path: String, _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: Hitch(stringLiteral: path), block) }
-    @inlinable func query<T>(replace paths: [String], with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: paths.map { Hitch(stringLiteral: $0) }, with: value, callback) }
-    @inlinable func query<T>(replace path: String, with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: Hitch(stringLiteral: path), with: value, callback) }
-    @inlinable func query<T>(map paths: [String], _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: paths.map { Hitch(stringLiteral: $0) }, block, callback) }
-    @inlinable func query<T>(map path: String, _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: Hitch(stringLiteral: path), block, callback) }
-    @inlinable func query<T>(filter paths: [String], _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(stringLiteral: $0) }, block, callback) }
-    @inlinable func query<T>(filter path: String, _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(stringLiteral: path), block, callback) }
-    @inlinable func query<T>(remove paths: [String], _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(stringLiteral: $0) }, { _ in false }, callback) }
-    @inlinable func query<T>(remove path: String, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(stringLiteral: path), { _ in false }, callback) }
+    @inlinable func query<T>(forEach paths: [String], _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: paths.map { Hitch(string: $0) }, block, callback) }
+    @inlinable func query<T>(forEach path: String, _ block: ForEachObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, forEach: Hitch(string: path), block, callback) }
+    @inlinable func query(forEach paths: [String], _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: paths.map { Hitch(string: $0) }, block) }
+    @inlinable func query(forEach path: String, _ block: ForEachObjectBlock) { return Sextant.shared.query(self, forEach: Hitch(string: path), block) }
+    @inlinable func query<T>(replace paths: [String], with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: paths.map { Hitch(string: $0) }, with: value, callback) }
+    @inlinable func query<T>(replace path: String, with value: JsonAny, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, replace: Hitch(string: path), with: value, callback) }
+    @inlinable func query<T>(map paths: [String], _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: paths.map { Hitch(string: $0) }, block, callback) }
+    @inlinable func query<T>(map path: String, _ block: MapObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, map: Hitch(string: path), block, callback) }
+    @inlinable func query<T>(filter paths: [String], _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(string: $0) }, block, callback) }
+    @inlinable func query<T>(filter path: String, _ block: FilterObjectBlock, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(string: path), block, callback) }
+    @inlinable func query<T>(remove paths: [String], _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: paths.map { Hitch(string: $0) }, { _ in false }, callback) }
+    @inlinable func query<T>(remove path: String, _ callback: (JsonElement) -> T?) -> T? { return Sextant.shared.query(self, filter: Hitch(string: path), { _ in false }, callback) }
 }
 
 public extension JsonElement {
@@ -104,17 +104,17 @@ public extension JsonElement {
     @inlinable func query(remove paths: [Hitch]) -> JsonElement? { return Sextant.shared.query(self, filter: paths, { _ in false }) }
     @discardableResult @inlinable func query(remove path: Hitch) -> JsonElement? { return Sextant.shared.query(self, filter: path, { _ in false }) }
 
-    @inlinable func query(forEach paths: [String], _ block: ForEachObjectBlock) { Sextant.shared.query(self, forEach: paths.map { Hitch(stringLiteral: $0) }, block) }
-    @inlinable func query(forEach path: String, _ block: ForEachObjectBlock) { Sextant.shared.query(self, forEach: Hitch(stringLiteral: path), block) }
+    @inlinable func query(forEach paths: [String], _ block: ForEachObjectBlock) { Sextant.shared.query(self, forEach: paths.map { Hitch(string: $0) }, block) }
+    @inlinable func query(forEach path: String, _ block: ForEachObjectBlock) { Sextant.shared.query(self, forEach: Hitch(string: path), block) }
 
-    @inlinable func query(replace paths: [String], with value: JsonAny) -> JsonElement? { return Sextant.shared.query(self, replace: paths.map { Hitch(stringLiteral: $0) }, with: value) }
-    @discardableResult @inlinable func query(replace path: String, with value: JsonAny) -> JsonElement? { return Sextant.shared.query(self, replace: Hitch(stringLiteral: path), with: value) }
-    @inlinable func query(map paths: [String], _ block: MapObjectBlock) -> JsonElement? { return Sextant.shared.query(self, map: paths.map { Hitch(stringLiteral: $0) }, block) }
-    @discardableResult @inlinable func query(map path: String, _ block: MapObjectBlock) -> JsonElement? { return Sextant.shared.query(self, map: Hitch(stringLiteral: path), block) }
-    @inlinable func query(filter paths: [String], _ block: FilterObjectBlock) -> JsonElement? { return Sextant.shared.query(self, filter: paths.map { Hitch(stringLiteral: $0) }, block) }
-    @discardableResult @inlinable func query(filter path: String, _ block: FilterObjectBlock) -> JsonElement? { return Sextant.shared.query(self, filter: Hitch(stringLiteral: path), block) }
-    @inlinable func query(remove paths: [String]) -> JsonElement? { return Sextant.shared.query(self, filter: paths.map { Hitch(stringLiteral: $0) }, { _ in false }) }
-    @discardableResult @inlinable func query(remove path: String) -> JsonElement? { return Sextant.shared.query(self, filter: Hitch(stringLiteral: path), { _ in false }) }
+    @inlinable func query(replace paths: [String], with value: JsonAny) -> JsonElement? { return Sextant.shared.query(self, replace: paths.map { Hitch(string: $0) }, with: value) }
+    @discardableResult @inlinable func query(replace path: String, with value: JsonAny) -> JsonElement? { return Sextant.shared.query(self, replace: Hitch(string: path), with: value) }
+    @inlinable func query(map paths: [String], _ block: MapObjectBlock) -> JsonElement? { return Sextant.shared.query(self, map: paths.map { Hitch(string: $0) }, block) }
+    @discardableResult @inlinable func query(map path: String, _ block: MapObjectBlock) -> JsonElement? { return Sextant.shared.query(self, map: Hitch(string: path), block) }
+    @inlinable func query(filter paths: [String], _ block: FilterObjectBlock) -> JsonElement? { return Sextant.shared.query(self, filter: paths.map { Hitch(string: $0) }, block) }
+    @discardableResult @inlinable func query(filter path: String, _ block: FilterObjectBlock) -> JsonElement? { return Sextant.shared.query(self, filter: Hitch(string: path), block) }
+    @inlinable func query(remove paths: [String]) -> JsonElement? { return Sextant.shared.query(self, filter: paths.map { Hitch(string: $0) }, { _ in false }) }
+    @discardableResult @inlinable func query(remove path: String) -> JsonElement? { return Sextant.shared.query(self, filter: Hitch(string: path), { _ in false }) }
 }
 
 // MARK: - REPLACE

@@ -11,7 +11,7 @@ struct PathNode: ValueNode {
 
     init(prebuiltPath: Path) {
         self.path = prebuiltPath
-        self.pathString = prebuiltPath.description.hitch()
+        self.pathString = Hitch(string: prebuiltPath.description)
         self.existsCheck = false
         self.pathShouldExists = false
     }
@@ -59,7 +59,7 @@ struct PathNode: ValueNode {
     }
 
     var literalValue: Hitch? {
-        return description.hitch()
+        return Hitch(string: description)
     }
 
     func stringValue() -> String? {
@@ -147,7 +147,7 @@ struct PathNode: ValueNode {
                 case let value as HalfHitch:
                     return StringNode(hitch: value.hitch(), escape: false)
                 case let value as String:
-                    return StringNode(hitch: value.hitch())
+                    return StringNode(hitch: Hitch(string: value))
                 case let value as JsonArray:
                     return JsonNode(array: value)
                 case let value as JsonDictionary:

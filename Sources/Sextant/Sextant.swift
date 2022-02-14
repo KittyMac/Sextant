@@ -81,7 +81,7 @@ extension JsonAny {
     func toHitch() -> Hitch? {
         switch self {
         case let string as String:
-            return string.hitch()
+            return Hitch(string: string)
         case let hitch as Hitch:
             return hitch
         case let halfHitch as HalfHitch:
@@ -95,7 +95,7 @@ extension JsonAny {
     func toHalfHitch() -> HalfHitch? {
         switch self {
         case let string as String:
-            return string.hitch().halfhitch()
+            return HalfHitch(string: string)
         case let hitch as Hitch:
             return hitch.halfhitch()
         case let halfHitch as HalfHitch:

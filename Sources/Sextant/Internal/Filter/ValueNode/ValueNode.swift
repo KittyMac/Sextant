@@ -92,11 +92,11 @@ extension ValueNode {
                 return .same
             }
             if let other = other as? Hitch,
-               literalValue.description == other {
+               HalfHitch(string: literalValue.description) == other {
                 return .same
             }
             if let other = other as? HalfHitch,
-               literalValue.description == other {
+               HalfHitch(string: literalValue.description) == other {
                 return .same
             }
             if let other = other as? CustomStringConvertible,
