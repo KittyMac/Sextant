@@ -11,9 +11,9 @@ final class EvaluationContext {
     var updateOperations = [Path]()
 
     @usableFromInline
-    var allValueElementResults = [JsonElement]()
+    var allValueElementResults = [JsonElement?]()
     @usableFromInline
-    var valueElementResults = [JsonElement]()
+    var valueElementResults = [JsonElement?]()
 
     @usableFromInline
     var allValueResults = JsonArray()
@@ -67,10 +67,10 @@ final class EvaluationContext {
         }
 
         if options.contains(.exportValues) {
-            allValueElementResults.append(JsonElement.null())
+            allValueElementResults.append(nil)
             allValueResults.append(jsonObject)
             if jsonObject != nil {
-                valueElementResults.append(JsonElement.null())
+                valueElementResults.append(nil)
                 valueResults.append(jsonObject)
             }
         }
@@ -112,7 +112,7 @@ final class EvaluationContext {
                 return nil
             }
 
-            return valueElementResults[valueElementResults.count - 1].type
+            return valueElementResults[valueElementResults.count - 1]?.type
         }
 
         return .array
@@ -136,10 +136,10 @@ final class EvaluationContext {
                 return []
             }
 
-            return [valueElementResults[valueElementResults.count - 1]]
+            return [valueElementResults[valueElementResults.count - 1]].map { $0 ?? JsonElement.null() }
         }
 
-        return valueElementResults
+        return valueElementResults.map { $0 ?? JsonElement.null() }
     }
 
     func allResultsElements() -> [JsonElement] {
@@ -148,10 +148,10 @@ final class EvaluationContext {
                 return []
             }
 
-            return [allValueElementResults[allValueElementResults.count - 1]]
+            return [allValueElementResults[allValueElementResults.count - 1]].map { $0 ?? JsonElement.null() }
         }
 
-        return allValueElementResults
+        return allValueElementResults.map { $0 ?? JsonElement.null() }
     }
 
     func resultsValues() -> JsonArray? {

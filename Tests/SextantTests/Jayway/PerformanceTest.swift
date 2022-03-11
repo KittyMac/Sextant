@@ -36,6 +36,8 @@ class PerformanceTest: TestsBase {
         // 0.007
         // 0.007
         // 0.009
+        // -- v0.4.8 --
+        // 0.010
         
         let path: Hitch = "$[*]"
 
@@ -85,6 +87,8 @@ class PerformanceTest: TestsBase {
         // 0.088
         // 0.106
         // 0.109
+        // -- v0.4.8 --
+        // 0.104
         
         let path: Hitch = "$..type"
         
@@ -123,6 +127,8 @@ class PerformanceTest: TestsBase {
         // 0.037
         // 0.056
         // 0.064
+        // -- v0.4.8 --
+        // 0.066
         
         let path: Hitch = "$[?(@.payload.ref=='master')].payload"
 
@@ -163,6 +169,8 @@ class PerformanceTest: TestsBase {
         // 0.208
         // 0.223
         // 0.252
+        // -- v0.4.8 --
+        // 0.268
         
         let path: Hitch = "$..repo[?(@.name =~ /-/)]"
 
