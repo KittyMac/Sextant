@@ -249,6 +249,28 @@ class ExamplesTest: TestsBase {
         XCTAssertEqual(results, [7,3,42])
     }
     
+    /// JsonElements can be the return value if queried against an existing JsonElement
+    func testSimple15() {
+        let json = #"[{"name":"Rocco","age":42},{"name":"John","age":36}]"#
+        
+        
+        json.parsed { root in
+            guard let root = root else { XCTFail(); return }
+                        
+            guard let persons = root.query(elements: "$[*]") else { XCTFail(); return }
+                        
+            XCTAssertEqual(persons[0][hitch: "name"], "Rocco")
+            XCTAssertEqual(persons[0][int: "age"], 42)
+            
+            XCTAssertEqual(persons[1][hitch: "name"], "John")
+            XCTAssertEqual(persons[1][int: "age"], 36)
+            
+            guard let person: JsonElement = root.query("$[1]") else { XCTFail(); return }
+            
+            XCTAssertEqual(person[hitch: "name"], "John")
+            XCTAssertEqual(person[int: "age"], 36)
+        }
+    }
 }
 
 extension ExamplesTest {
@@ -262,6 +284,13 @@ extension ExamplesTest {
             ("testSimple5", testSimple5),
             ("testSimple6", testSimple6),
             ("testSimple7", testSimple7),
+            ("testSimple8", testSimple8),
+            ("testSimple9", testSimple9),
+            ("testSimple10", testSimple10),
+            ("testSimple11", testSimple11),
+            ("testSimple12", testSimple12),
+            ("testSimple13", testSimple13),
+            ("testSimple14", testSimple14),
         ]
     }
 }

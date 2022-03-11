@@ -165,6 +165,13 @@ public extension JsonAny {
 }
 
 public extension JsonElement {
+
+    @inlinable func query(_ path: Hitch) -> [JsonElement]? { return Sextant.shared.query(self, elements: path) }
+    @inlinable func query(elements path: Hitch) -> [JsonElement]? { return Sextant.shared.query(self, elements: path) }
+
+    @inlinable func query(_ path: Hitch) -> JsonElement? { return Sextant.shared.query(self, element: path) }
+    @inlinable func query(element path: Hitch) -> JsonElement? { return Sextant.shared.query(self, element: path) }
+
     @inlinable func query(paths: Hitch) -> JsonArray? { return Sextant.shared.query(self, paths: paths) }
     @inlinable func query(values path: Hitch) -> JsonArray? { return Sextant.shared.query(self, values: path) }
     @inlinable func query(_ path: Hitch) -> String? { return Sextant.shared.query(self, value: path) }
@@ -285,6 +292,30 @@ public extension Dictionary {
 }
 
 public extension Sextant {
+
+    func query(_ root: JsonElement?,
+               allElements path: Hitch) -> [JsonElement]? {
+        guard let path = cachedPath(query: path) else { return nil }
+        guard let root = root else { return nil }
+        if let result = path.evaluate(jsonElement: root,
+                                      rootJsonElement: root,
+                                      options: [.exportValues]) {
+            return result.allResultsElements()
+        }
+        return nil
+    }
+
+    func query(_ root: JsonElement?,
+               elements path: Hitch) -> [JsonElement]? {
+        guard let path = cachedPath(query: path) else { return nil }
+        guard let root = root else { return nil }
+        if let result = path.evaluate(jsonElement: root,
+                                      rootJsonElement: root,
+                                      options: [.exportValues]) {
+            return result.resultsElements()
+        }
+        return nil
+    }
 
     func query(_ root: JsonElement?,
                allValues path: Hitch) -> JsonArray? {
@@ -1107,5 +1138,14 @@ public extension Sextant {
             guard let jsonData = root.jsonDeserialized() else { return nil }
             return query(jsonData, values: path)?.first?.toDate()
         }
+    }
+}
+
+// MARK: - First Result -> JsonElement
+
+public extension Sextant {
+    @inlinable func query(_ root: JsonElement?,
+                          element path: Hitch) -> JsonElement? {
+        return query(root, elements: path)?.first
     }
 }

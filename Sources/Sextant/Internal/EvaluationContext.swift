@@ -11,9 +11,9 @@ final class EvaluationContext {
     var updateOperations = [Path]()
 
     @usableFromInline
-    var allValueTypeResults = [JsonType?]()
+    var allValueElementResults = [JsonElement]()
     @usableFromInline
-    var valueTypeResults = [JsonType?]()
+    var valueElementResults = [JsonElement]()
 
     @usableFromInline
     var allValueResults = JsonArray()
@@ -67,10 +67,10 @@ final class EvaluationContext {
         }
 
         if options.contains(.exportValues) {
-            allValueTypeResults.append(nil)
+            allValueElementResults.append(JsonElement.null())
             allValueResults.append(jsonObject)
             if jsonObject != nil {
-                valueTypeResults.append(nil)
+                valueElementResults.append(JsonElement.null())
                 valueResults.append(jsonObject)
             }
         }
@@ -92,10 +92,10 @@ final class EvaluationContext {
 
         if options.contains(.exportValues) {
             let jsonObject = jsonElement.reify(true)
-            allValueTypeResults.append(jsonElement.type)
+            allValueElementResults.append(jsonElement)
             allValueResults.append(jsonObject)
             if jsonObject != nil {
-                valueTypeResults.append(jsonElement.type)
+                valueElementResults.append(jsonElement)
                 valueResults.append(jsonObject)
             }
         }
@@ -108,11 +108,11 @@ final class EvaluationContext {
 
     internal func jsonType() -> JsonType? {
         if pathIsDefinite {
-            if valueTypeResults.count == 0 {
+            if valueElementResults.count == 0 {
                 return nil
             }
 
-            return valueTypeResults[valueTypeResults.count - 1]
+            return valueElementResults[valueElementResults.count - 1].type
         }
 
         return .array
@@ -128,6 +128,30 @@ final class EvaluationContext {
         }
 
         return valueResults
+    }
+
+    func resultsElements() -> [JsonElement] {
+        if pathIsDefinite {
+            if valueElementResults.count == 0 {
+                return []
+            }
+
+            return [valueElementResults[valueElementResults.count - 1]]
+        }
+
+        return valueElementResults
+    }
+
+    func allResultsElements() -> [JsonElement] {
+        if pathIsDefinite {
+            if allValueElementResults.count == 0 {
+                return []
+            }
+
+            return [allValueElementResults[allValueElementResults.count - 1]]
+        }
+
+        return allValueElementResults
     }
 
     func resultsValues() -> JsonArray? {
