@@ -2,7 +2,7 @@ import Foundation
 import Hitch
 import Spanker
 
-public typealias MapObjectBlock = (JsonElement) -> Any?
+public typealias MapObjectBlock = (JsonElement) -> JsonAny?
 public typealias ForEachObjectBlock = (JsonElement) -> Void
 public typealias FilterObjectBlock = (JsonElement) -> Bool
 

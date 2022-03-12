@@ -48,7 +48,7 @@ struct ArrayIndexPath: Path {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
         guard parentElement.type == .array else { error("invalid set operation"); return false }
         guard index >= 0 && index < parentElement.count else { return false }
-        parentElement.replace(at: index, value: JsonElement(unknown: value))
+        parentElement.replace(at: index, value: value.toJsonElement())
         return true
     }
 
@@ -59,7 +59,7 @@ struct ArrayIndexPath: Path {
         guard parentElement.type == .array else { error("invalid set operation"); return false }
         guard let valueElement = parentElement[element: index] else { return false }
         if let result = block(valueElement) {
-            parentElement.replace(at: index, value: result)
+            parentElement.replace(at: index, value: result.toJsonElement())
         } else {
             parentElement.remove(at: index)
         }

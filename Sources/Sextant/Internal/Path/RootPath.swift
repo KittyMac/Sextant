@@ -39,7 +39,7 @@ struct RootPath: Path {
     @discardableResult
     func set(value: JsonAny) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
-        parentElement.replace(with: JsonElement(unknown: value))
+        parentElement.replace(with: value.toJsonElement())
         return false
     }
 
@@ -47,7 +47,7 @@ struct RootPath: Path {
     @discardableResult
     func map(block: MapObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
-        self.parentElement?.replace(with: JsonElement(unknown: block(parentElement)))
+        self.parentElement?.replace(with: block(parentElement)?.toJsonElement() ?? JsonElement.null())
         return true
     }
 
