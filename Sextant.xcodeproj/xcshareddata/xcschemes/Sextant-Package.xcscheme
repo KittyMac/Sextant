@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "Sextant::Sextant"
+               BlueprintIdentifier = "sextant::Sextant"
                BuildableName = "Sextant.framework"
                BlueprintName = "Sextant"
                ReferencedContainer = "container:Sextant.xcodeproj">
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "Sextant::SextantTests"
+               BlueprintIdentifier = "sextant::SextantTests"
                BuildableName = "SextantTests.xctest"
                BlueprintName = "SextantTests"
                ReferencedContainer = "container:Sextant.xcodeproj">
