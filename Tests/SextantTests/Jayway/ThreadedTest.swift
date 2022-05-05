@@ -39,7 +39,7 @@ class ThreadedTest: TestsBase {
             }.start()
         }
         
-        wait(for: [expectation], timeout: 30)
+        wait(for: [expectation], timeout: 90)
     }
     
 }
