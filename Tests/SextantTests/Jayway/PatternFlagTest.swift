@@ -1,8 +1,8 @@
 import XCTest
-import class Foundation.Bundle
-import Hitch
+import Foundation
+import HitchKit
 
-@testable import Sextant
+@testable import SextantKit
 
 class PatternFlagTest: TestsBase {
     private func RegexFlags(_ f: NSRegularExpression.Options) -> NSRegularExpression.Options {

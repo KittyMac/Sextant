@@ -23,7 +23,7 @@ Sextant is a complete, high performance JSONPath implementation written in Swift
 
 
 ```swift
-import Sextant
+import SextantKit
 
 /// Each call to Sextant's query(values: ) will return an array on success and nil on failure
 func testSimple0() {

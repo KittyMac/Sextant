@@ -1,7 +1,7 @@
 import XCTest
-import class Foundation.Bundle
+import Foundation
 
-import Sextant
+import SextantKit
 
 class PropertyPathTokenTests: TestsBase {
     let jsonSimpleMap = """

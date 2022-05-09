@@ -1,7 +1,7 @@
 import XCTest
-import class Foundation.Bundle
+import Foundation
 
-@testable import Sextant
+@testable import SextantKit
 
 class PathCompilerTest: TestsBase {
     var root: JsonAny = nil

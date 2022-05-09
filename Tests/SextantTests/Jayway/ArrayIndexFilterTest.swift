@@ -1,8 +1,8 @@
 import XCTest
-import Hitch
-import class Foundation.Bundle
+import HitchKit
+import Foundation
 
-@testable import Sextant
+@testable import SextantKit
 
 class ArrayIndexFilterTest: TestsBase {
     let json = "[1, 3, 5, 7, 8, 13, 20]"

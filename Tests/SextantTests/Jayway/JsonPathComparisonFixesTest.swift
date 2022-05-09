@@ -1,8 +1,8 @@
 import XCTest
-import Hitch
-import class Foundation.Bundle
+import HitchKit
+import Foundation
 
-@testable import Sextant
+@testable import SextantKit
 
 class JsonPathComparisonFixesTest: TestsBase {
     // fixes: https://github.com/javerous/SMJJSONPath/issues/6
