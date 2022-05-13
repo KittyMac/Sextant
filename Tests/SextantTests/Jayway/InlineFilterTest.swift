@@ -1,7 +1,7 @@
 import XCTest
-import Foundation
+import class Foundation.Bundle
 
-@testable import SextantKit
+@testable import Sextant
 
 class InlineFilterTest: TestsBase {
     

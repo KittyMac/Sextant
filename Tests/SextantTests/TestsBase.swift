@@ -1,7 +1,7 @@
 import XCTest
-import Foundation
+import class Foundation.Bundle
 
-import SextantKit
+import Sextant
 
 func XCTAssertEqualAny(_ inFirst: Any?, _ inSecond: Any?) {
     guard let first = inFirst else { return XCTAssertTrue(inFirst == nil && inSecond == nil, "one of the arguments is nil") }

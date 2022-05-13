@@ -3,28 +3,28 @@
 import PackageDescription
 
 let package = Package(
-    name: "SextantKit",
+    name: "Sextant",
     platforms: [
         .macOS(.v10_13), .iOS(.v11)
     ],
     products: [
-        .library(name: "SextantKit", targets: ["SextantKit"])
+        .library(name: "Sextant", targets: ["Sextant"])
     ],
     dependencies: [
-        .package(name: "ChronometerKit", url: "https://github.com/KittyMac/Chronometer.git", .upToNextMinor(from: "0.2.0")),
-        .package(name: "HitchKit", url: "https://github.com/KittyMac/Hitch.git", .upToNextMinor(from: "0.5.0")),
-        .package(name: "SpankerKit", url: "https://github.com/KittyMac/Spanker.git", .upToNextMinor(from: "0.3.0")),
+        .package(url: "https://github.com/KittyMac/Chronometer.git", .upToNextMinor(from: "0.1.0")),
+        .package(url: "https://github.com/KittyMac/Hitch.git", .upToNextMinor(from: "0.4.0")),
+        .package(url: "https://github.com/KittyMac/Spanker.git", .upToNextMinor(from: "0.2.0")),
     ],
     targets: [
         .target(
-            name: "SextantKit",
+            name: "Sextant",
             dependencies: [
-                "HitchKit",
-                "SpankerKit",
-                "ChronometerKit"
+                "Hitch",
+                "Spanker",
+                "Chronometer"
             ]),
         .testTarget(
             name: "SextantTests",
-            dependencies: ["SextantKit"]),
+            dependencies: ["Sextant"]),
     ]
 )

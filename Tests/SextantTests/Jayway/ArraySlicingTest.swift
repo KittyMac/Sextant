@@ -1,8 +1,8 @@
 import XCTest
-import HitchKit
-import Foundation
+import Hitch
+import class Foundation.Bundle
 
-@testable import SextantKit
+@testable import Sextant
 
 class ArraySlicingTest: TestsBase {
     let jsonArray = "[1, 3, 5, 7, 8, 13, 20]"

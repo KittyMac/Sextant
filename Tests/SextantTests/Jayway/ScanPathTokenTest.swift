@@ -1,7 +1,7 @@
 import XCTest
-import Foundation
+import class Foundation.Bundle
 
-import SextantKit
+import Sextant
 
 class ScanPathTokenTests: TestsBase {
     let jsonDocument1 = """

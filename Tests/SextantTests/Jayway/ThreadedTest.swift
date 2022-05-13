@@ -1,9 +1,9 @@
 import XCTest
-import HitchKit
-import SpankerKit
-import Foundation
+import Hitch
+import Spanker
+import class Foundation.Bundle
 
-@testable import SextantKit
+@testable import Sextant
 
 class ThreadedTest: TestsBase {
     private var largeData0: Data = Data()
