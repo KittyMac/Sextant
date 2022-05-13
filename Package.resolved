@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/KittyMac/Chronometer.git",
         "state": {
           "branch": null,
-          "revision": "5e6481a277db398a7a3989f54f83c06e01eb4b15",
-          "version": "0.1.3"
+          "revision": "bf49dace3be107ab11609ed428c1b7878a07be52",
+          "version": "0.1.4"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/KittyMac/Hitch.git",
         "state": {
           "branch": null,
-          "revision": "a87e8c73413999396761c441e64f27ac13da40a4",
-          "version": "0.4.32"
+          "revision": "7cea1901cf1cd4bf390c1cf17eca73952f13f310",
+          "version": "0.4.34"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/KittyMac/Spanker.git",
         "state": {
           "branch": null,
-          "revision": "1f744093842a36730be0914c4620750f1af9fccf",
-          "version": "0.2.22"
+          "revision": "b26eb33a41f49a50f2f73ba6bcc8ad82af1a6da3",
+          "version": "0.2.24"
         }
       }
     ]
