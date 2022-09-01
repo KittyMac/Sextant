@@ -2,7 +2,7 @@ import XCTest
 import Hitch
 import class Foundation.Bundle
 
-@testable import Sextant
+import Sextant
 
 class ArrayPathTokenTest: TestsBase {
     let json = #"[{"foo":"foo-val-0"},{"foo":"foo-val-1"},{"foo":"foo-val-2"},{"foo":"foo-val-3"},{"foo":"foo-val-4"},{"foo":"foo-val-5"},{"foo":"foo-val-6"}]"#

@@ -2,6 +2,8 @@ import XCTest
 import Hitch
 import class Foundation.Bundle
 
+#if DEBUG
+
 @testable import Sextant
 
 class FilterParseTest: TestsBase {
@@ -40,3 +42,5 @@ extension FilterParseTest {
         ]
     }
 }
+
+#endif

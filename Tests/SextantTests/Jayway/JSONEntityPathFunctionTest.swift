@@ -1,7 +1,7 @@
 import XCTest
 import class Foundation.Bundle
 
-@testable import Sextant
+import Sextant
 
 class JSONEntityPathFunctionTest: TestsBase {
     let jsonBatch = """

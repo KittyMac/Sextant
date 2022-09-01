@@ -3,7 +3,7 @@ import Hitch
 import Spanker
 import class Foundation.Bundle
 
-@testable import Sextant
+import Sextant
 
 class ExamplesTest: TestsBase {
     

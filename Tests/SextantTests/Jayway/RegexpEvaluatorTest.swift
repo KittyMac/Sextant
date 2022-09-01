@@ -2,6 +2,8 @@ import XCTest
 import class Foundation.Bundle
 import Hitch
 
+#if DEBUG
+
 @testable import Sextant
 
 class RegexEvaluatorTest: TestsBase {
@@ -54,3 +56,5 @@ extension RegexEvaluatorTest {
         ]
     }
 }
+
+#endif

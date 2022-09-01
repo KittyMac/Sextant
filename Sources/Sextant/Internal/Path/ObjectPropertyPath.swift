@@ -60,7 +60,7 @@ struct ObjectPropertyPath: Path {
     @usableFromInline
     let propertyHalfHitch: HalfHitch?
 
-    @inlinable @inline(__always)
+    @usableFromInline
     init(any: JsonAny,
          property: Hitch) {
         parentAny = any
@@ -71,7 +71,7 @@ struct ObjectPropertyPath: Path {
         propertyHalfHitch = nil
     }
 
-    @inlinable @inline(__always)
+    @usableFromInline
     init(dictionary: JsonDictionary,
          property: String) {
         parentAny = nil
@@ -82,7 +82,7 @@ struct ObjectPropertyPath: Path {
         propertyHalfHitch = nil
     }
 
-    @inlinable @inline(__always)
+    @usableFromInline
     init(element: JsonElement,
          property: HalfHitch) {
         parentAny = nil

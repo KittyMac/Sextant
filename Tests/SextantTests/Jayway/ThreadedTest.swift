@@ -3,7 +3,9 @@ import Hitch
 import Spanker
 import class Foundation.Bundle
 
-@testable import Sextant
+import Sextant
+
+#if os(macOS)
 
 class ThreadedTest: TestsBase {
     private var largeData0: Data = Data()
@@ -43,3 +45,5 @@ class ThreadedTest: TestsBase {
     }
     
 }
+
+#endif

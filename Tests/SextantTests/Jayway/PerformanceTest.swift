@@ -3,7 +3,9 @@ import Hitch
 import Spanker
 import class Foundation.Bundle
 
-@testable import Sextant
+import Sextant
+
+#if os(macOS)
 
 class PerformanceTest: TestsBase {
     private var largeData0: Data = Data()
@@ -189,3 +191,5 @@ class PerformanceTest: TestsBase {
     }
     
 }
+
+#endif

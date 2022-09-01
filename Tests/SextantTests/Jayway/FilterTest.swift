@@ -1,7 +1,7 @@
 import XCTest
 import class Foundation.Bundle
 
-@testable import Sextant
+import Sextant
 
 class FilterTest: TestsBase {
     let jsonObject = """

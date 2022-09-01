@@ -2,6 +2,8 @@ import XCTest
 import class Foundation.Bundle
 import Hitch
 
+#if DEBUG
+
 @testable import Sextant
 
 class PatternFlagTest: TestsBase {
@@ -29,3 +31,5 @@ extension PatternFlagTest {
         ]
     }
 }
+
+#endif

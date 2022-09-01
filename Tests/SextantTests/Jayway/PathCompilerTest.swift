@@ -1,6 +1,8 @@
 import XCTest
 import class Foundation.Bundle
 
+#if DEBUG
+
 @testable import Sextant
 
 class PathCompilerTest: TestsBase {
@@ -229,3 +231,5 @@ extension PathCompilerTest {
         ]
     }
 }
+
+#endif

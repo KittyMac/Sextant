@@ -22,7 +22,7 @@ struct ArrayIndexPath: Path {
     @usableFromInline
     let index: Int
 
-    @inlinable @inline(__always)
+    @usableFromInline
     init(array: JsonArray,
          index: Int,
          item: JsonAny) {
@@ -32,7 +32,7 @@ struct ArrayIndexPath: Path {
         self.item = item
     }
 
-    @inlinable @inline(__always)
+    @usableFromInline
     init(element: JsonElement,
          index: Int,
          item: JsonAny) {
