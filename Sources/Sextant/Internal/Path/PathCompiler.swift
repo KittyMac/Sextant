@@ -439,7 +439,7 @@ final class PathCompiler {
                         return false
                     }
 
-                    prop.unescape()
+                    prop.unicodeUnescape()
                     properties.append(prop)
 
                     inProperty = false
