@@ -1,4 +1,4 @@
-FROM swift:5.7.1-focal
+FROM swift:5.7.1-focal as builder
 
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true && apt-get -q update && \
     apt-get -q install -y \
