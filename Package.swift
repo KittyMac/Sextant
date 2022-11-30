@@ -8,7 +8,7 @@ let package = Package(
         .macOS(.v10_13), .iOS(.v11)
     ],
     products: [
-        .library(name: "Sextant", targets: ["Sextant"])
+        .library(name: "Sextant", type: .dynamic, targets: ["Sextant"])
     ],
     dependencies: [
         .package(url: "https://github.com/KittyMac/Chronometer.git", from: "0.1.0"),
