@@ -9,7 +9,6 @@ let package = Package(
     ],
     products: [
         .library(name: "Sextant", targets: ["Sextant"]),
-        .library(name: "SextantLib", type: .dynamic, targets: ["Sextant"]),
     ],
     dependencies: [
         .package(url: "https://github.com/KittyMac/Chronometer.git", from: "0.1.0"),
