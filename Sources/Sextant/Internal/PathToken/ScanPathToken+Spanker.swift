@@ -56,6 +56,24 @@ extension ScanPathToken {
 
             idx += 1
         }
+        
+        // Evaluate my non-walkable children
+        if predicate.isWildcardFilterPath() {
+            for (propertyObject) in jsonArray.iterValues {
+                guard propertyObject.type != .dictionary else { continue }
+                guard propertyObject.type != .array else { continue }
+                
+                if predicate.matchesJsonElement(jsonElement: propertyObject) {
+                    let result = path.evaluate(currentPath: currentPath,
+                                               parentPath: parentPath,
+                                               jsonElement: propertyObject,
+                                               evaluationContext: evaluationContext)
+                    if result != .done {
+                        return result
+                    }
+                }
+            }
+        }
 
         return .done
     }
@@ -107,6 +125,24 @@ extension ScanPathToken {
                 }
                 if result != .done {
                     return result
+                }
+            }
+        }
+        
+        // Evaluate my non-walkable children
+        if predicate.isWildcardFilterPath() {
+            for (propertyObject) in jsonDictionary.iterValues {
+                guard propertyObject.type != .dictionary else { continue }
+                guard propertyObject.type != .array else { continue }
+                
+                if predicate.matchesJsonElement(jsonElement: propertyObject) {
+                    let result = object.evaluate(currentPath: currentPath,
+                                                 parentPath: parentPath,
+                                                 jsonElement: propertyObject,
+                                                 evaluationContext: evaluationContext)
+                    if result != .done {
+                        return result
+                    }
                 }
             }
         }

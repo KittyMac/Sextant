@@ -5,11 +5,18 @@ import Spanker
 class FilterPathTokenPredicate: ScanPredicate {
     let token: PredicatePathToken
     let evaluationContext: EvaluationContext
+    let isWildcardFilter: Bool
 
     init(token: PredicatePathToken,
          evaluationContext: EvaluationContext) {
         self.token = token
         self.evaluationContext = evaluationContext
+        self.isWildcardFilter = (token.description == "[?]")
+    }
+    
+    @inlinable @inline(__always)
+    override func isWildcardFilterPath() -> Bool {
+        return isWildcardFilter
     }
 
     @inlinable @inline(__always)

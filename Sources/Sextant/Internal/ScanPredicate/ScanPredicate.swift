@@ -20,6 +20,11 @@ class ScanPredicate {
         }
         return FakePredicate()
     }
+    
+    @inlinable @inline(__always)
+    func isWildcardFilterPath() -> Bool {
+        return false
+    }
 
     @inlinable @inline(__always)
     func matchesJsonObject(jsonObject: JsonAny) -> Bool {

@@ -72,6 +72,13 @@ class PredicatePathToken: PathToken {
             if isUpstreamDefinite() {
                 return .error("Filter: \(description) can not be applied to primitives. Current context is: \(jsonObject ?? "nil")")
             }
+            if accept(jsonObject: jsonObject,
+                      rootJsonObject: evaluationContext.rootJsonObject,
+                      evaluationContext: evaluationContext) {
+                return evaluationContext.add(path: currentPath,
+                                             operation: NullPath.shared,
+                                             jsonObject: jsonObject)
+            }
         }
 
         return .done
@@ -136,6 +143,13 @@ class PredicatePathToken: PathToken {
         } else {
             if isUpstreamDefinite() {
                 return .error("Filter: \(description) can not be applied to primitives. Current context is: \(jsonElement)")
+            }
+            if accept(jsonElement: jsonElement,
+                      rootJsonElement: evaluationContext.rootJsonElement,
+                      evaluationContext: evaluationContext) {
+                return evaluationContext.add(path: currentPath,
+                                             operation: newPath(rootElement: jsonElement, options: evaluationContext.options),
+                                             jsonElement: jsonElement)
             }
         }
 

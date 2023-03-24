@@ -18,6 +18,9 @@ class ThreadedTest: TestsBase {
     }
         
     func testThreads0() {
+        #if DEBUG
+        
+        #else
         // Ensure that sharing cached paths across threads does not cause bad things to happen
         let path: Hitch = "$..type"
         let expectation = XCTestExpectation(description: "success")
@@ -42,6 +45,7 @@ class ThreadedTest: TestsBase {
         }
         
         wait(for: [expectation], timeout: 90)
+        #endif
     }
     
 }

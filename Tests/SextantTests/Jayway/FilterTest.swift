@@ -224,6 +224,13 @@ class FilterTest: TestsBase {
     }
 
     // MARK - SMJFilterTest - IN
+    
+    func test_string_in_evals_child_node_no_field() {
+        let json = "{\"foo\": [\"false\",\"true\"], \"bar\": {\"a\":\"true\"}}"
+        XCTAssertEqual(json.query(values: "$..[?(@ contains 'ru')]")?.count, 2)
+        XCTAssertEqual(json.query(values: "$.foo.[?(@ contains 'ru')]")?.count, 1)
+        XCTAssertEqual(json.query(values: "$.bar.[?(@ contains 'ru')]")?.count, 0)
+    }
 
     func test_string_in_evals() {
         //XCTAssertEqual(jsonObject.query(values: "[?(@.string-key IN [\"a\", null, \"string\"])]")?.count, 1)

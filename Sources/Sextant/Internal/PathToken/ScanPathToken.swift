@@ -114,6 +114,24 @@ class ScanPathToken: PathToken {
 
             idx += 1
         }
+        
+        // Evaluate my non-walkable children
+        if predicate.isWildcardFilterPath() {
+            for evalObject in jsonObject {
+                guard evalObject is JsonDictionary == false else { continue }
+                guard evalObject is JsonArray == false else { continue }
+                
+                if predicate.matchesJsonObject(jsonObject: evalObject) {
+                    let result = path.evaluate(currentPath: currentPath,
+                                               parentPath: parentPath,
+                                               jsonObject: evalObject,
+                                               evaluationContext: evaluationContext)
+                    if result != .done {
+                        return result
+                    }
+                }
+            }
+        }
 
         return .done
     }
@@ -165,6 +183,24 @@ class ScanPathToken: PathToken {
                 }
                 if result != .done {
                     return result
+                }
+            }
+        }
+        
+        // Evaluate my non-walkable children
+        if predicate.isWildcardFilterPath() {
+            for (_, propertyObject) in jsonObject {
+                guard propertyObject is JsonDictionary == false else { continue }
+                guard propertyObject is JsonArray == false else { continue }
+                
+                if predicate.matchesJsonObject(jsonObject: propertyObject) {
+                    let result = object.evaluate(currentPath: currentPath,
+                                                 parentPath: parentPath,
+                                                 jsonObject: propertyObject,
+                                                 evaluationContext: evaluationContext)
+                    if result != .done {
+                        return result
+                    }
                 }
             }
         }

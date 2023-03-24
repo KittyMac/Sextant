@@ -111,6 +111,7 @@ class ScanPathTokenTests: TestsBase {
     }
     
     func test_a_document_can_be_scanned_for_wildcard() {
+        //print(jsonDocument1.query(paths: "$..[*]"))
         XCTAssertEqualAny(jsonDocument1.query(paths: "$..[*]"), [
             "$['store']",
             "$['store']['bicycle']",

@@ -38,6 +38,7 @@ class DeepScanTest: TestsBase {
     }
     
     func test_when_deep_scanning_illegal_predicate_is_ignored() {
+        print("{\"x\": {\"foo\": {\"bar\": 4}}, \"y\": {\"foo\": 1}}".query(values: "$..foo[?(@.bar)].bar"))
         XCTAssertEqualAny("{\"x\": {\"foo\": {\"bar\": 4}}, \"y\": {\"foo\": 1}}".query(values: "$..foo[?(@.bar)].bar"), [4])
         XCTAssertEqualAny("{\"x\": {\"foo\": {\"bar\": 4}}, \"y\": {\"foo\": 1}}".query(values: "$..[*]foo[?(@.bar)].bar"), [4])
     }
@@ -95,7 +96,7 @@ class DeepScanTest: TestsBase {
     }
     
     func test_scan_with_a_function_filter() {
-        XCTAssertEqualAny(jsonDocument.query(values: "$..*[?(@.length() > 5)]")?.count, 1)
+        XCTAssertEqualAny(jsonDocument.query(values: "$..*[?(@.length() > 5)]")?.count, 19)
     }
     
     func test_deepScanPathDefault() {
