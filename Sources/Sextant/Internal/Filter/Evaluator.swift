@@ -69,7 +69,7 @@ enum Evaluator {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     static func evaluate(relationalOperator: RelationalOperator,
                          left: ValueNode?,
                          right: ValueNode?,

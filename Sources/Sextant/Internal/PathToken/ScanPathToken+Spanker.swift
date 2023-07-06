@@ -4,7 +4,7 @@ import Spanker
 
 extension ScanPathToken {
 
-    @inlinable @inline(__always)
+    @inlinable
     func walk(array path: PathToken,
               currentPath: Hitch,
               parentPath: Path,
@@ -78,7 +78,7 @@ extension ScanPathToken {
         return .done
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func walk(object: PathToken,
               currentPath: Hitch,
               parentPath: Path,

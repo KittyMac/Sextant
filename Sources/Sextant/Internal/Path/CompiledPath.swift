@@ -61,7 +61,7 @@ struct CompiledPath: Path {
         return path
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext? {
         let evaluationContext = EvaluationContext(path: self,
                                                   rootJsonObject: rootJsonObject,
@@ -84,7 +84,7 @@ struct CompiledPath: Path {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext? {
         let evaluationContext = EvaluationContext(path: self,
                                                   rootJsonElement: rootJsonElement,
@@ -107,17 +107,17 @@ struct CompiledPath: Path {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func isDefinite() -> Bool {
         return root.isPathDefinite()
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func isFunctionPath() -> Bool {
         return root.isFunctionPath()
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func isRootPath() -> Bool {
         return rootPath
     }

@@ -91,39 +91,39 @@ extension Path {
     }
 }
 
-@inlinable @inline(__always)
+@inlinable
 internal func newPath(rootObject: JsonAny,
                       options: EvaluationOptions) -> Path {
     return RootPath(rootObject: rootObject, options: options)
 }
 
-@inlinable @inline(__always)
+@inlinable
 internal func newPath(rootElement: JsonElement,
                       options: EvaluationOptions) -> Path {
     return RootPath(rootElement: rootElement, options: options)
 }
 
-@inlinable @inline(__always)
+@inlinable
 internal func newPath(array: JsonArray, index: Int, item: JsonAny) -> Path {
     return ArrayIndexPath(array: array, index: index, item: item)
 }
 
-@inlinable @inline(__always)
+@inlinable
 internal func newPath(element: JsonElement, index: Int, item: JsonAny) -> Path {
     return ArrayIndexPath(element: element, index: index, item: item)
 }
 
-@inlinable @inline(__always)
+@inlinable
 internal func newPath(any: JsonAny, property: Hitch) -> Path {
     return ObjectPropertyPath(any: any, property: property)
 }
 
-@inlinable @inline(__always)
+@inlinable
 internal func newPath(dictionary: JsonDictionary, property: String) -> Path {
     return ObjectPropertyPath(dictionary: dictionary, property: property)
 }
 
-@inlinable @inline(__always)
+@inlinable
 internal func newPath(element: JsonElement, property: HalfHitch) -> Path {
     return ObjectPropertyPath(element: element, property: property)
 }

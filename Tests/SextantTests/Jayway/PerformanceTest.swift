@@ -12,7 +12,7 @@ class PerformanceTest: TestsBase {
     private var large0: JsonAny = nil
     
     override func setUp() {
-        let largeDataPath = "/Volumes/Storage/large.json"
+        let largeDataPath = "/Users/rjbowli/Development/data/large.json"
         largeData0 = try! Data(contentsOf: URL(fileURLWithPath: largeDataPath))
         large0 = try! JSONSerialization.jsonObject(with: largeData0, options: [])
     }
@@ -60,6 +60,9 @@ class PerformanceTest: TestsBase {
         // 0.878
         // -- v0.4 --
         // 0.882
+        
+        // 0.566
+        // 0.664
         
         let path: Hitch = "$..type"
         

@@ -25,7 +25,7 @@ struct PredicateContext {
         self.rootJsonElement = rootJsonElement
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func evaluate(path: Path, options: EvaluationOptions) -> (JsonAny, JsonType?) {
         if jsonObject != nil {
             return evaluate(jsonObject: path, options: options)
@@ -33,7 +33,7 @@ struct PredicateContext {
         return evaluate(jsonElement: path, options: options)
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func evaluate(jsonObject path: Path, options: EvaluationOptions) -> (JsonAny, JsonType?) {
         var result: JsonAny = nil
 
@@ -57,7 +57,7 @@ struct PredicateContext {
         return (result, nil)
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func evaluate(jsonElement path: Path, options: EvaluationOptions) -> (JsonAny, JsonType?) {
         var result: JsonAny = nil
         var resultType: JsonType?

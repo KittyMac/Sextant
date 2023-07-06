@@ -9,7 +9,7 @@ class ArrayIndexToken: ArrayPathToken {
         self.indexOperation = operation
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -50,7 +50,7 @@ class ArrayIndexToken: ArrayPathToken {
         return .done
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,

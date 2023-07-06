@@ -4,7 +4,7 @@ import Spanker
 
 class WildcardPathToken: PathToken {
 
-    @inlinable @inline(__always)
+    @inlinable
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -35,7 +35,7 @@ class WildcardPathToken: PathToken {
         return .done
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,

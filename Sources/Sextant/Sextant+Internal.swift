@@ -84,7 +84,7 @@ enum EvaluationStatus: Equatable {
 
 extension Hitch {
 
-    @inlinable @inline(__always)
+    @inlinable
     class func appending<T>(hitch: Hitch,
                          block: () -> (T),
                          execute: () -> Void) -> T {
@@ -94,7 +94,7 @@ extension Hitch {
         return block()
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     class func appending<T>(hitch: Hitch,
                             parts: [Hitch],
                             _ block: () -> (T)) -> T {
@@ -107,7 +107,7 @@ extension Hitch {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     class func appending<T>(hitch: Hitch,
                             index: Int,
                             _ block: () -> (T)) -> T {
@@ -119,7 +119,7 @@ extension Hitch {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     class func appending<T>(hitch: Hitch,
                             property: Hitch,
                             _ block: () -> (T)) -> T {
@@ -131,7 +131,7 @@ extension Hitch {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     class func appending<T>(hitch: Hitch,
                             property: Hitch,
                             wrap: UInt8,
@@ -146,7 +146,7 @@ extension Hitch {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     class func appending<T>(hitch: Hitch,
                             property: HalfHitch,
                             wrap: UInt8,
@@ -161,7 +161,7 @@ extension Hitch {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     class func appending<T>(hitch: Hitch,
                             property: String,
                             wrap: UInt8,

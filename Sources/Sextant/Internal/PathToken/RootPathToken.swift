@@ -18,7 +18,7 @@ final class RootPathToken: PathToken {
         tail = self
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func isRootPath() -> Bool {
         return isRootPathToken
     }
@@ -34,7 +34,7 @@ final class RootPathToken: PathToken {
         return self
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -60,7 +60,7 @@ final class RootPathToken: PathToken {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,

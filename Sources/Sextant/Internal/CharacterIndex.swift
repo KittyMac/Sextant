@@ -20,69 +20,69 @@ class CharacterIndex: CustomStringConvertible {
         return charSequence.description
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func substring(_ from: Int, _ to: Int) -> Hitch? {
         return charSequence.substring(from, to)
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func count() -> Int {
         return charSequence.count
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func current() -> UInt8 {
         return charSequence[position]
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func next() -> UInt8 {
         guard position < endPosition else { return 0 }
         return charSequence[position + 1]
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func advance(_ count: Int = 1) {
         position += count
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func removeFromEnd(_ count: Int = 1) {
         endPosition = endPosition - count
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func positionAtEnd() -> Bool {
         return position >= endPosition
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     subscript (index: Int) -> UInt8 {
         get { return charSequence[index] }
         set(newValue) { charSequence[index] = newValue }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func last() -> UInt8 {
         return charSequence[endPosition]
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func first() -> UInt8 {
         return charSequence[position]
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func inBounds(position: Int) -> Bool {
         return position >= 0 && position <= endPosition
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func inBounds() -> Bool {
         return position >= 0 && position <= endPosition
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func hasMoreCharacters() -> Bool {
         return position < endPosition
     }

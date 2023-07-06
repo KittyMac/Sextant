@@ -18,7 +18,7 @@ let falseHitch = Hitch("false")
 
 extension JsonAny {
 
-    @inlinable @inline(__always)
+    @inlinable
     func toBool() -> Bool? {
 
         switch self {
@@ -39,7 +39,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func toDouble() -> Double? {
         switch self {
         case let double as Double:
@@ -51,7 +51,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func toInt() -> Int? {
         switch self {
         case let double as Double:
@@ -63,7 +63,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func toString() -> String? {
         switch self {
         case let string as String:
@@ -77,7 +77,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func toHitch() -> Hitch? {
         switch self {
         case let string as String:
@@ -91,7 +91,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func toHalfHitch() -> HalfHitch? {
         switch self {
         case let string as String:
@@ -105,7 +105,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func toDate() -> Date? {
         var dateString = ""
 

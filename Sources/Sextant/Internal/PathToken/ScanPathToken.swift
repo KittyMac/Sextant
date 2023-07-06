@@ -4,7 +4,7 @@ import Spanker
 
 class ScanPathToken: PathToken {
 
-    @inlinable @inline(__always)
+    @inlinable
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -30,7 +30,7 @@ class ScanPathToken: PathToken {
         return .done
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,
@@ -64,7 +64,7 @@ class ScanPathToken: PathToken {
         return ".."
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func walk(array path: PathToken,
               currentPath: Hitch,
               parentPath: Path,
@@ -136,7 +136,7 @@ class ScanPathToken: PathToken {
         return .done
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func walk(object: PathToken,
               currentPath: Hitch,
               parentPath: Path,

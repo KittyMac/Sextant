@@ -30,7 +30,7 @@ class PredicatePathToken: PathToken {
         return true
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -100,7 +100,7 @@ class PredicatePathToken: PathToken {
         return true
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,

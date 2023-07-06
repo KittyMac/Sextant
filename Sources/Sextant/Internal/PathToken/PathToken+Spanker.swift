@@ -4,7 +4,7 @@ import Spanker
 
 extension PathToken {
 
-    @inlinable @inline(__always)
+    @inlinable
     func checkArray(currentPath: Hitch,
                     jsonElement: JsonElement,
                     evaluationContext: EvaluationContext) -> ArrayPathCheck {
@@ -19,7 +19,7 @@ extension PathToken {
         return .skip
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func handle(arrayIndex: Int,
                 currentPath: Hitch,
                 jsonElement: JsonElement,
@@ -67,7 +67,7 @@ extension PathToken {
         return .done
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func handle(property: Hitch,
                 currentPath: Hitch,
                 jsonElement: JsonElement,
@@ -146,7 +146,7 @@ extension PathToken {
         return .done
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func has(property: Hitch,
              jsonElement: JsonElement,
              evaluationContext: EvaluationContext) -> Bool {
@@ -155,7 +155,7 @@ extension PathToken {
                     evaluationContext: evaluationContext) != nil
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func read(property: Hitch,
               jsonElement: JsonElement,
               evaluationContext: EvaluationContext) -> JsonElement? {

@@ -14,7 +14,7 @@ class RelationalExpressionNode: ExpressionNode {
         self.right = right
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     override func apply(predicateContext: PredicateContext) -> EvaluatorResult {
         // Note: this is broken out verbosely to avoid performance problems caused by copy of a value type.
         if left.typeName != .path && right.typeName != .path {

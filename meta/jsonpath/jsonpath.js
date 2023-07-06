@@ -88,7 +88,7 @@ function runJsonPathPlusTest(title, json, path, result) {
 }
 
 try {
-    const data = fs.readFileSync('/Volumes/Storage/large.json', 'utf8');
+    const data = fs.readFileSync('/Users/rjbowli/Development/data/large.json', 'utf8');
     let json = JSON.parse(data);
     
     print(json.length)

@@ -12,7 +12,7 @@ class ThreadedTest: TestsBase {
     private var large0: JsonAny = nil
     
     override func setUp() {
-        let largeDataPath = "/Volumes/Storage/large.json"
+        let largeDataPath = "/Users/rjbowli/Development/data/large.json"
         largeData0 = try! Data(contentsOf: URL(fileURLWithPath: largeDataPath))
         large0 = try! JSONSerialization.jsonObject(with: largeData0, options: [])
     }

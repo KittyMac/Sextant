@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/KittyMac/Hitch.git",
       "state" : {
-        "revision" : "377070db13a48be7564d456e7262ee2cb5f68de7",
-        "version" : "0.4.110"
+        "revision" : "90065f8f6900b389cbd4d3c73d94d50d172994cd",
+        "version" : "0.4.111"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/KittyMac/Spanker.git",
       "state" : {
-        "revision" : "a8877b23d25b76b803fb38e134037badd987aa52",
-        "version" : "0.2.38"
+        "revision" : "e9067864739180ecea8283bc658dd29b0ed9bd0f",
+        "version" : "0.2.39"
       }
     }
   ],

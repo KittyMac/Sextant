@@ -57,7 +57,7 @@ final class EvaluationContext {
         self.pathIsDefinite = path.isDefinite()
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func add(path: Hitch,
              operation: Path,
              jsonObject: JsonAny) -> EvaluationStatus {
@@ -81,7 +81,7 @@ final class EvaluationContext {
         return .done
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     func add(path: Hitch,
              operation: Path,
              jsonElement: JsonElement) -> EvaluationStatus {
