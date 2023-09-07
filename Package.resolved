@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/KittyMac/Spanker.git",
       "state" : {
-        "revision" : "e9067864739180ecea8283bc658dd29b0ed9bd0f",
-        "version" : "0.2.39"
+        "revision" : "7883b305b847a8b4d02420a21b6aa8ed9355e4db",
+        "version" : "0.2.45"
       }
     }
   ],
