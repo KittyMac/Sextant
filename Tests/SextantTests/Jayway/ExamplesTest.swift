@@ -9,7 +9,7 @@ class ExamplesTest: TestsBase {
     
     /// Each call to Sextant's query(values: ) will return an array on success and nil on failure
     func testSimple0() {
-        let json = #"["Hello","World"]"#
+        let json: HalfHitch = #"["Hello","World"]"#
         guard let results = json.query(values: "$[0]") else { return XCTFail() }
         XCTAssertEqualAny(results[0], "Hello")
     }
@@ -32,7 +32,7 @@ class ExamplesTest: TestsBase {
     
     /// Automatically covert to simple tuples
     func testSimple3() {
-        let json = #"{"name":"Rocco","age":42}"#
+        let json: HalfHitch = #"{"name":"Rocco","age":42}"#
         
         guard let person: (name: String, age: Int) = json.query("$.['name','age']") else { return XCTFail() }
         XCTAssertEqual(person.name, "Rocco")
@@ -49,7 +49,7 @@ class ExamplesTest: TestsBase {
     
     /// Supports Decodable structs
     func testSimple4() {
-        let json = #"{"data":{"people":[{"name":"Rocco","age":42},{"name":"John","age":12},{"name":"Elizabeth","age":35},{"name":"Victoria","age":85}]}}"#
+        let json: HalfHitch = #"{"data":{"people":[{"name":"Rocco","age":42},{"name":"John","age":12},{"name":"Elizabeth","age":35},{"name":"Victoria","age":85}]}}"#
         
         class Person: Decodable {
             let name: String
@@ -90,13 +90,14 @@ class ExamplesTest: TestsBase {
     
     func testSimple7() {
         // note: email is missing from this one
-        let json = #"{"data":{"attributes":{"about":null,"created":"2021-12-19T18:06:51.000+00:00","first_name":"John","full_name":"John Doe","image_url":"https://www.example.com/image.png","last_name":"Doe","thumb_url":"https://www.example.com/image.png","url":"https://www.example.com/user?u=234576235","vanity":null},"id":"234576235","type":"user"},"links":{"self":"https://www.example.com/api/oauth2/v2/user/234576235"}}"#
+        let json: Hitch = #"{"data":{"attributes":{"about":null,"created":"2021-12-19T18:06:51.000+00:00","first_name":"John","full_name":"John Doe","image_url":"https://www.example.com/image.png","last_name":"Doe","thumb_url":"https://www.example.com/image.png","url":"https://www.example.com/user?u=234576235","vanity":null},"id":"234576235","type":"user"},"links":{"self":"https://www.example.com/api/oauth2/v2/user/234576235"}}"#
         
-        if let _: (name: String?,
+        if let x: (name: String?,
                    firstName: String?,
                    lastName: String?,
                    email: String,
                    imageUrl: String?) = json.query("$.data.attributes['full_name','first_name','last_name','email','thumb_url']") {
+            print(x)
             XCTFail()
         }
         
@@ -139,7 +140,7 @@ class ExamplesTest: TestsBase {
     
     /// Use replace, map, filter, remove and forEach to perform mofications to your json
     func testSimple10() {
-        let json = #"{"data":{"people":[{"name":"Rocco","age":42,"gender":"m"},{"name":"John","age":12,"gender":"m"},{"name":"Elizabeth","age":35,"gender":"f"},{"name":"Victoria","age":85,"gender":"f"}]}}"#
+        let json: HalfHitch = #"{"data":{"people":[{"name":"Rocco","age":42,"gender":"m"},{"name":"John","age":12,"gender":"m"},{"name":"Elizabeth","age":35,"gender":"f"},{"name":"Victoria","age":85,"gender":"f"}]}}"#
 
         let modifiedJson: String? = json.parsed { root in
             guard let root = root else { XCTFail(); return nil }
@@ -164,7 +165,7 @@ class ExamplesTest: TestsBase {
     
     /// Use a single map to accomplish the same task as above but with only one pass through the data
     func testSimple11() {
-        let json = #"{"data":{"people":[{"name":"Rocco","age":42,"gender":"m"},{"name":"John","age":12,"gender":"m"},{"name":"Elizabeth","age":35,"gender":"f"},{"name":"Victoria","age":85,"gender":"f"}]}}"#
+        let json: HalfHitch = #"{"data":{"people":[{"name":"Rocco","age":42,"gender":"m"},{"name":"John","age":12,"gender":"m"},{"name":"Elizabeth","age":35,"gender":"f"},{"name":"Victoria","age":85,"gender":"f"}]}}"#
         
         let modifiedJson: String? = json.query(map: "$..people[*] ", { person in
             // Remove all females, increment age by 1, lowercase all names
@@ -216,7 +217,7 @@ class ExamplesTest: TestsBase {
     /// operations and perform a dynamic lookup to the operation function, perform
     /// the task and coallate the results.
     func testSimple14() {
-        let json = #"[{"name":"add","inputs":[3,4]},{"name":"subtract","inputs":[6,3]},{"echo":"Hello, world"},{"name":"increment","input":41},{"echo":"Hello, world"}]"#
+        let json: HalfHitch = #"[{"name":"add","inputs":[3,4]},{"name":"subtract","inputs":[6,3]},{"echo":"Hello, world"},{"name":"increment","input":41},{"echo":"Hello, world"}]"#
         
         let operations: [HalfHitch: (JsonElement) -> (Int?)] = [
             "add": { input in
@@ -251,7 +252,7 @@ class ExamplesTest: TestsBase {
     
     /// JsonElements can be the return value if queried against an existing JsonElement
     func testSimple15() {
-        let json = #"[{"name":"Rocco","age":42},{"name":"John","age":36}]"#
+        let json: HalfHitch = #"[{"name":"Rocco","age":42},{"name":"John","age":36}]"#
         
         
         json.parsed { root in

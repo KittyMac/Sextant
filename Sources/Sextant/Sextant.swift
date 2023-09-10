@@ -166,6 +166,13 @@ public extension Hitch {
     }
 }
 
+public extension HalfHitch {
+    @inlinable
+    func jsonDeserialized() -> JsonAny {
+        return self.dataNoCopy().jsonDeserialized()
+    }
+}
+
 public extension String {
     @inlinable
     func jsonDeserialized() -> JsonAny {
