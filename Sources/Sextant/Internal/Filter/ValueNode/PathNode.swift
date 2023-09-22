@@ -120,7 +120,7 @@ struct PathNode: ValueNode {
                     return NumberNode(value: object.toDouble() ?? 0.0)
                 case .boolean:
                     return BooleanNode(value: object as? Bool ?? false)
-                case .string, .regex:
+                case .string:
                     return StringNode(hitch: object.toHitch() ?? Hitch.empty)
                 case .array:
                     return JsonNode(array: object as? JsonArray ?? [])
