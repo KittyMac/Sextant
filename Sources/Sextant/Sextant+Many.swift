@@ -8,17 +8,17 @@ public extension String {
     @inlinable func query(paths: [Hitch]) -> [String]? { return Sextant.shared.query(self, paths: paths) }
     @inlinable func query(values path: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, values: path) }
     @inlinable func query(_ path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(strings path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(string path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(hitches path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(hitch path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(ints path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(int path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(doubles path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(double path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(bools path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(bool path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(dates path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(date path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<A, B>(_ path: [Hitch]) -> (A, B)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C>(_ path: [Hitch]) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
@@ -31,34 +31,34 @@ public extension String {
     @inlinable func query(paths: [String]) -> [String]? { return Sextant.shared.query(self, paths: paths.map { Hitch(string: $0) }) }
     @inlinable func query(values path: [String]) -> JsonArray? { return Sextant.shared.query(self, values: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(strings path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(string path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(hitches path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(hitch path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(ints path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(int path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(doubles path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(double path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(bools path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(bool path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(dates path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(date path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
 }
 
 public extension Hitch {
     @inlinable func query(paths: [Hitch]) -> [String]? { return Sextant.shared.query(self, paths: paths) }
     @inlinable func query(values path: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, values: path) }
     @inlinable func query(_ path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(strings path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(string path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(hitches path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(hitch path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(ints path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(int path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(doubles path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(double path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(bools path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(bool path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(dates path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(date path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<A, B>(_ path: [Hitch]) -> (A, B)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C>(_ path: [Hitch]) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
@@ -71,34 +71,34 @@ public extension Hitch {
     @inlinable func query(paths: [String]) -> [String]? { return Sextant.shared.query(self, paths: paths.map { Hitch(string: $0) }) }
     @inlinable func query(values path: [String]) -> JsonArray? { return Sextant.shared.query(self, values: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(strings path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(string path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(hitches path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(hitch path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(ints path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(int path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(doubles path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(double path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(bools path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(bool path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(dates path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(date path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
 }
 
 public extension HalfHitch {
     @inlinable func query(paths: [Hitch]) -> [String]? { return Sextant.shared.query(self, paths: paths) }
     @inlinable func query(values path: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, values: path) }
     @inlinable func query(_ path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(strings path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(string path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(hitches path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(hitch path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(ints path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(int path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(doubles path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(double path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(bools path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(bool path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(dates path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(date path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<A, B>(_ path: [Hitch]) -> (A, B)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C>(_ path: [Hitch]) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
@@ -111,34 +111,34 @@ public extension HalfHitch {
     @inlinable func query(paths: [String]) -> [String]? { return Sextant.shared.query(self, paths: paths.map { Hitch(string: $0) }) }
     @inlinable func query(values path: [String]) -> JsonArray? { return Sextant.shared.query(self, values: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(strings path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(string path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(hitches path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(hitch path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(ints path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(int path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(doubles path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(double path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(bools path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(bool path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(dates path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(date path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
 }
 
 public extension Data {
     @inlinable func query(paths: [Hitch]) -> [String]? { return Sextant.shared.query(self, paths: paths) }
     @inlinable func query(values path: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, values: path) }
     @inlinable func query(_ path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(strings path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(string path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(hitches path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(hitch path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(ints path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(int path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(doubles path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(double path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(bools path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(bool path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(dates path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(date path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<A, B>(_ path: [Hitch]) -> (A, B)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C>(_ path: [Hitch]) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
@@ -151,34 +151,34 @@ public extension Data {
     @inlinable func query(paths: [String]) -> [String]? { return Sextant.shared.query(self, paths: paths.map { Hitch(string: $0) }) }
     @inlinable func query(values path: [String]) -> JsonArray? { return Sextant.shared.query(self, values: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(strings path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(string path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(hitches path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(hitch path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(ints path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(int path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(doubles path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(double path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(bools path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(bool path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(dates path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(date path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
 }
 
 public extension JsonAny {
     @inlinable func query(paths: [Hitch]) -> [String]? { return Sextant.shared.query(self, paths: paths) }
     @inlinable func query(values path: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, values: path) }
     @inlinable func query(_ path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(strings path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(string path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(hitches path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(hitch path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(ints path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(int path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(doubles path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(double path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(bools path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(bool path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(dates path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(date path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<A, B>(_ path: [Hitch]) -> (A, B)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C>(_ path: [Hitch]) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
@@ -191,17 +191,17 @@ public extension JsonAny {
     @inlinable func query(paths: [String]) -> [String]? { return Sextant.shared.query(self, paths: paths.map { Hitch(string: $0) }) }
     @inlinable func query(values path: [String]) -> JsonArray? { return Sextant.shared.query(self, values: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(strings path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(string path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(hitches path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(hitch path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(ints path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(int path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(doubles path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(double path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(bools path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(bool path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(dates path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(date path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
 }
 
 public extension JsonElement {
@@ -211,17 +211,17 @@ public extension JsonElement {
     @inlinable func query(paths: [Hitch]) -> [String]? { return Sextant.shared.query(self, paths: paths) }
     @inlinable func query(values path: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, values: path) }
     @inlinable func query(_ path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(strings path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(string path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(hitches path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(hitch path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(ints path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(int path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(doubles path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(double path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(bools path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(bool path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(dates path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(date path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<A, B>(_ path: [Hitch]) -> (A, B)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C>(_ path: [Hitch]) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
@@ -234,34 +234,34 @@ public extension JsonElement {
     @inlinable func query(paths: [String]) -> [String]? { return Sextant.shared.query(self, paths: paths.map { Hitch(string: $0) }) }
     @inlinable func query(values path: [String]) -> JsonArray? { return Sextant.shared.query(self, values: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(strings path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(string path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(hitches path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(hitch path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(ints path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(int path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(doubles path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(double path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(bools path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(bool path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(dates path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(date path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
 }
 
 public extension Array {
     @inlinable func query(paths: [Hitch]) -> [String]? { return Sextant.shared.query(self, paths: paths) }
     @inlinable func query(values path: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, values: path) }
     @inlinable func query(_ path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(strings path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(string path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(hitches path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(hitch path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(ints path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(int path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(doubles path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(double path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(bools path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(bool path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(dates path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(date path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<A, B>(_ path: [Hitch]) -> (A, B)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C>(_ path: [Hitch]) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
@@ -274,34 +274,34 @@ public extension Array {
     @inlinable func query(paths: [String]) -> [String]? { return Sextant.shared.query(self, paths: paths.map { Hitch(string: $0) }) }
     @inlinable func query(values path: [String]) -> JsonArray? { return Sextant.shared.query(self, values: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(strings path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(string path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(hitches path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(hitch path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(ints path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(int path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(doubles path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(double path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(bools path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(bool path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(dates path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(date path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
 }
 
 public extension Dictionary {
     @inlinable func query(paths: [Hitch]) -> [String]? { return Sextant.shared.query(self, paths: paths) }
     @inlinable func query(values path: [Hitch]) -> JsonArray? { return Sextant.shared.query(self, values: path) }
     @inlinable func query(_ path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(strings path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(string path: [Hitch]) -> String? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(hitches path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(hitch path: [Hitch]) -> Hitch? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(ints path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(int path: [Hitch]) -> Int? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(doubles path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(double path: [Hitch]) -> Double? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(bools path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(bool path: [Hitch]) -> Bool? { return Sextant.shared.query(self, value: path) }
     @inlinable func query(_ path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
-    @inlinable func query(dates path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
+    @inlinable func query(date path: [Hitch]) -> Date? { return Sextant.shared.query(self, value: path) }
 
     @inlinable func query<A, B>(_ path: [Hitch]) -> (A, B)? { return Sextant.shared.query(self, value: path) }
     @inlinable func query<A, B, C>(_ path: [Hitch]) -> (A, B, C)? { return Sextant.shared.query(self, value: path) }
@@ -314,17 +314,17 @@ public extension Dictionary {
     @inlinable func query(paths: [String]) -> [String]? { return Sextant.shared.query(self, paths: paths.map { Hitch(string: $0) }) }
     @inlinable func query(values path: [String]) -> JsonArray? { return Sextant.shared.query(self, values: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(strings path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(string path: [String]) -> String? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(hitches path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(hitch path: [String]) -> Hitch? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(ints path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(int path: [String]) -> Int? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(doubles path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(double path: [String]) -> Double? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(bools path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(bool path: [String]) -> Bool? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
     @inlinable func query(_ path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
-    @inlinable func query(dates path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
+    @inlinable func query(date path: [String]) -> Date? { return Sextant.shared.query(self, value: path.map { Hitch(string: $0) }) }
 }
 
 public extension Sextant {
