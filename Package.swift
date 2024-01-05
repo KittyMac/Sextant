@@ -8,7 +8,6 @@ let package = Package(
         .macOS(.v10_13), .iOS(.v11)
     ],
     products: [
-        .executable(name: "SextantCLI", targets: ["SextantCLI"]),
         .library(name: "Sextant", targets: ["Sextant"]),
     ],
     dependencies: [
@@ -18,16 +17,6 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
     ],
     targets: [
-        .executableTarget(
-            name: "SextantCLI",
-            dependencies: [
-                "Sextant",
-                "Hitch",
-                "Spanker",
-                "Chronometer",
-                .product(name: "ArgumentParser", package: "swift-argument-parser")
-            ]
-        ),
         .target(
             name: "Sextant",
             dependencies: [
