@@ -56,6 +56,12 @@ final class Parameter {
         let handle: (JsonAny) -> Void = { obj in
             if let typedValue = obj.toHalfHitch() {
                 values.append(typedValue)
+            } else if let typedValue = obj.toInt() {
+                values.append("{0}" << [typedValue])
+            } else if let typedValue = obj.toDouble() {
+                values.append("{0}" << [typedValue])
+            } else if let typedValue = obj.toBool() {
+                values.append("{0}" << [typedValue])
             }
         }
 
@@ -78,6 +84,12 @@ final class Parameter {
         let handle: (JsonAny) -> Void = { obj in
             if let typedValue = obj.toHitch() {
                 values.append(typedValue)
+            } else if let typedValue = obj.toInt() {
+                values.append("{0}" <<< [typedValue])
+            } else if let typedValue = obj.toDouble() {
+                values.append("{0}" <<< [typedValue])
+            } else if let typedValue = obj.toBool() {
+                values.append("{0}" <<< [typedValue])
             }
         }
 

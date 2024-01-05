@@ -134,6 +134,20 @@ public class TestsBase: XCTestCase {
                 "d",
                 "e",
                 "f"
+            ],
+            "nestedFields": [
+                {
+                    "index": 0,
+                    "name": "A"
+                },
+                {
+                    "index": 1,
+                    "name": "B"
+                },
+                {
+                    "index": 2,
+                    "name": "C"
+                }
             ]
         }
     """
