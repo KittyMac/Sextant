@@ -80,12 +80,12 @@ enum PathFunction {
 
         switch self {
         case .AVG:
-            guard let numerals = numerals(jsonObject: jsonObject, parameters: parameters) else {
+            guard let numerals = numerals(evaluationContext: evaluationContext, jsonObject: jsonObject, parameters: parameters) else {
                 return nil
             }
             return numerals.reduce(0.0, +) / Double(numerals.count)
         case .STDDEV:
-            guard let numerals = numerals(jsonObject: jsonObject, parameters: parameters) else {
+            guard let numerals = numerals(evaluationContext: evaluationContext, jsonObject: jsonObject, parameters: parameters) else {
                 return nil
             }
 
@@ -95,13 +95,13 @@ enum PathFunction {
 
             return sqrt((sumSq / count) - (sum * sum / count / count))
         case .SUM:
-            return numerals(jsonObject: jsonObject, parameters: parameters)?.reduce(0, +)
+            return numerals(evaluationContext: evaluationContext, jsonObject: jsonObject, parameters: parameters)?.reduce(0, +)
         case .MIN:
-            return numerals(jsonObject: jsonObject, parameters: parameters)?.min()
+            return numerals(evaluationContext: evaluationContext, jsonObject: jsonObject, parameters: parameters)?.min()
         case .MAX:
-            return numerals(jsonObject: jsonObject, parameters: parameters)?.max()
+            return numerals(evaluationContext: evaluationContext, jsonObject: jsonObject, parameters: parameters)?.max()
         case .CONCAT:
-            guard let hitches = hitches(jsonObject: jsonObject, parameters: parameters) else {
+            guard let hitches = hitches(evaluationContext: evaluationContext, jsonObject: jsonObject, parameters: parameters) else {
                 return nil
             }
             let combined = Hitch(capacity: hitches.reduce(0) { $0 + $1.count })
@@ -131,13 +131,14 @@ enum PathFunction {
             var result = [JsonAny]()
             result.append(contentsOf: array)
             for param in parameters {
-                result.append(param.value())
+                result.append(param.value(evaluationContext: evaluationContext))
             }
             return result
         }
     }
 
-    func numerals(jsonObject: JsonAny,
+    func numerals(evaluationContext: EvaluationContext,
+                  jsonObject: JsonAny,
                   parameters: [Parameter]) -> [Double]? {
         var values = [Double]()
 
@@ -145,7 +146,8 @@ enum PathFunction {
             values.append(contentsOf: array.compactMap { $0.toDouble() })
         }
 
-        values.append(contentsOf: Parameter.doubles(parameters: parameters) ?? [])
+        values.append(contentsOf: Parameter.doubles(evaluationContext: evaluationContext,
+                                                    parameters: parameters) ?? [])
 
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")
@@ -155,7 +157,8 @@ enum PathFunction {
         return values
     }
 
-    func hitches(jsonObject: JsonAny,
+    func hitches(evaluationContext: EvaluationContext,
+                 jsonObject: JsonAny,
                  parameters: [Parameter]) -> [Hitch]? {
         var values = [Hitch]()
 
@@ -163,7 +166,8 @@ enum PathFunction {
             values.append(contentsOf: array.compactMap { $0.toHitch() })
         }
 
-        values.append(contentsOf: Parameter.hitches(parameters: parameters) ?? [])
+        values.append(contentsOf: Parameter.hitches(evaluationContext: evaluationContext,
+                                                    parameters: parameters) ?? [])
 
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")

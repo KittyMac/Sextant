@@ -73,12 +73,11 @@ final class FunctionPathToken: PathToken {
                             parentPath: Path,
                             jsonObject: JsonAny,
                             evaluationContext: EvaluationContext) {
-
         for param in functionParams {
-            guard param.evaluated == false else { continue }
-
+            guard evaluationContext.evaluatedParametersBindings[param.uuid] == nil else { continue }
+            
             if let path = param.path {
-                param.lateBinding = { _ in
+                evaluationContext.evaluatedParametersBindings[param.uuid] = { _ in
                     guard let evaluationContext = path.evaluate(jsonObject: evaluationContext.rootJsonObject,
                                                                 rootJsonObject: evaluationContext.rootJsonObject,
                                                                 options: evaluationContext.options) else {
@@ -86,11 +85,10 @@ final class FunctionPathToken: PathToken {
                     }
                     return evaluationContext.jsonObject()
                 }
-                param.evaluated = true
             }
 
             if let json = param.json {
-                param.lateBinding = { _ in
+                evaluationContext.evaluatedParametersBindings[param.uuid] = { _ in
                     let value = try? JSONSerialization.jsonObject(with: json.dataNoCopy(),
                                                                   options: [.allowFragments])
                     if let value = value as? String {
@@ -98,7 +96,6 @@ final class FunctionPathToken: PathToken {
                     }
                     return value
                 }
-                param.evaluated = true
             }
         }
     }
@@ -148,10 +145,10 @@ final class FunctionPathToken: PathToken {
                             evaluationContext: EvaluationContext) {
 
         for param in functionParams {
-            guard param.evaluated == false else { continue }
-
+            guard evaluationContext.evaluatedParametersBindings[param.uuid] == nil else { continue }
+            
             if let path = param.path {
-                param.lateBinding = { _ in
+                evaluationContext.evaluatedParametersBindings[param.uuid] = { _ in
                     guard let evaluationContext = path.evaluate(jsonElement: evaluationContext.rootJsonElement,
                                                                 rootJsonElement: evaluationContext.rootJsonElement,
                                                                 options: evaluationContext.options) else {
@@ -159,17 +156,15 @@ final class FunctionPathToken: PathToken {
                     }
                     return evaluationContext.jsonObject()
                 }
-                param.evaluated = true
             }
 
             if let json = param.json {
-                param.lateBinding = { _ in
+                evaluationContext.evaluatedParametersBindings[param.uuid] = { _ in
                     return json.parsed { element in
                         guard let element = element else { return NSNull() }
                         return element.reify()
                     }
                 }
-                param.evaluated = true
             }
         }
     }

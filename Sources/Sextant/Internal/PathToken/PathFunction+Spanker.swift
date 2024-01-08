@@ -12,12 +12,12 @@ extension PathFunction {
 
         switch self {
         case .AVG:
-            guard let numerals = numerals(jsonElement: jsonElement, parameters: parameters) else {
+            guard let numerals = numerals(evaluationContext: evaluationContext, jsonElement: jsonElement, parameters: parameters) else {
                 return nil
             }
             return numerals.reduce(0.0, +) / Double(numerals.count)
         case .STDDEV:
-            guard let numerals = numerals(jsonElement: jsonElement, parameters: parameters) else {
+            guard let numerals = numerals(evaluationContext: evaluationContext, jsonElement: jsonElement, parameters: parameters) else {
                 return nil
             }
 
@@ -27,13 +27,13 @@ extension PathFunction {
 
             return sqrt((sumSq / count) - (sum * sum / count / count))
         case .SUM:
-            return numerals(jsonElement: jsonElement, parameters: parameters)?.reduce(0, +)
+            return numerals(evaluationContext: evaluationContext, jsonElement: jsonElement, parameters: parameters)?.reduce(0, +)
         case .MIN:
-            return numerals(jsonElement: jsonElement, parameters: parameters)?.min()
+            return numerals(evaluationContext: evaluationContext, jsonElement: jsonElement, parameters: parameters)?.min()
         case .MAX:
-            return numerals(jsonElement: jsonElement, parameters: parameters)?.max()
+            return numerals(evaluationContext: evaluationContext, jsonElement: jsonElement, parameters: parameters)?.max()
         case .CONCAT:
-            guard let hitches = hitches(jsonElement: jsonElement, parameters: parameters) else {
+            guard let hitches = hitches(evaluationContext: evaluationContext, jsonElement: jsonElement, parameters: parameters) else {
                 return nil
             }
             let combined = Hitch(capacity: hitches.reduce(0) { $0 + $1.count })
@@ -55,13 +55,14 @@ extension PathFunction {
                 result.append(element.reify())
             }
             for param in parameters {
-                result.append(param.value())
+                result.append(param.value(evaluationContext: evaluationContext))
             }
             return result
         }
     }
 
-    func numerals(jsonElement: JsonElement,
+    func numerals(evaluationContext: EvaluationContext,
+                  jsonElement: JsonElement,
                   parameters: [Parameter]) -> [Double]? {
         var values = [Double]()
 
@@ -75,7 +76,8 @@ extension PathFunction {
             }
         }
 
-        values.append(contentsOf: Parameter.doubles(parameters: parameters) ?? [])
+        values.append(contentsOf: Parameter.doubles(evaluationContext: evaluationContext,
+                                                    parameters: parameters) ?? [])
 
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")
@@ -85,7 +87,8 @@ extension PathFunction {
         return values
     }
 
-    func hitches(jsonElement: JsonElement,
+    func hitches(evaluationContext: EvaluationContext,
+                 jsonElement: JsonElement,
                  parameters: [Parameter]) -> [HalfHitch]? {
         var values = [HalfHitch]()
 
@@ -97,7 +100,8 @@ extension PathFunction {
             }
         }
 
-        values.append(contentsOf: Parameter.halfHitches(parameters: parameters) ?? [])
+        values.append(contentsOf: Parameter.halfHitches(evaluationContext: evaluationContext,
+                                                        parameters: parameters) ?? [])
 
         guard values.count > 0  else {
             error("Aggregation function attempted to calculate value using empty array")

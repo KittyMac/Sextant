@@ -40,10 +40,16 @@ class NestedFunctionTest: TestsBase {
     }
     
     func testStringConcatIssue7() {
-        let json = #"{"x":"1","Y":2,"z":true}"#
-        XCTAssertEqualAny(json.query(values: #"$.concat($.x,"_",$.Y,"_",$.z)"#), ["1_2_true"])
+        let json1 = #"{"x":"1","Y":2}"#
+        XCTAssertEqualAny(json1.query(values: #"$.concat($.x,"-",$.Y)"#), ["1-2"])
+        
+        let json2 = #"{"x":"1","Y":5}"#
+        XCTAssertEqualAny(json2.query(values: #"$.concat($.x,"-",$.Y)"#), ["1-5"])
+        
+        let json3 = #"{"x":"1","Y":8}"#
+        XCTAssertEqualAny(json3.query(values: #"$.concat($.x,"-",$.Y)"#), ["1-8"])
     }
-    
+        
     func testAppendNumber() {
         XCTAssertEqualAny(jsonNumberSeries.query(values: "$.numbers.append(11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0).avg()"), [10.0])
     }

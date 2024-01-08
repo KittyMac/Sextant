@@ -4,31 +4,37 @@ import Hitch
 typealias ParameterLateBinding = ((Parameter) -> JsonAny)
 
 final class Parameter {
-    var evaluated: Bool = false
+    var uuid: Int = 0
+
     var json: Hitch?
     var path: Path?
-    var cachedValue: JsonAny = nil
-    var lateBinding: ParameterLateBinding?
+    //var cachedValue: JsonAny = nil
+    //var lateBinding: ParameterLateBinding?
 
     init(json: Hitch) {
         self.json = Hitch(hitch: json)
+        uuid = unsafeBitCast(self, to: Int.self)
     }
 
     init(path: Path) {
+        uuid = unsafeBitCast(self, to: Int.self)
         self.path = path
     }
 
-    func value() -> JsonAny {
-        if let cachedValue = cachedValue {
+    func value(evaluationContext: EvaluationContext) -> JsonAny {
+        if let cachedValue = evaluationContext.evaluatedParametersCache[uuid] {
             return cachedValue
         }
-        if let lateBinding = lateBinding {
-            cachedValue = lateBinding(self)
+        if let lateBinding = evaluationContext.evaluatedParametersBindings[uuid] {
+            let value = lateBinding?(self)
+            evaluationContext.evaluatedParametersCache[uuid] = value
+            return value
         }
-        return cachedValue
+        return nil
     }
 
-    class func doubles(parameters: [Parameter]) -> [Double]? {
+    class func doubles(evaluationContext: EvaluationContext,
+                       parameters: [Parameter]) -> [Double]? {
         var values = [Double]()
 
         let handle: (JsonAny) -> Void = { obj in
@@ -38,7 +44,7 @@ final class Parameter {
         }
 
         for param in parameters {
-            guard let value = param.value() else { return nil }
+            guard let value = param.value(evaluationContext: evaluationContext) else { return nil }
 
             if let array = value as? JsonArray {
                 array.forEach(handle)
@@ -50,7 +56,8 @@ final class Parameter {
         return values
     }
 
-    class func halfHitches(parameters: [Parameter]) -> [HalfHitch]? {
+    class func halfHitches(evaluationContext: EvaluationContext,
+                           parameters: [Parameter]) -> [HalfHitch]? {
         var values = [HalfHitch]()
 
         let handle: (JsonAny) -> Void = { obj in
@@ -66,7 +73,7 @@ final class Parameter {
         }
 
         for param in parameters {
-            guard let value = param.value() else { return nil }
+            guard let value = param.value(evaluationContext: evaluationContext) else { return nil }
 
             if let array = value as? JsonArray {
                 array.forEach(handle)
@@ -78,7 +85,8 @@ final class Parameter {
         return values
     }
 
-    class func hitches(parameters: [Parameter]) -> [Hitch]? {
+    class func hitches(evaluationContext: EvaluationContext,
+                       parameters: [Parameter]) -> [Hitch]? {
         var values = [Hitch]()
 
         let handle: (JsonAny) -> Void = { obj in
@@ -94,7 +102,7 @@ final class Parameter {
         }
 
         for param in parameters {
-            guard let value = param.value() else { return nil }
+            guard let value = param.value(evaluationContext: evaluationContext) else { return nil }
 
             if let array = value as? JsonArray {
                 array.forEach(handle)
