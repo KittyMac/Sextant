@@ -272,6 +272,78 @@ class ExamplesTest: TestsBase {
             XCTAssertEqual(person[int: "age"], 36)
         }
     }
+    
+    /// JsonElements can be the return value if queried against an existing JsonElement
+    func testSimple16() {
+        let json = #"[{"title":"Post 1","timestamp":1},{"title":"Post 2","timestamp":2}]"#
+        
+        
+        
+        // ===== Method 0: compatible with JSONSerialization =====
+        // First method is like using JSONSerialization; returns a "JSONArray" which
+        // is just a typealias for [Any?]. Least efficient method, annoying to use.
+        let result0 = json.query(values: "$[*]")!
+        
+        // prints: Optional([Optional(["title": Optional("Post 1"), "timestamp": Optional(1)]), Optional(["name": Optional("Post 2"), "timestamp": Optional(2)])])
+        print(result0)
+        
+        if let result0JsonData = try? JSONSerialization.data(withJSONObject: result0, options: [.sortedKeys]),
+           // prints: [{"timestamp":1,"title":"Post 1"},{"title":"Post 2","timestamp":2}]
+           let result0JsonString = String(data: result0JsonData, encoding: .utf8) {
+            print(result0JsonString)
+        }
+
+        
+        // ===== Method 1: coerce Codable structs =====
+        // Middle efficiency, more convenient coding.
+        struct LikedPost: Codable {
+            let title: String
+            let timestamp: Int
+        }
+        
+        let result1: [LikedPost] = json.query("$[*]")!
+        // prints: "Post 1"
+        print(result1[0].title)
+        
+        
+        // ===== Method 2a: JsonElement =====
+        // JsonElements are the internal structures used by Sextant; they have references
+        // which point to the original content so they can be used without any unnecessary
+        // copying of data. Since they reference the original data, you need to ensure that
+        // they get converted to a more real format for use elsewhere.
+        
+        var result2a: [LikedPost] = []
+        json.query(forEach: "$[*]") { item in
+            if let title = item[string: "title"],
+               let timestamp = item[int: "timestamp"] {
+                result2a.append(LikedPost(title: title, timestamp: timestamp))
+            }
+        }
+        // prints: "Post 1"
+        print(result2a[0].title)
+        
+        // ===== Method 2b: JsonElement =====
+        // When working with JsonElements, its often advisable to use the parsed() method. This ensures
+        // that the data the JsonElements reference is alive while using them. It also allows you to
+        // perform multiple queries against the same json very efficiently, as you have the root
+        // JsonElement directly for all queries.
+        var result2b: [LikedPost] = []
+        json.parsed { root in
+            guard let root = root else { return }
+            
+            // Contrived: pulling the two values out using different queries just to prove the
+            // point. The json is already parsed so queries inside here are very fast
+            if let titles: [String] = root.query("$..title"),
+               let timestamps: [Int] = root.query("$..timestamp"),
+               titles.count == timestamps.count {
+                for idx in 0..<titles.count {
+                    result2b.append(LikedPost(title: titles[idx], timestamp: timestamps[idx]))
+                }
+            }
+        }
+        // prints: "Post 1"
+        print(result2b[0].title)
+    }
 }
 
 extension ExamplesTest {
