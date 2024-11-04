@@ -354,6 +354,8 @@ class ExamplesTest: TestsBase {
         XCTAssertEqual(json.query(validate: "$."), "Path must not end with a \'.\' or \'..\'")
         XCTAssertEqual(json.query(validate: "$.."), "Path must not end with a \'.\' or \'..\'")
         XCTAssertEqual(json.query(validate: "$.store.book[["), "Could not parse token starting at position 12.")
+        XCTAssertEqual(json.query(validate: "@.category"), nil)
+        
     }
 }
 

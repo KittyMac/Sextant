@@ -218,7 +218,7 @@ public final class Sextant {
         // PathCompiler will prepend "$." for all paths which don't specify,
         // but since we want to check for validitiy we need to fail
         // specially here
-        guard query[0] == .dollarSign || query[0] == .ampersand else {
+        guard query[0] == .dollarSign || query[0] == .atMark else {
             return "Path must start with $ or @"
         }
         
