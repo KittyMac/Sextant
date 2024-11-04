@@ -226,6 +226,19 @@ func testSimple14() {
 }
 ```
 
+```swift
+/// You can test a json path for validity by calling .query(validate)
+func testSimple17() {
+    let json = #"[{"title":"Post 1","timestamp":1},{"title":"Post 2","timestamp":2}]"#
+
+    XCTAssertEqual(json.query(validate: "$"), nil)
+    XCTAssertEqual(json.query(validate: ""), "Path must start with $ or @")
+    XCTAssertEqual(json.query(validate: "$."), "Path must not end with a \'.\' or \'..\'")
+    XCTAssertEqual(json.query(validate: "$.."), "Path must not end with a \'.\' or \'..\'")
+    XCTAssertEqual(json.query(validate: "$.store.book[["), "Could not parse token starting at position 12.")
+}
+```
+
 ## Performance
 
 Sextant utilizes [Hitch](https://github.com/KittyMac/Hitch) (high performance strings) and [Spanker](https://github.com/KittyMac/Spanker) (high performance, low overhead JSON deserialization) to provide a best-in-class JSONPath implementation for Swift. Hitch allows for fast, utf8 shared memory strings. Spanker generates a low cost view of the JSON blob which Sextant then queries the JSONPath against. Nothing is deserialized and no memory is copied from the source JSON blob until they are returned as results from the query. Sextant really shines in scenarios where you have a large amount of JSON and/or a large number of queries to run against it.

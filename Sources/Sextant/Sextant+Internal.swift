@@ -12,7 +12,16 @@ func anyEquals(_ a: JsonAny, _ b: JsonAny?) -> Bool {
     return false
 }
 
+func clearerror() {
+    Thread.current.threadDictionary["__SEXTANT_ERROR"] = nil
+}
+
+func geterror() -> String? {
+    return Thread.current.threadDictionary["__SEXTANT_ERROR"] as? String
+}
+
 func error(_ error: String) {
+    Thread.current.threadDictionary["__SEXTANT_ERROR"] = error
     #if DEBUG
     // print("Error: " + error)
     #endif

@@ -344,6 +344,17 @@ class ExamplesTest: TestsBase {
         // prints: "Post 1"
         print(result2b[0].title)
     }
+    
+    /// Check a jsonpath for validity
+    func testSimple17() {
+        let json = #"[{"title":"Post 1","timestamp":1},{"title":"Post 2","timestamp":2}]"#
+
+        XCTAssertEqual(json.query(validate: "$"), nil)
+        XCTAssertEqual(json.query(validate: ""), "Path must start with $ or @")
+        XCTAssertEqual(json.query(validate: "$."), "Path must not end with a \'.\' or \'..\'")
+        XCTAssertEqual(json.query(validate: "$.."), "Path must not end with a \'.\' or \'..\'")
+        XCTAssertEqual(json.query(validate: "$.store.book[["), "Could not parse token starting at position 12.")
+    }
 }
 
 extension ExamplesTest {

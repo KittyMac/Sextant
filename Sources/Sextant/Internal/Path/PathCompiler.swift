@@ -26,7 +26,7 @@ final class PathCompiler {
         }
 
         guard isPathContext(ci.current()) else {
-            error("Path must start with \(docContextChar) or \(evalContextChar)")
+            error("Path must start with $ or @")
             return nil
         }
 
@@ -126,7 +126,7 @@ final class PathCompiler {
             appender.append(token: ScanPathToken())
             ci.advance(2)
         } else if ci.hasMoreCharacters() == false {
-            error("Path must not end with a '.'")
+            error("Unexpected end of path")
             return false
         } else {
             ci.advance(1)

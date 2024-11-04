@@ -212,4 +212,19 @@ public final class Sextant {
         cachedPaths[query] = path
         return path
     }
+    
+    func validate(query: Hitch) -> String? {
+        
+        // PathCompiler will prepend "$." for all paths which don't specify,
+        // but since we want to check for validitiy we need to fail
+        // specially here
+        guard query[0] == .dollarSign || query[0] == .ampersand else {
+            return "Path must start with $ or @"
+        }
+        
+        clearerror()
+        guard let pathCompiler = PathCompiler(query: query) else { return geterror() }
+        _ = pathCompiler.compile()
+        return geterror()
+    }
 }
