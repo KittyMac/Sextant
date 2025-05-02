@@ -43,51 +43,60 @@ extension Path {
 
     @usableFromInline
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext? {
-        fatalError("should be overwritten")
+        // fatalError("should be overwritten")
+        return nil
     }
 
     @usableFromInline
     func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext? {
-        fatalError("should be overwritten")
+        // fatalError("should be overwritten")
+        return nil
     }
 
     @usableFromInline
     func isDefinite() -> Bool {
-        fatalError("should be overwritten")
+        // fatalError("should be overwritten")
+        return false
     }
 
     @usableFromInline
     func isFunctionPath() -> Bool {
-        fatalError("should be overwritten")
+        // fatalError("should be overwritten")
+        return false
     }
 
     @usableFromInline
     func isRootPath() -> Bool {
-        fatalError("should be overwritten")
+        // fatalError("should be overwritten")
+        return false
     }
 
     @usableFromInline
     @discardableResult
     func set(value: JsonAny) -> Bool {
-        fatalError("should be overwritten")
+        // fatalError("should be overwritten")
+        return false
     }
 
     @usableFromInline
     @discardableResult
     func map(block: MapObjectBlock) -> Bool {
-        fatalError("should be overwritten")
+        // fatalError("should be overwritten")
+        return false
     }
 
     @usableFromInline
     @discardableResult
     func forEach(block: ForEachObjectBlock) -> Bool {
-        fatalError("should be overwritten")
+        // fatalError("should be overwritten")
+        return false
     }
 
     @usableFromInline
     @discardableResult
     func filter(block: FilterObjectBlock) -> Bool {
-        fatalError("should be overwritten")
+        // fatalError("should be overwritten")
+        return false
     }
 }
 

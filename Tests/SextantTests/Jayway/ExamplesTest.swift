@@ -357,6 +357,16 @@ class ExamplesTest: TestsBase {
         XCTAssertEqual(json.query(validate: "@.category"), nil)
         
     }
+    
+    func testSimple18() {
+        let result = #"{"users":[{"name":"John","age":30},{"name":"Jane","age":29}]}"#.query(map: "$.users[0]", { _ in
+            "x"
+        }) { root in
+            root.description
+        }
+        
+        XCTAssertEqual(result, #"{"users":["x",{"name":"Jane","age":29}]}"#)
+    }
 }
 
 extension ExamplesTest {
