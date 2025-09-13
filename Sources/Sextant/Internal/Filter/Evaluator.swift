@@ -23,7 +23,6 @@ enum EvaluatorResult {
 
 enum Evaluator {
 
-    @inline(__always)
     fileprivate static func block(relationalOperator: RelationalOperator) -> EvaluatorBlock {
         switch relationalOperator {
         case .GTE:
@@ -69,7 +68,7 @@ enum Evaluator {
         }
     }
 
-    @inlinable
+    
     static func evaluate(relationalOperator: RelationalOperator,
                          left: ValueNode?,
                          right: ValueNode?,

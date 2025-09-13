@@ -2,39 +2,39 @@ import Foundation
 import Hitch
 import Spanker
 
-@usableFromInline
+
 final class EvaluationContext {
-    @usableFromInline
+    
     var options: EvaluationOptions
 
-    @usableFromInline
+    
     var updateOperations = [Path]()
 
-    @usableFromInline
+    
     var allValueElementResults = [JsonElement?]()
-    @usableFromInline
+    
     var valueElementResults = [JsonElement?]()
 
-    @usableFromInline
+    
     var allValueResults = JsonArray()
-    @usableFromInline
+    
     var valueResults = JsonArray()
-    @usableFromInline
+    
     var pathResults = [Hitch]()
 
-    @usableFromInline
+    
     var evaluationCache = [Hitch: JsonAny]()
 
-    @usableFromInline
+    
     var path: Path
 
-    @usableFromInline
+    
     var rootJsonObject: JsonAny = nil
 
-    @usableFromInline
+    
     var rootJsonElement: JsonElement = JsonElement.null()
 
-    @usableFromInline
+    
     var pathIsDefinite: Bool = false
     
     var evaluatedParametersCache: [Int: JsonAny] = [:]
@@ -60,7 +60,7 @@ final class EvaluationContext {
         self.pathIsDefinite = path.isDefinite()
     }
 
-    @inlinable
+    
     func add(path: Hitch,
              operation: Path,
              jsonObject: JsonAny) -> EvaluationStatus {
@@ -84,7 +84,7 @@ final class EvaluationContext {
         return .done
     }
 
-    @inlinable
+    
     func add(path: Hitch,
              operation: Path,
              jsonElement: JsonElement) -> EvaluationStatus {

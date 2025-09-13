@@ -4,7 +4,7 @@ import Hitch
 private let regexChar = UInt8.forwardSlash
 
 class CharacterIndex: CustomStringConvertible {
-    @usableFromInline
+    
     internal let charSequence: Hitch
 
     var position: Int
@@ -20,69 +20,69 @@ class CharacterIndex: CustomStringConvertible {
         return charSequence.description
     }
 
-    @inlinable
+    
     func substring(_ from: Int, _ to: Int) -> Hitch? {
         return charSequence.substring(from, to)
     }
 
-    @inlinable
+    
     func count() -> Int {
         return charSequence.count
     }
 
-    @inlinable
+    
     func current() -> UInt8 {
         return charSequence[position]
     }
 
-    @inlinable
+    
     func next() -> UInt8 {
         guard position < endPosition else { return 0 }
         return charSequence[position + 1]
     }
 
-    @inlinable
+    
     func advance(_ count: Int = 1) {
         position += count
     }
 
-    @inlinable
+    
     func removeFromEnd(_ count: Int = 1) {
         endPosition = endPosition - count
     }
 
-    @inlinable
+    
     func positionAtEnd() -> Bool {
         return position >= endPosition
     }
 
-    @inlinable
+    
     subscript (index: Int) -> UInt8 {
         get { return charSequence[index] }
         set(newValue) { charSequence[index] = newValue }
     }
 
-    @inlinable
+    
     func last() -> UInt8 {
         return charSequence[endPosition]
     }
 
-    @inlinable
+    
     func first() -> UInt8 {
         return charSequence[position]
     }
 
-    @inlinable
+    
     func inBounds(position: Int) -> Bool {
         return position >= 0 && position <= endPosition
     }
 
-    @inlinable
+    
     func inBounds() -> Bool {
         return position >= 0 && position <= endPosition
     }
 
-    @inlinable
+    
     func hasMoreCharacters() -> Bool {
         return position < endPosition
     }

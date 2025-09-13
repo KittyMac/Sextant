@@ -140,7 +140,7 @@ extension ValueNode {
         return .differ
     }
 
-    @inlinable
+    
     func equal(to other: ValueNode) -> Bool {
 
         if let number1 = numericValue,

@@ -14,19 +14,19 @@ class FilterPathTokenPredicate: ScanPredicate {
         self.isWildcardFilter = (token.description == "[?]")
     }
     
-    @inlinable
+    
     override func isWildcardFilterPath() -> Bool {
         return isWildcardFilter
     }
 
-    @inlinable
+    
     override func matchesJsonObject(jsonObject: JsonAny) -> Bool {
         return token.accept(jsonObject: jsonObject,
                             rootJsonObject: evaluationContext.rootJsonObject,
                             evaluationContext: evaluationContext)
     }
 
-    @inlinable
+    
     override func matchesJsonElement(jsonElement: JsonElement) -> Bool {
         return token.accept(jsonElement: jsonElement,
                             rootJsonElement: evaluationContext.rootJsonElement,

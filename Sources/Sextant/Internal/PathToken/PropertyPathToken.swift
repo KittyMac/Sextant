@@ -22,7 +22,7 @@ class PropertyPathToken: PathToken {
         }
     }
 
-    @inlinable
+    
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -48,7 +48,7 @@ class PropertyPathToken: PathToken {
         return .done
     }
 
-    @inlinable
+    
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,

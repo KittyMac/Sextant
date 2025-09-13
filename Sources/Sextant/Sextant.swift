@@ -7,18 +7,18 @@ public typealias JsonAny = Any?
 public typealias JsonArray = [JsonAny]
 public typealias JsonDictionary = [String: JsonAny]
 
-@usableFromInline
+
 let nullHitch = Hitch("null")
 
-@usableFromInline
+
 let trueHitch = Hitch("true")
 
-@usableFromInline
+
 let falseHitch = Hitch("false")
 
 extension JsonAny {
 
-    @inlinable
+    
     func toBool() -> Bool? {
 
         switch self {
@@ -39,7 +39,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable
+    
     func toDouble() -> Double? {
         switch self {
         case let double as Double:
@@ -51,7 +51,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable
+    
     func toInt() -> Int? {
         switch self {
         case let double as Double:
@@ -63,7 +63,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable
+    
     func toString() -> String? {
         switch self {
         case let string as String:
@@ -77,7 +77,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable
+    
     func toHitch() -> Hitch? {
         switch self {
         case let string as String:
@@ -91,7 +91,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable
+    
     func toHalfHitch() -> HalfHitch? {
         switch self {
         case let string as String:
@@ -105,7 +105,7 @@ extension JsonAny {
         }
     }
 
-    @inlinable
+    
     func toDate() -> Date? {
         var dateString = ""
 
@@ -124,7 +124,7 @@ extension JsonAny {
     }
 }
 
-@usableFromInline
+
 struct EvaluationOptions: OptionSet {
     public let rawValue: Int
 
@@ -160,28 +160,28 @@ struct EvaluationOptions: OptionSet {
 // MARK: - Incoming Extensions - Parsing
 
 public extension Hitch {
-    @inlinable
+    
     func jsonDeserialized() -> JsonAny {
         return self.dataNoCopy().jsonDeserialized()
     }
 }
 
 public extension HalfHitch {
-    @inlinable
+    
     func jsonDeserialized() -> JsonAny {
         return self.dataNoCopy().jsonDeserialized()
     }
 }
 
 public extension String {
-    @inlinable
+    
     func jsonDeserialized() -> JsonAny {
         return self.data(using: .utf8)?.jsonDeserialized()
     }
 }
 
 public extension Data {
-    @inlinable
+    
     func jsonDeserialized() -> JsonAny {
         return try? JSONSerialization.jsonObject(with: self, options: [.allowFragments])
     }

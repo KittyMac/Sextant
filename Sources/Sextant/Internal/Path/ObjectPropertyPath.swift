@@ -37,30 +37,30 @@ extension JsonAny {
     }
 }
 
-@usableFromInline
+
 struct ObjectPropertyPath: Path {
-    @usableFromInline
+    
     let parentAny: JsonAny
 
-    @usableFromInline
+    
     let parentDictionary: JsonDictionary?
 
-    @usableFromInline
+    
     let parentArray: JsonArray? = nil
 
-    @usableFromInline
+    
     let parentElement: JsonElement?
 
-    @usableFromInline
+    
     let propertyString: String?
 
-    @usableFromInline
+    
     let propertyHitch: Hitch?
 
-    @usableFromInline
+    
     let propertyHalfHitch: HalfHitch?
 
-    @usableFromInline
+    
     init(any: JsonAny,
          property: Hitch) {
         parentAny = any
@@ -71,7 +71,7 @@ struct ObjectPropertyPath: Path {
         propertyHalfHitch = nil
     }
 
-    @usableFromInline
+    
     init(dictionary: JsonDictionary,
          property: String) {
         parentAny = nil
@@ -82,7 +82,7 @@ struct ObjectPropertyPath: Path {
         propertyHalfHitch = nil
     }
 
-    @usableFromInline
+    
     init(element: JsonElement,
          property: HalfHitch) {
         parentAny = nil
@@ -93,7 +93,7 @@ struct ObjectPropertyPath: Path {
         propertyHalfHitch = property
     }
 
-    @usableFromInline
+    
     @discardableResult
     func set(value: JsonAny) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
@@ -104,7 +104,7 @@ struct ObjectPropertyPath: Path {
         return true
     }
 
-    @usableFromInline
+    
     @discardableResult
     func map(block: MapObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
@@ -119,7 +119,7 @@ struct ObjectPropertyPath: Path {
         return true
     }
 
-    @usableFromInline
+    
     @discardableResult
     func forEach(block: ForEachObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
@@ -130,7 +130,7 @@ struct ObjectPropertyPath: Path {
         return true
     }
 
-    @usableFromInline
+    
     @discardableResult
     func filter(block: FilterObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }

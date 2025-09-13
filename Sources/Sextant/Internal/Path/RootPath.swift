@@ -2,24 +2,24 @@ import Foundation
 import Hitch
 import Spanker
 
-@usableFromInline
+
 struct RootPath: Path {
-    @usableFromInline
+    
     let parentAny: JsonAny
 
-    @usableFromInline
+    
     let parentDictionary: JsonDictionary? = nil
 
-    @usableFromInline
+    
     let parentArray: JsonArray? = nil
 
-    @usableFromInline
+    
     var parentElement: JsonElement?
 
-    @usableFromInline
+    
     var options: EvaluationOptions
 
-    @usableFromInline
+    
     init(rootObject: JsonAny,
          options: EvaluationOptions) {
         parentAny = rootObject
@@ -27,7 +27,7 @@ struct RootPath: Path {
         self.options = options
     }
 
-    @usableFromInline
+    
     init(rootElement: JsonElement?,
          options: EvaluationOptions) {
         parentAny = nil
@@ -35,7 +35,7 @@ struct RootPath: Path {
         self.options = options
     }
 
-    @usableFromInline
+    
     @discardableResult
     func set(value: JsonAny) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
@@ -43,7 +43,7 @@ struct RootPath: Path {
         return false
     }
 
-    @usableFromInline
+    
     @discardableResult
     func map(block: MapObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
@@ -51,7 +51,7 @@ struct RootPath: Path {
         return true
     }
 
-    @usableFromInline
+    
     @discardableResult
     func forEach(block: ForEachObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }
@@ -59,7 +59,7 @@ struct RootPath: Path {
         return true
     }
 
-    @usableFromInline
+    
     @discardableResult
     func filter(block: FilterObjectBlock) -> Bool {
         guard let parentElement = parentElement else { error("invalid set operation"); return false }

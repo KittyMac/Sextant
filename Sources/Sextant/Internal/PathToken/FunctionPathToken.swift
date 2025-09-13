@@ -30,7 +30,7 @@ final class FunctionPathToken: PathToken {
         self.pathFunction = PathFunction(hitch: self.fragment)
     }
 
-    @inlinable
+    
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonObject: JsonAny,
@@ -100,7 +100,7 @@ final class FunctionPathToken: PathToken {
         }
     }
 
-    @inlinable
+    
     override func evaluate(currentPath: Hitch,
                            parentPath: Path,
                            jsonElement: JsonElement,

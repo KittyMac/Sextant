@@ -3,16 +3,16 @@ import Hitch
 import Spanker
 
 struct CompiledPath: Path {
-    @usableFromInline
+    
     let parentAny: JsonAny
 
-    @usableFromInline
+    
     let parentDictionary: JsonDictionary? = nil
 
-    @usableFromInline
+    
     let parentArray: JsonArray? = nil
 
-    @usableFromInline
+    
     let parentElement: JsonElement? = nil
 
     var root: RootPathToken
@@ -61,7 +61,7 @@ struct CompiledPath: Path {
         return path
     }
 
-    @inlinable
+    
     func evaluate(jsonObject: JsonAny, rootJsonObject: JsonAny, options: EvaluationOptions) -> EvaluationContext? {
         let evaluationContext = EvaluationContext(path: self,
                                                   rootJsonObject: rootJsonObject,
@@ -84,7 +84,7 @@ struct CompiledPath: Path {
         }
     }
 
-    @inlinable
+    
     func evaluate(jsonElement: JsonElement, rootJsonElement: JsonElement, options: EvaluationOptions) -> EvaluationContext? {
         let evaluationContext = EvaluationContext(path: self,
                                                   rootJsonElement: rootJsonElement,
@@ -107,17 +107,17 @@ struct CompiledPath: Path {
         }
     }
 
-    @inlinable
+    
     func isDefinite() -> Bool {
         return root.isPathDefinite()
     }
 
-    @inlinable
+    
     func isFunctionPath() -> Bool {
         return root.isFunctionPath()
     }
 
-    @inlinable
+    
     func isRootPath() -> Bool {
         return rootPath
     }
