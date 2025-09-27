@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "Sextant",
     products: [
-        .library(name: "Sextant", type: .dynamic, targets: ["Sextant"]),
+        .library(name: "Sextant", targets: ["Sextant"]),
     ],
     dependencies: [
         .package(url: "https://github.com/KittyMac/Chronometer.git", from: "0.1.0"),
