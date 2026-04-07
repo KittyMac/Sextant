@@ -367,6 +367,49 @@ class ExamplesTest: TestsBase {
         
         XCTAssertEqual(result, #"{"users":["x",{"name":"Jane","age":29}]}"#)
     }
+    
+    func testSimple19() {
+        let json = #"{"users":[{"name":"John","age":30},{"name":"Jane","age":29}]}"#
+        
+        Spanker.parsed(string: json) { root in
+            guard let root = root else { return }
+            
+            // works but makes no sense if your path is asking for multiple somethings
+            let somethingOrNothing1: JsonElement? = root.query("$..nothing")
+            print("somethingOrNothing1: \(somethingOrNothing1)")
+            
+            let somethingOrNothing2: JsonElement? = root.query("$..name")
+            print("somethingOrNothing2: \(somethingOrNothing2)")
+            
+            // returns array which will be empty if nothing
+            let nothing: [JsonElement]? = root.query("$..nothing")
+            print("nothing: \(nothing)")
+            
+            // returns as many somethings as matched
+            let something: [JsonElement]? = root.query("$..name")
+            print("something: \(something)")
+        }
+        
+        if json.exists(path: "$..nothing") {
+            print("nothing exists")
+        } else {
+            print("nothing does not exist")
+        }
+        
+        if json.exists(path: "$..name") {
+            print("name exists")
+        } else {
+            print("name does not exist")
+        }
+        
+    }
+}
+
+extension String {
+    // convenient but inefficient as requires parsing and querying every time
+    public func exists(path: String) -> Bool {
+        return Spanker.parsed(string: self) { root in root?.query(element: Hitch(string: path)) != nil } == true
+    }
 }
 
 extension ExamplesTest {
