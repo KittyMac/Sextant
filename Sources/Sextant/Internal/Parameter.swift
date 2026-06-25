@@ -4,7 +4,7 @@ import Hitch
 typealias ParameterLateBinding = ((Parameter) -> JsonAny)
 
 final class Parameter {
-    var uuid: Int = 0
+    var uuid: ObjectIdentifier { ObjectIdentifier(self) }
 
     var json: Hitch?
     var path: Path?
@@ -13,11 +13,9 @@ final class Parameter {
 
     init(json: Hitch) {
         self.json = Hitch(hitch: json)
-        uuid = unsafeBitCast(self, to: Int.self)
     }
 
     init(path: Path) {
-        uuid = unsafeBitCast(self, to: Int.self)
         self.path = path
     }
 

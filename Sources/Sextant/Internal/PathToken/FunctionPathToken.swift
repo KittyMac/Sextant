@@ -77,13 +77,13 @@ final class FunctionPathToken: PathToken {
             guard evaluationContext.evaluatedParametersBindings[param.uuid] == nil else { continue }
             
             if let path = param.path {
+                let rootJsonObject = evaluationContext.rootJsonObject
+                let options = evaluationContext.options
                 evaluationContext.evaluatedParametersBindings[param.uuid] = { _ in
-                    guard let evaluationContext = path.evaluate(jsonObject: evaluationContext.rootJsonObject,
-                                                                rootJsonObject: evaluationContext.rootJsonObject,
-                                                                options: evaluationContext.options) else {
-                        return nil
-                    }
-                    return evaluationContext.jsonObject()
+                    guard let ctx = path.evaluate(jsonObject: rootJsonObject,
+                                                  rootJsonObject: rootJsonObject,
+                                                  options: options) else { return nil }
+                    return ctx.jsonObject()
                 }
             }
 

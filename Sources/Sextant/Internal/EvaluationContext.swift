@@ -37,8 +37,8 @@ final class EvaluationContext {
     
     var pathIsDefinite: Bool = false
     
-    var evaluatedParametersCache: [Int: JsonAny] = [:]
-    var evaluatedParametersBindings: [Int: ParameterLateBinding?] = [:]
+    var evaluatedParametersCache: [ObjectIdentifier: JsonAny] = [:]
+    var evaluatedParametersBindings: [ObjectIdentifier: ParameterLateBinding?] = [:]
 
     init(path: Path,
          rootJsonObject: JsonAny,
